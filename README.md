@@ -67,6 +67,9 @@ Fully synthetic Part D-style data — **not real patient data**.
 pip install -r requirements.txt
 ```
 
+Requires: pandas, numpy, scikit-learn, lightgbm, shap, matplotlib.
+On macOS, LightGBM needs `brew install libomp`.
+
 ## Running the Pipeline
 
 ```

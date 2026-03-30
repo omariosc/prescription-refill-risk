@@ -216,13 +216,48 @@ At the natural **NDC-11 level, 99.9% of (patient, drug) pairs have only 1 fill**
 
 ## 8. Modelling Notes
 
-*To be filled during model building.*
+- **Model:** LightGBM with `is_unbalance=True`, learning_rate=0.05, 63 leaves, max_depth=7
+- **Early stopping:** Best iteration at round 141 (out of 1000, stopped at 191)
+- **67 features** across 5 groups: PDE (15), beneficiary (36), inpatient (6), outpatient (5), carrier (5)
+- Training on 1,045,574 fills (2008 to mid-2009), validated on 247,863 (mid-2009 to end-2009)
+
+### Top Features by Gain
+| Rank | Feature | % of Total Gain |
+|------|---------|----------------|
+| 1 | `std_gap_same_drug` (cadence variability) | 34.9% |
+| 2 | `current_days_supply` | 21.1% |
+| 3 | `mean_gap_same_drug` (average gap) | 16.0% |
+| 4 | `n_prior_fills_same_drug` (fill history length) | 7.0% |
+| 5 | `n_total_fills_all_drugs` (total prescriptions) | 5.2% |
+| 6 | `pct_late_history` (past non-adherence) | 4.8% |
+| 7 | `n_unique_drugs` (polypharmacy) | 2.9% |
+| 8 | `last_gap_same_drug` | 1.3% |
+| 9 | `early_refill_count` (stockpiling) | 1.2% |
+| 10 | `mean_cost` | 0.7% |
+
+**Key insight for pitch:** The top 3 features are ALL prescription-behaviour features (gap variability, current supply length, mean gap). Prior adherence history (`pct_late_history`) ranks 6th. This tells us: **past behaviour is the strongest predictor of future behaviour** — patients with erratic refill patterns are the ones most likely to be late next time. This is clinically intuitive and actionable.
+
+**Beneficiary/claims features had low individual importance** — age was the strongest at 0.26%. However, they may still contribute collectively through interactions.
 
 ---
 
 ## 9. Results & Evaluation
 
-*To be filled after evaluation.*
+### Metrics
+| Split | N Fills | % Late | PR-AUC | ROC-AUC |
+|-------|---------|--------|--------|---------|
+| Validation (mid-2009 to end-2009) | 247,863 | 72.2% | **0.856** | 0.729 |
+| Test (2010) | 180,158 | 59.0% | **0.737** | 0.688 |
+
+### Interpretation
+- **Validation PR-AUC of 0.856** is strong — well above the 72.2% baseline (a random model would get ~0.722 PR-AUC for the majority class).
+- **Test PR-AUC drops to 0.737** — expected temporal degradation. The 2010 test set has different class balance (59% vs 72% late) due to data truncation, and the model was trained on data with a different distribution.
+- **ROC-AUC of 0.688** on test is moderate — reflects the difficulty of binary discrimination when class balance shifts across splits.
+
+### What this means for Pharmacy2U
+1. A model trained on prescription history alone can identify patients likely to refill late with good precision
+2. The strongest signal is **behavioural consistency** — patients with stable, regular refill patterns are easy to distinguish from those with erratic patterns
+3. This could power a **proactive outreach system**: flag patients with high risk scores before their expected run-out date, enabling early intervention (reminders, pharmacist calls, delivery scheduling)
 
 ---
 

@@ -44,12 +44,10 @@ def plot_shap_importance(shap_values: shap.Explanation, max_display: int = 20) -
 
 def plot_shap_summary(shap_values: shap.Explanation, max_display: int = 20) -> None:
     """Plot and save SHAP beeswarm summary plot."""
-    fig, ax = plt.subplots(figsize=(10, 8))
-    shap.plots.beeswarm(shap_values, max_display=max_display, show=False, ax=ax)
-    plt.tight_layout()
+    shap.plots.beeswarm(shap_values, max_display=max_display, show=False, plot_size=(10, 8))
     path = OUTPUTS / "shap_summary.png"
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    plt.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close()
     print(f"  SHAP summary plot saved to {path}")
 
 
