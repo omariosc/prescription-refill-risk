@@ -48,6 +48,40 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .sec-sub{font-size:15px;color:#6b7280;margin-bottom:32px}
 .card{background:#fff;border-radius:var(--card);box-shadow:var(--shadow);padding:32px}
 
+/* Pipeline */
+.pipeline{background:#fff;padding:64px 0;border-bottom:1px solid var(--border)}
+.pipeline .sec-title{text-align:center}
+.pipeline .sec-sub{text-align:center;max-width:640px;margin:0 auto 40px}
+.pipe-steps{display:flex;flex-direction:column;gap:0;position:relative;max-width:800px;margin:0 auto}
+.pipe-step{display:grid;grid-template-columns:56px 1fr;gap:20px;position:relative;padding-bottom:32px}
+.pipe-step:last-child{padding-bottom:0}
+.pipe-step:last-child .pipe-line{display:none}
+.pipe-num{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:#fff;position:relative;z-index:2;flex-shrink:0}
+.pipe-line{position:absolute;left:23px;top:48px;bottom:0;width:2px;background:var(--border);z-index:1}
+.pipe-card{background:var(--grey);border:1px solid var(--border);border-radius:12px;padding:24px 28px;transition:box-shadow 200ms,transform 200ms}
+.pipe-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.pipe-card h3{font-size:17px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.pipe-card h3 .material-symbols-outlined{font-size:22px;color:var(--accent)}
+.pipe-card .pipe-tech{font-size:12px;color:#9ca3af;font-family:'Inter',sans-serif;font-weight:400;margin-left:4px}
+.pipe-card p{font-size:14px;color:#4b5563;line-height:1.65;margin-bottom:0}
+.pipe-card .pipe-stat{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:var(--pill);padding:4px 12px;font-size:12px;font-weight:600;color:var(--navy);margin-top:10px;margin-right:6px}
+.pipe-card .pipe-stat .material-symbols-outlined{font-size:16px;color:var(--accent)}
+.pipe-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.pipe-mini-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center}
+.pipe-mini-card .mini-val{font-family:'Nunito',sans-serif;font-size:20px;font-weight:800}
+.pipe-mini-card .mini-val.high{color:var(--coral)}
+.pipe-mini-card .mini-val.mod{color:#d97706}
+.pipe-mini-card .mini-val.low{color:#059669}
+.pipe-mini-card .mini-lbl{font-size:11px;color:#6b7280;margin-top:2px}
+.pipe-graph{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:14px}
+.pipe-graph-title{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px}
+.pipe-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.pipe-bar-row:last-child{margin-bottom:0}
+.pipe-bar-label{width:140px;text-align:right;color:#4b5563;flex-shrink:0;font-weight:500}
+.pipe-bar-track{flex:1;height:20px;background:var(--grey);border-radius:4px;overflow:hidden;position:relative}
+.pipe-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:10px;font-weight:700;color:#fff;min-width:24px;transition:width 600ms ease-out}
+@media(max-width:640px){.pipe-step{grid-template-columns:40px 1fr;gap:12px}.pipe-num{width:36px;height:36px;font-size:14px}.pipe-line{left:17px}.pipe-mini{grid-template-columns:1fr}}
+
 /* Tabs */
 .tab-bar{display:flex;gap:4px;background:var(--grey);border-radius:var(--pill);padding:4px;width:fit-content;margin-bottom:28px}
 .tab-btn{padding:10px 24px;border-radius:var(--pill);border:none;background:transparent;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:#6b7280;cursor:pointer;transition:all 150ms;display:flex;align-items:center;gap:6px}
@@ -241,6 +275,111 @@ footer strong{color:var(--navy)}
       <div class="trust-item"><span class="material-symbols-outlined">verified</span>PR-AUC Validated Model</div>
       <div class="trust-item"><span class="material-symbols-outlined">psychology</span>SHAP Explainable AI</div>
       <div class="trust-item"><span class="material-symbols-outlined">bolt</span>Real-time Risk Scoring</div>
+    </div>
+  </div>
+</section>
+
+<!-- Pipeline Explainer -->
+<section class="pipeline" id="how-it-works">
+  <div class="container">
+    <h2 class="sec-title">How It Works</h2>
+    <p class="sec-sub">From raw prescription records to an actionable risk score &mdash; a six-stage pipeline built for transparency.</p>
+
+    <div class="pipe-steps">
+
+      <!-- Step 1 -->
+      <div class="pipe-step">
+        <div><div class="pipe-num" style="background:var(--navy)">1</div><div class="pipe-line"></div></div>
+        <div class="pipe-card">
+          <h3><span class="material-symbols-outlined">database</span> Data Collection <span class="pipe-tech">(CMS DE-SynPUF)</span></h3>
+          <p>We start with eight linked datasets covering three years of anonymised prescription records, hospital admissions, outpatient visits, and physician encounters &mdash; joined together for each patient.</p>
+          <span class="pipe-stat"><span class="material-symbols-outlined">description</span> 5.5 million prescription fills</span>
+          <span class="pipe-stat"><span class="material-symbols-outlined">groups</span> 99,538 patients</span>
+          <span class="pipe-stat"><span class="material-symbols-outlined">calendar_month</span> 2008&ndash;2010</span>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="pipe-step">
+        <div><div class="pipe-num" style="background:#0088b3">2</div><div class="pipe-line"></div></div>
+        <div class="pipe-card">
+          <h3><span class="material-symbols-outlined">cleaning_services</span> Cleaning &amp; Validation</h3>
+          <p>Records with missing supply durations or cancelled prescriptions are removed. Clinical codes are standardised, date formats are unified, and patients who passed away are appropriately handled so their data doesn't distort the model.</p>
+          <span class="pipe-stat"><span class="material-symbols-outlined">filter_alt</span> 117,749 invalid records removed</span>
+          <span class="pipe-stat"><span class="material-symbols-outlined">sync_alt</span> 11 condition flags remapped</span>
+          <span class="pipe-stat"><span class="material-symbols-outlined">person_off</span> 2,301 death-censored fills</span>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="pipe-step">
+        <div><div class="pipe-num" style="background:#00a89e">3</div><div class="pipe-line"></div></div>
+        <div class="pipe-card">
+          <h3><span class="material-symbols-outlined">label</span> Defining &ldquo;Late&rdquo; <span class="pipe-tech">(Label Construction)</span></h3>
+          <p>For each prescription, we calculate when the supply should run out. If the patient's next refill arrives more than seven days after that date, we mark it as <strong>late</strong>. This gives us a clear yes-or-no target the model can learn from.</p>
+          <span class="pipe-stat"><span class="material-symbols-outlined">assignment</span> 1.47 million labelled fills</span>
+          <span class="pipe-stat"><span class="material-symbols-outlined">timer</span> 7-day grace window</span>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="pipe-step">
+        <div><div class="pipe-num" style="background:var(--accent)">4</div><div class="pipe-line"></div></div>
+        <div class="pipe-card">
+          <h3><span class="material-symbols-outlined">construction</span> Building the Signals <span class="pipe-tech">(Feature Engineering)</span></h3>
+          <p>We extract 67 measurable signals from each patient's history &mdash; including how regular their past refills have been, their age, chronic conditions, hospital visits, and prescription costs. Each signal only uses information available <em>before</em> the prediction point, preventing the model from &ldquo;seeing the future&rdquo;.</p>
+          <div class="pipe-graph">
+            <div class="pipe-graph-title">Top features by predictive importance</div>
+            <div class="pipe-bar-row"><span class="pipe-bar-label">Refill regularity</span><div class="pipe-bar-track"><div class="pipe-bar-fill" style="width:78%;background:var(--navy)">35%</div></div></div>
+            <div class="pipe-bar-row"><span class="pipe-bar-label">Supply duration</span><div class="pipe-bar-track"><div class="pipe-bar-fill" style="width:47%;background:#0088b3">21%</div></div></div>
+            <div class="pipe-bar-row"><span class="pipe-bar-label">Average refill gap</span><div class="pipe-bar-track"><div class="pipe-bar-fill" style="width:36%;background:#00a89e">16%</div></div></div>
+            <div class="pipe-bar-row"><span class="pipe-bar-label">Fill history length</span><div class="pipe-bar-track"><div class="pipe-bar-fill" style="width:16%;background:var(--accent)">7%</div></div></div>
+            <div class="pipe-bar-row"><span class="pipe-bar-label">Past late refills</span><div class="pipe-bar-track"><div class="pipe-bar-fill" style="width:11%;background:#6ec6c6">5%</div></div></div>
+            <div class="pipe-bar-row"><span class="pipe-bar-label">Other 62 signals</span><div class="pipe-bar-track"><div class="pipe-bar-fill" style="width:36%;background:#9ca3af">16%</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="pipe-step">
+        <div><div class="pipe-num" style="background:#005c8f">5</div><div class="pipe-line"></div></div>
+        <div class="pipe-card">
+          <h3><span class="material-symbols-outlined">model_training</span> Training the Model <span class="pipe-tech">(LightGBM)</span></h3>
+          <p>A gradient-boosted decision tree model learns which combinations of signals best predict late refills. Crucially, training uses <strong>only historical data</strong> and is tested on a separate future time period &mdash; just as it would work in practice.</p>
+          <div class="pipe-mini">
+            <div class="pipe-mini-card"><div class="mini-val" style="color:var(--navy)">0.856</div><div class="mini-lbl">Validation PR-AUC</div></div>
+            <div class="pipe-mini-card"><div class="mini-val" style="color:var(--heading)">0.737</div><div class="mini-lbl">Test PR-AUC</div></div>
+            <div class="pipe-mini-card"><div class="mini-val" style="color:var(--accent)">141</div><div class="mini-lbl">Decision trees</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="pipe-step">
+        <div><div class="pipe-num" style="background:#003052">6</div><div class="pipe-line"></div></div>
+        <div class="pipe-card">
+          <h3><span class="material-symbols-outlined">tune</span> Calibration &amp; Uncertainty</h3>
+          <p>Raw model scores are mapped to real-world risk tiers based on <strong>actual observed late rates</strong> in our test population. Each prediction also includes a confidence range &mdash; when the model is unsure, it says so, so clinicians can apply their own judgement.</p>
+          <div class="pipe-mini">
+            <div class="pipe-mini-card"><div class="mini-val high">76%</div><div class="mini-lbl">HIGH actual late rate<br>(score &ge; 0.55)</div></div>
+            <div class="pipe-mini-card"><div class="mini-val mod">61%</div><div class="mini-lbl">MODERATE actual late rate<br>(score 0.30&ndash;0.55)</div></div>
+            <div class="pipe-mini-card"><div class="mini-val low">40%</div><div class="mini-lbl">LOW actual late rate<br>(score &lt; 0.30)</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="pipe-step">
+        <div><div class="pipe-num" style="background:var(--accent);color:var(--navy)">7</div></div>
+        <div class="pipe-card" style="border-color:var(--accent);background:linear-gradient(135deg,rgba(0,224,188,.04),rgba(0,224,188,.08))">
+          <h3><span class="material-symbols-outlined">dashboard</span> Actionable Risk Report</h3>
+          <p>The final output for each patient: a risk tier with a plain-language explanation, the top factors driving their score, a confidence range the clinician can see at a glance, and a recommended next step &mdash; from passive monitoring to immediate pharmacist outreach.</p>
+          <span class="pipe-stat"><span class="material-symbols-outlined">analytics</span> SHAP-explained drivers</span>
+          <span class="pipe-stat"><span class="material-symbols-outlined">medication</span> Real drug names via RxNorm</span>
+          <span class="pipe-stat"><span class="material-symbols-outlined">shield</span> 90% confidence intervals</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
