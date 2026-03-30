@@ -22,8 +22,8 @@ Fully synthetic Part D-style data — **not real patient data**.
 ```
 .
 ├── data/               # Raw and processed data (gitignored)
-├── notebooks/          # Exploratory and modelling notebooks
-├── src/                # Reusable Python modules
+├── src/                # Python modules (loading, features, model, explain)
+├── scripts/            # End-to-end pipeline runner
 ├── outputs/            # Figures, metrics, results
 ├── resources/          # PDFs, codebooks (gitignored)
 └── README.md
@@ -70,7 +70,7 @@ pip install -r requirements.txt
 ## Running the Pipeline
 
 ```
-jupyter notebook notebooks/01_eda.ipynb
+python scripts/run_pipeline.py
 ```
 
 ## Caveats
