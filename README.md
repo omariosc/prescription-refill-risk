@@ -81,6 +81,6 @@ jupyter notebook notebooks/01_eda.ipynb
 
 ## Team
 
-- Omar Al-Obaidi
-- [Teammate 2]
-- [Teammate 3]
+- Xin Ci Wong
+- Arpita Saggar
+- Omar Choudhry
