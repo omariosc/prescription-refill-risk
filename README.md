@@ -26,6 +26,6 @@
 
 | Name | GitHub |
 |------|--------|
-| Xin Ci Wong | |
-| Arpita Saggar | |
+| Xin Ci Wong | [@X-ksana](https://github.com/X-ksana) |
+| Arpita Saggar | [@arpita2512](https://github.com/arpita2512) |
 | Omar Choudhry | [@omariosc](https://github.com/omariosc) |
