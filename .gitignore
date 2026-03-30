@@ -54,3 +54,6 @@ demo/node_modules/
 demo/.wrangler/
 
 .playwright-mcp/
+
+# Claude/Superpowers internal files
+docs/superpowers/
