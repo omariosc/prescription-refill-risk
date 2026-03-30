@@ -22,6 +22,81 @@
 
 ---
 
+## Local Setup
+
+### What you need first
+
+- [Python 3.10+](https://www.python.org/downloads/)
+- [Node.js 20+](https://nodejs.org/)
+- [Git](https://git-scm.com/)
+
+---
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/omariosc/prescription-refill-risk.git
+cd prescription-refill-risk
+```
+
+---
+
+### 2. ML Pipeline (Python)
+
+**Install dependencies**
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Mac/Linux
+# .venv\Scripts\activate         # Windows
+pip install -r requirements.txt
+```
+
+**Add the data**
+
+Download the [CMS DE-SynPUF](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf) sample files and place them in the `data/` folder:
+
+```
+data/
+  DE1_0_2008_Beneficiary_Summary_File_Sample1.csv
+  DE1_0_2008_to_2010_Prescription_Drug_Events_Sample1.csv
+  ... (other sample files)
+```
+
+**Run the pipeline**
+
+```bash
+python scripts/run_pipeline.py
+```
+
+This trains the model and saves outputs (SHAP plots, metrics) to `outputs/`.
+
+---
+
+### 3. Demo (local web app)
+
+The demo runs entirely in your browser — no data or Python needed.
+
+```bash
+cd demo
+npm install
+npm run dev
+```
+
+Open [http://localhost:8787](http://localhost:8787).
+
+**Want to run the React frontend separately?**
+
+```bash
+cd demo/frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) — make sure the worker is also running (step above) so the API calls work.
+
+---
+
 ## Team
 
 | Name | GitHub |
