@@ -663,8 +663,8 @@ export default function SupplyChainDashboard({ onBack }) {
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>explore</span> Geographic uniformity
               </div>
               <ul style={{ fontSize: 13, color: "#4b5563", lineHeight: 1.7, paddingLeft: 18, margin: 0 }}>
-                <li>Late refill rates vary only 75.6% to 76.9% across all states (1.3pp)</li>
-                <li>High-risk percentages span just 54.2% to 55.8% (1.6pp range)</li>
+                <li>Late refill rates vary only 75.6% to 76.9% across all states (1.3 percentage points)</li>
+                <li>High-risk percentages span just 54.2% to 55.8% (1.6 percentage point range)</li>
                 <li>No state is a clear outlier or safe harbour</li>
                 <li>Volume differences are dramatic but risk rates are remarkably flat</li>
               </ul>
