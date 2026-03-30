@@ -42,7 +42,15 @@ from src.model import (
     save_metrics,
     train_model,
 )
-from src.utils import OUTPUTS
+from src.utils import (
+    GRACE_DAYS,
+    OUTPUTS,
+    TIER_DESCRIPTIONS,
+    TIER_HIGH,
+    TIER_LOW,
+    TRAIN_END,
+    VAL_END,
+)
 
 
 def main() -> None:
@@ -72,7 +80,7 @@ def main() -> None:
     print("PHASE 1: LABEL CONSTRUCTION")
     print("=" * 60)
 
-    labelled = build_refill_labels(pde, deaths, grace_days=7)
+    labelled = build_refill_labels(pde, deaths, grace_days=GRACE_DAYS)
     print("\nTemporal split:")
     train, val, test = temporal_split(labelled)
 
@@ -113,11 +121,11 @@ def main() -> None:
     )
 
     # Apply temporal split to merged data
-    train_merged = merged_df[merged_df["SRVC_DT"] <= "2009-06-30"]
+    train_merged = merged_df[merged_df["SRVC_DT"] <= TRAIN_END]
     val_merged = merged_df[
-        (merged_df["SRVC_DT"] > "2009-06-30") & (merged_df["SRVC_DT"] <= "2009-12-31")
+        (merged_df["SRVC_DT"] > TRAIN_END) & (merged_df["SRVC_DT"] <= VAL_END)
     ]
-    test_merged = merged_df[merged_df["SRVC_DT"] > "2009-12-31"]
+    test_merged = merged_df[merged_df["SRVC_DT"] > VAL_END]
 
     print(f"\n  Train: {len(train_merged):,} | Val: {len(val_merged):,} | Test: {len(test_merged):,}")
 
@@ -257,9 +265,9 @@ def main() -> None:
     # Save risk tier results
     risk_summary = {
         "tiers": {
-            "LOW": {"boundary": [0, 0.30], "description": "No action. Monitor passively."},
-            "MEDIUM": {"boundary": [0.30, 0.55], "description": "Automated reminder at expected run-out."},
-            "HIGH": {"boundary": [0.55, 1.0], "description": "Proactive pharmacist outreach before run-out."},
+            "LOW":    {"boundary": [0,         TIER_LOW],  "description": TIER_DESCRIPTIONS["LOW"]},
+            "MEDIUM": {"boundary": [TIER_LOW,  TIER_HIGH], "description": TIER_DESCRIPTIONS["MEDIUM"]},
+            "HIGH":   {"boundary": [TIER_HIGH, 1.0],       "description": TIER_DESCRIPTIONS["HIGH"]},
         },
         "test_set_stats": {},
     }

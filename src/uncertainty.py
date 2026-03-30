@@ -8,11 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, RegressorMixin
 
-from src.utils import OUTPUTS
-
-# Risk tier boundaries (see docs/CALIBRATION.md)
-TIER_LOW = 0.30
-TIER_HIGH = 0.55
+from src.utils import OUTPUTS, TIER_LOW, TIER_HIGH  # single source of truth in utils.py
 
 
 class LGBMRegressorWrapper(BaseEstimator, RegressorMixin):

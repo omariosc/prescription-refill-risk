@@ -35,15 +35,12 @@ from src.features_pde import compute_pde_features
 from src.labels import build_refill_labels, temporal_split
 from src.merge import merge_features
 from src.model import train_model
-from src.utils import DATA_PROCESSED, OUTPUTS
+from src.utils import DATA_PROCESSED, GRACE_DAYS, OUTPUTS, TIER_HIGH, TIER_LOW, TRAIN_END, VAL_END  # single source of truth
 
 POP_DATA = Path(__file__).resolve().parent.parent / "data" / "population"
 POP_OUT = OUTPUTS / "population"
 POP_DATA.mkdir(parents=True, exist_ok=True)
 POP_OUT.mkdir(parents=True, exist_ok=True)
-
-TIER_LOW = 0.30
-TIER_HIGH = 0.55
 
 
 def main() -> None:
@@ -62,7 +59,7 @@ def main() -> None:
     outpatient = load_outpatient()
     carrier = load_carrier_aggregated()
 
-    labelled = build_refill_labels(pde, deaths, grace_days=7)
+    labelled = build_refill_labels(pde, deaths, grace_days=GRACE_DAYS)
     train, val, test = temporal_split(labelled)
 
     print("\n" + "=" * 60)
@@ -83,8 +80,8 @@ def main() -> None:
     print("POPULATION ANALYTICS: Training model")
     print("=" * 60)
 
-    train_m = merged_df[merged_df["SRVC_DT"] <= "2009-06-30"]
-    val_m = merged_df[(merged_df["SRVC_DT"] > "2009-06-30") & (merged_df["SRVC_DT"] <= "2009-12-31")]
+    train_m = merged_df[merged_df["SRVC_DT"] <= TRAIN_END]
+    val_m = merged_df[(merged_df["SRVC_DT"] > TRAIN_END) & (merged_df["SRVC_DT"] <= VAL_END)]
     model = train_model(train_m, val_m, feature_cols)
 
     # ── Predict on ALL fills ────────────────────────────────────────
@@ -114,8 +111,8 @@ def main() -> None:
 
     # Add split label
     merged_df["split"] = "train"
-    merged_df.loc[merged_df["SRVC_DT"] > "2009-06-30", "split"] = "val"
-    merged_df.loc[merged_df["SRVC_DT"] > "2009-12-31", "split"] = "test"
+    merged_df.loc[merged_df["SRVC_DT"] > TRAIN_END, "split"] = "val"
+    merged_df.loc[merged_df["SRVC_DT"] > VAL_END,   "split"] = "test"
 
     # ── Load NDC drug name cache ────────────────────────────────────
     ndc_cache_path = DATA_PROCESSED / "ndc_cache.json"
