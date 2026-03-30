@@ -1,7 +1,7 @@
 const STEPS = [
   {
     num: 1,
-    color: 'var(--navy)',
+    color: '#003052',
     icon: 'database',
     title: 'Data Collection',
     tech: 'CMS DE-SynPUF',
@@ -14,7 +14,7 @@ const STEPS = [
   },
   {
     num: 2,
-    color: '#0088b3',
+    color: '#004d64',
     icon: 'cleaning_services',
     title: 'Cleaning & Validation',
     desc: 'Records with missing supply durations or cancelled prescriptions are removed. Clinical codes are standardised, date formats are unified, and patients who passed away are appropriately handled so their data doesn\u2019t distort the model.',
@@ -26,7 +26,7 @@ const STEPS = [
   },
   {
     num: 3,
-    color: '#00a89e',
+    color: '#006b75',
     icon: 'label',
     title: 'Defining \u201CLate\u201D',
     tech: 'Label Construction',
@@ -38,7 +38,7 @@ const STEPS = [
   },
   {
     num: 4,
-    color: 'var(--accent)',
+    color: '#008887',
     icon: 'construction',
     title: 'Building the Signals',
     tech: 'Feature Engineering',
@@ -54,7 +54,7 @@ const STEPS = [
   },
   {
     num: 5,
-    color: '#005c8f',
+    color: '#00a599',
     icon: 'model_training',
     title: 'Training the Model',
     tech: 'LightGBM',
@@ -67,7 +67,7 @@ const STEPS = [
   },
   {
     num: 6,
-    color: '#003052',
+    color: '#00c3aa',
     icon: 'tune',
     title: 'Calibration & Uncertainty',
     desc: 'Raw model scores are mapped to real-world risk tiers based on actual observed late rates in our test population. Each prediction also includes a confidence range \u2014 when the model is unsure, it says so, so clinicians can apply their own judgement.',
@@ -79,7 +79,7 @@ const STEPS = [
   },
   {
     num: 7,
-    color: 'var(--accent)',
+    color: '#00e0bc',
     numColor: 'var(--navy)',
     icon: 'dashboard',
     title: 'Actionable Risk Report',
