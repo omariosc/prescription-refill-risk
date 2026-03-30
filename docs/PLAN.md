@@ -245,3 +245,78 @@ Phase 5: explain.py → SHAP analysis + patient timeline demo
 | 3 - Merge | Low | Left joins + missing value handling |
 | 4 - Modelling | Medium | LightGBM is fast; tuning takes time |
 | 5 - Explainability | Medium | SHAP is compute-intensive on large datasets; may need to sample |
+
+---
+
+## Fallback Strategies & Contingency Plans
+
+### If NDC-5 grouping is still too coarse / class imbalance is too extreme (~80% late)
+
+**Try in order:**
+1. **Adjust grace window:** Try 14, 21, or 30 days instead of 7. This will shift the class balance.
+2. **Regression instead of classification:** Predict `excess_gap` (continuous) instead of binary late/on-time. Report risk as predicted gap days. Evaluate with MAE/RMSE and then binarise at presentation time.
+3. **NDC-4 or NDC-3 grouping:** Try broader groupings to see if patterns improve. Document the trade-off (broader group = more data, less drug-specific signal).
+4. **Patient-level "any drug" refill:** Define the target as "does the patient fill ANY prescription within X days of ANY run-out?" This sidesteps the NDC problem entirely but loses drug-specific prediction.
+
+### If carrier claims processing is too slow or causes memory issues
+
+**Fallback:** Skip carrier features in the first pass. Build the full pipeline with PDE + beneficiary + inpatient + outpatient only. Add carrier features as an enhancement if time permits. The 81.9% outpatient overlap already provides strong healthcare engagement signals.
+
+**Alternative:** Pre-aggregate carrier claims to patient-month level as a standalone script, save to `data/processed/carrier_monthly.parquet`, and load that instead of processing raw 2.4GB files during feature engineering.
+
+### If temporal per-fill feature computation is too slow
+
+**Fallback:** Instead of computing rolling windows per fill (expensive), pre-compute features at the **patient-month** level:
+- Monthly claim counts, monthly fill counts, monthly spend
+- Then join to each fill by (patient, month of SRVC_DT)
+- Loses some precision but runs in minutes instead of hours
+
+### If LightGBM performs poorly (PR-AUC < 0.3 or similar)
+
+**Check in order:**
+1. **Label quality:** Sample 50 labelled rows and manually verify the labels are correct. Check that death censoring and last-fill exclusion are working.
+2. **Feature quality:** Check for constant or near-constant features. Check for accidental leakage (any feature correlated >0.95 with the target).
+3. **Try simpler baseline first:** Logistic regression on top-5 features. If this also fails, the signal may be too weak (possible with synthetic data).
+4. **Try XGBoost:** Sometimes handles different data distributions better.
+5. **Feature ablation:** Train with ONLY PDE features first, then add groups one at a time. Identify which group actually helps.
+
+### If model overfits (train PR-AUC >> validation PR-AUC)
+
+1. Increase `min_child_samples` (LightGBM) or `min_child_weight` (XGBoost)
+2. Reduce `num_leaves` / `max_depth`
+3. Add `reg_alpha` / `reg_lambda` (L1/L2 regularisation)
+4. Subsample rows and columns (`bagging_fraction`, `feature_fraction`)
+5. Drop high-cardinality or leaky features
+
+### If SHAP computation is too slow
+
+1. **Sample:** Compute SHAP on 5,000 random test samples instead of the full test set
+2. **Use gain-based importance** as a faster alternative for the bar chart
+3. **TreeSHAP** (default for tree models) should be fast; if not, check that the model type is being detected correctly
+
+### If 2010 test set is too small or noisy
+
+**Fallback split:**
+- Train: 2008-01-01 to 2009-03-31
+- Validation: 2009-04-01 to 2009-09-30
+- Test: 2009-10-01 to 2010-12-31
+
+This gives a larger test set at the cost of a smaller training set.
+
+---
+
+## Incremental Build Strategy
+
+**The pipeline should be built so that it runs end-to-end at every stage, even if incomplete.** This means:
+
+1. **MVP (2 hours):** PDE only → labels → PDE features only → LightGBM → PR-AUC → basic plot. No claims, no beneficiary. This is the "we have something to demo" safety net.
+
+2. **+Beneficiary (1 hour):** Add demographics + chronic conditions. Should noticeably improve model.
+
+3. **+Inpatient/Outpatient (1-2 hours):** Add hospitalisation disruption + healthcare engagement features.
+
+4. **+Carrier (1-2 hours):** Add physician visit features. Marginal improvement expected (overlaps with outpatient).
+
+5. **+Polish (1-2 hours):** SHAP, calibration, patient timeline demo, presentation materials.
+
+At each stage, commit and push. The repo is always in a runnable state.

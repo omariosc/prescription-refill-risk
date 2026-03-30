@@ -226,9 +226,51 @@ At the natural **NDC-11 level, 99.9% of (patient, drug) pairs have only 1 fill**
 
 ---
 
-## 10. Caveats for Presentation
+## 10. Improvement Opportunities & Pitch Points
+
+These are concrete things we investigated, decided on, or could improve — useful for showing the panel we thought critically.
+
+### Decisions We Made (and why)
+| Decision | Why | Alternative considered |
+|----------|-----|----------------------|
+| NDC-5 drug grouping | NDC-11 unusable (99.9% single-fill), NDC-9 too sparse (0.5%) | NDC-3/4, patient-level "any drug" refill |
+| 7-day grace window | Balances clinical realism with label quality | 14-day sensitivity check planned |
+| Time-based split (2008-mid2009 / mid2009-end2009 / 2010) | Prevents data leakage, simulates real deployment | Random split (rejected: would leak future patterns) |
+| "Ever had" chronic conditions | Year-to-year re-randomisation is a synthetic artifact | Per-year snapshot (less stable) |
+| Death censoring at month level | Death dates are month-granular (day always=01) | Could assume mid-month (day=15) for finer precision |
+| Filter DAYS_SUPLY_NUM=0 | Breaks run-out calculation entirely | Could impute with median (30 days) — risky |
+
+### Things That Could Improve Results (with real data)
+1. **NDC-11 continuity:** Real pharmacy data maintains prescription identity. Our NDC-5 grouping is a workaround for synthetic data — in production, exact NDC-11 matching would dramatically improve signal.
+2. **Realistic chronic conditions:** Real beneficiary data has genuine longitudinal progression. Our "ever had" aggregation masks synthetic noise.
+3. **Exact costs:** Real PDE has dollar-cent precision. Our data is binned to $10 multiples with hard caps.
+4. **Longer sequences:** Real patients have ~14+ fills at the 10th percentile vs 3 in synthetic data. More history = better features.
+5. **Provider-level signals:** Real NPI numbers map to actual prescribers. The synthetic NPIs are random.
+
+### Things We Could Still Improve Now
+1. **NDC enrichment via RxNorm API:** Map NDC-5 to drug class names for interpretability. Makes the demo much more compelling ("patient is late on their diabetes medication" vs "patient is late on NDC group 00002").
+2. **Charlson Comorbidity Index:** Compute from ICD-9 codes in carrier/inpatient claims — single-number clinical complexity score, well-established in literature.
+3. **Medication Possession Ratio (MPR):** Standard adherence metric in pharmacy research. MPR = (sum of days_supply) / (last_fill_date - first_fill_date). Report alongside our risk score for credibility.
+4. **Hospitalisation-during-supply feature:** Check if a patient was hospitalised between fill and expected run-out. Strong causal signal — you can't pick up a prescription from a hospital bed.
+5. **Streamlit demo:** Interactive patient lookup with timeline visualisation. Much more impressive than static plots.
+6. **Grace window sensitivity analysis:** Run the full pipeline at 7, 14, 21, 30 day grace windows. Show how class balance and model performance shift. Demonstrates rigour.
+7. **Calibration plot:** Show the panel that our risk scores are not just ranked correctly but actually meaningful as probabilities.
+
+### Pitch Narrative (suggested structure)
+1. **The problem:** Late prescription refills affect millions of patients. Early identification enables proactive outreach.
+2. **The data challenge:** Synthetic data breaks NDC continuity — we adapted by using NDC-5 grouping (show the 99.9% vs 17.8% table).
+3. **Our approach:** 5 data sources × temporal feature engineering × gradient boosting. Time-based split to prevent leakage. Death censoring to avoid false labels.
+4. **What we found:** [top features driving late refills — e.g., prior late history, hospitalisation, low healthcare engagement]. Show SHAP.
+5. **The demo:** Live patient timeline with risk scores and explanations.
+6. **Caveats & real-world path:** What changes with real data, what stays the same.
+
+---
+
+## 11. Caveats for Presentation
 1. Data is fully synthetic — outputs are for modelling/product-thinking purposes only
 2. Date perturbation means refill gaps are synthetic artifacts, not real adherence patterns
-3. Chronic condition prevalence is inflated ~2x vs reality
-4. Fewer prescription events per person than reality — shorter sequences
-5. **Not clinical advice** — this is a pipeline demonstration, not a prescribing tool
+3. NDC-5 grouping is a workaround for synthetic data — real data would use exact NDC-11
+4. Chronic condition prevalence is inflated ~2x vs reality
+5. Fewer prescription events per person than reality — shorter sequences
+6. Cost columns are coarsely binned ($10 multiples, hard-capped)
+7. **Not clinical advice** — this is a pipeline demonstration, not a prescribing tool
