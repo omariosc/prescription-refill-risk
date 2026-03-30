@@ -9,9 +9,11 @@ export default defineConfig({
     emptyOutDir: false,
   },
   server: {
+    port: 5173,
     proxy: {
-      '/api': 'http://localhost:8787',
-      '/docs': 'http://localhost:8787',
+      // Forward all non-React routes to the Cloudflare Worker (wrangler dev on 8787)
+      '/api':  { target: 'http://localhost:8787', changeOrigin: true },
+      '/docs': { target: 'http://localhost:8787', changeOrigin: true },
     },
   },
 });

@@ -141,7 +141,26 @@ The demo is a Cloudflare Worker + React frontend. It runs entirely locally with 
 
 - [Node.js 20+](https://nodejs.org/)
 
-### Running the Cloudflare Worker (backend + UI)
+### Running locally with live reload
+
+This starts the Cloudflare Worker and the React dev server together. Frontend changes update instantly in the browser.
+
+```bash
+cd demo
+npm install
+cd frontend && npm install && cd ..
+npm run dev:local
+```
+
+Open [http://localhost:5173](http://localhost:5173).
+
+- **React changes** (components, styles) → hot-reload instantly, no rebuild needed
+- **Worker changes** (API routes, auth logic) → wrangler restarts automatically
+- API calls from the React app are proxied to the worker on port 8787
+
+### Quick demo (no live reload)
+
+If you just want to run the pre-built app without a React dev server:
 
 ```bash
 cd demo
@@ -149,31 +168,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:8787](http://localhost:8787).
-
-This serves both the API and the built frontend. Use this for a quick local demo.
-
-### Running the React frontend in dev mode
-
-If you want hot-reload while editing the frontend:
-
-**Terminal 1 — start the worker (API)**
-
-```bash
-cd demo
-npm install
-npm run dev
-```
-
-**Terminal 2 — start the React dev server**
-
-```bash
-cd demo/frontend
-npm install
-npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173). The React app proxies API calls to the worker on port 8787 automatically.
+Open [http://localhost:8787](http://localhost:8787). Changes to the React frontend require a rebuild (`npm run build:frontend`) before they appear here.
 
 ### Setting up the database (optional, for auth features)
 
