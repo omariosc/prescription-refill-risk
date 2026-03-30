@@ -215,6 +215,69 @@ def main() -> None:
         print("\n  No suitable patient found for timeline demo")
 
     # ===================================================================
+    # Phase 6: Uncertainty Quantification
+    # ===================================================================
+    print("\n" + "=" * 60)
+    print("PHASE 6: UNCERTAINTY QUANTIFICATION (MAPIE)")
+    print("=" * 60)
+
+    from src.uncertainty import (
+        compute_prediction_intervals,
+        classify_risk_tiers,
+        plot_risk_distribution,
+        plot_uncertainty_analysis,
+    )
+
+    y_pred_conf, y_pis = compute_prediction_intervals(
+        model, feature_cols,
+        cal_df=val_merged,
+        test_df=test_merged,
+        confidence_level=0.90,
+    )
+
+    # Classify into risk tiers with uncertainty
+    risk_df = classify_risk_tiers(y_pred_conf, y_pis)
+    y_true_test = test_merged["late"].values
+
+    # Print tier summary
+    print("\nRisk Tier Summary (test set):")
+    for tier in ["LOW", "MEDIUM", "HIGH"]:
+        mask = risk_df["tier"] == tier
+        n = mask.sum()
+        actual = y_true_test[mask].mean() if n > 0 else 0
+        uncertain = risk_df.loc[mask, "uncertain"].mean() * 100 if "uncertain" in risk_df.columns and n > 0 else 0
+        print(f"  {tier:6s}: {n:>7,} ({n/len(risk_df)*100:5.1f}%) | "
+              f"actual late rate: {actual:.1%} | "
+              f"uncertain: {uncertain:.1f}%")
+
+    # Plots
+    plot_risk_distribution(risk_df, y_true_test)
+    plot_uncertainty_analysis(risk_df)
+
+    # Save risk tier results
+    risk_summary = {
+        "tiers": {
+            "LOW": {"boundary": [0, 0.30], "description": "No action. Monitor passively."},
+            "MEDIUM": {"boundary": [0.30, 0.55], "description": "Automated reminder at expected run-out."},
+            "HIGH": {"boundary": [0.55, 1.0], "description": "Proactive pharmacist outreach before run-out."},
+        },
+        "test_set_stats": {},
+    }
+    for tier in ["LOW", "MEDIUM", "HIGH"]:
+        mask = risk_df["tier"] == tier
+        risk_summary["test_set_stats"][tier] = {
+            "n_patients": int(mask.sum()),
+            "pct_of_total": float(mask.mean() * 100),
+            "actual_late_rate": float(y_true_test[mask].mean()) if mask.sum() > 0 else 0,
+            "mean_interval_width": float(risk_df.loc[mask, "width"].mean()) if "width" in risk_df.columns else None,
+            "pct_uncertain": float(risk_df.loc[mask, "uncertain"].mean() * 100) if "uncertain" in risk_df.columns else None,
+        }
+    import json
+    with open(OUTPUTS / "risk_tiers.json", "w") as f:
+        json.dump(risk_summary, f, indent=2)
+    print(f"\n  Risk tier summary saved to outputs/risk_tiers.json")
+
+    # ===================================================================
     # Done
     # ===================================================================
     elapsed = time.time() - t0
@@ -223,10 +286,13 @@ def main() -> None:
     print(f"{'=' * 60}")
     print(f"  Outputs saved to: outputs/")
     print(f"  - metrics.json")
+    print(f"  - risk_tiers.json")
     print(f"  - ndc_lookup.csv")
     print(f"  - shap_importance.png")
     print(f"  - shap_summary.png")
     print(f"  - calibration.png")
+    print(f"  - risk_distribution.png")
+    print(f"  - uncertainty_analysis.png")
     print(f"  - patient_timeline_*.png")
 
 
