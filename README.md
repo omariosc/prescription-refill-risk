@@ -1,4 +1,5 @@
 <p align="center">
+  <img src="resources/brand-assets/p2u_logo.svg" alt="Pharmacy2U" height="48" />
   <h1 align="center">Prescription Refill Risk</h1>
   <p align="center">Predicting late prescription refills using machine learning</p>
 </p>
