@@ -52,6 +52,11 @@ models/
 # Demo (Cloudflare Worker)
 demo/node_modules/
 demo/.wrangler/
+demo/frontend/node_modules/
+demo/frontend/dist/
+
+# Demo seed data (contains credentials — run locally only)
+demo/seed.sql
 
 .playwright-mcp/
 
