@@ -1,324 +1,621 @@
 import { useState, useMemo } from "react";
 
-/* SSA State Code → Name/Abbr mapping (CMS DE-SynPUF codebook) */
-const SSA = {1:{n:"Alabama",a:"AL"},2:{n:"Alaska",a:"AK"},3:{n:"Arizona",a:"AZ"},4:{n:"Arkansas",a:"AR"},5:{n:"California",a:"CA"},6:{n:"Colorado",a:"CO"},7:{n:"Connecticut",a:"CT"},8:{n:"Delaware",a:"DE"},9:{n:"District of Columbia",a:"DC"},10:{n:"Florida",a:"FL"},11:{n:"Georgia",a:"GA"},12:{n:"Hawaii",a:"HI"},13:{n:"Idaho",a:"ID"},14:{n:"Illinois",a:"IL"},15:{n:"Indiana",a:"IN"},16:{n:"Iowa",a:"IA"},17:{n:"Kansas",a:"KS"},18:{n:"Kentucky",a:"KY"},19:{n:"Louisiana",a:"LA"},20:{n:"Maine",a:"ME"},21:{n:"Maryland",a:"MD"},22:{n:"Massachusetts",a:"MA"},23:{n:"Michigan",a:"MI"},24:{n:"Minnesota",a:"MN"},25:{n:"Mississippi",a:"MS"},26:{n:"Missouri",a:"MO"},27:{n:"Montana",a:"MT"},28:{n:"Nebraska",a:"NE"},29:{n:"Nevada",a:"NV"},30:{n:"New Hampshire",a:"NH"},31:{n:"New Jersey",a:"NJ"},32:{n:"New Mexico",a:"NM"},33:{n:"New York",a:"NY"},34:{n:"North Carolina",a:"NC"},35:{n:"North Dakota",a:"ND"},36:{n:"Ohio",a:"OH"},37:{n:"Oklahoma",a:"OK"},38:{n:"Oregon",a:"OR"},39:{n:"Pennsylvania",a:"PA"},40:{n:"Puerto Rico",a:"PR"},41:{n:"Rhode Island",a:"RI"},42:{n:"South Carolina",a:"SC"},43:{n:"South Dakota",a:"SD"},44:{n:"Tennessee",a:"TN"},45:{n:"Texas",a:"TX"},46:{n:"Utah",a:"UT"},47:{n:"Vermont",a:"VT"},48:{n:"Virgin Islands",a:"VI"},49:{n:"Virginia",a:"VA"},50:{n:"Washington",a:"WA"},51:{n:"West Virginia",a:"WV"},52:{n:"Wisconsin",a:"WI"},53:{n:"Wyoming",a:"WY"},54:{n:"Other",a:"XX"}};
+/* ──────────────────────────────────────────────────────────────────
+   Supply Chain Dashboard — Geographic Risk View
+   Data sourced from outputs/population/supply_chain.json
+   1,473,595 scored fills across 67,085 patients, 52 states/territories,
+   2,978 counties (CMS DE-SynPUF 2008-2010).
+   ────────────────────────────────────────────────────────────────── */
 
-/* All state data from outputs/population/supply_chain.json — exact numbers */
-const STATES = [
-  {c:5,f:162129,p:7321,l:76.1,h:54.8},{c:10,f:104216,p:4760,l:76.4,h:55.1},{c:33,f:92334,p:4095,l:75.9,h:54.7},
-  {c:45,f:90949,p:4072,l:76.2,h:55.0},{c:39,f:77543,p:3489,l:76.3,h:55.0},{c:14,f:56099,p:2535,l:76.1,h:54.8},
-  {c:36,f:53564,p:2474,l:76.1,h:55.1},{c:34,f:49501,p:2162,l:76.2,h:54.9},{c:23,f:46427,p:2208,l:76.3,h:55.2},
-  {c:31,f:40221,p:1781,l:76.0,h:54.4},{c:11,f:40110,p:1720,l:75.9,h:54.9},{c:44,f:38557,p:1624,l:76.3,h:54.9},
-  {c:26,f:34210,p:1483,l:76.0,h:54.3},{c:49,f:33995,p:1515,l:76.1,h:54.8},{c:15,f:31942,p:1399,l:75.6,h:54.5},
-  {c:22,f:30607,p:1463,l:76.7,h:55.6},{c:50,f:27634,p:1264,l:76.2,h:55.0},{c:1,f:26924,p:1224,l:76.5,h:55.3},
-  {c:3,f:26729,p:1294,l:76.0,h:54.9},{c:24,f:25917,p:1249,l:76.9,h:55.2},{c:18,f:25880,p:1087,l:76.2,h:55.2},
-  {c:52,f:24704,p:1158,l:76.1,h:55.1},{c:54,f:24139,p:1045,l:76.1,h:55.5},{c:19,f:23018,p:1025,l:76.2,h:55.5},
-  {c:42,f:21734,p:980,l:76.3,h:54.7},{c:21,f:18830,p:877,l:76.8,h:55.8},{c:37,f:18396,p:837,l:76.2,h:55.2},
-  {c:25,f:18246,p:746,l:75.9,h:55.0},{c:38,f:17770,p:873,l:76.0,h:54.2},{c:16,f:17593,p:808,l:76.5,h:54.8},
-  {c:6,f:16637,p:730,l:76.4,h:55.0},{c:9,f:14832,p:599,l:75.9,h:54.2},{c:4,f:14399,p:697,l:76.2,h:54.8},
-  {c:17,f:14069,p:653,l:76.2,h:55.4},{c:29,f:13445,p:572,l:76.2,h:55.0},{c:7,f:13252,p:580,l:76.4,h:55.2},
-  {c:20,f:11684,p:504,l:75.8,h:54.0},{c:28,f:10720,p:515,l:76.3,h:55.5},{c:46,f:10350,p:442,l:76.4,h:54.5},
-  {c:30,f:8474,p:372,l:76.2,h:54.2},{c:41,f:7932,p:338,l:76.3,h:55.0},{c:51,f:7917,p:357,l:76.7,h:56.4},
-  {c:43,f:7093,p:308,l:76.2,h:55.2},{c:8,f:6895,p:304,l:76.5,h:55.1},{c:2,f:6820,p:320,l:75.3,h:53.5},
-  {c:32,f:6605,p:315,l:76.2,h:54.6},{c:47,f:6113,p:260,l:76.3,h:55.4},{c:13,f:5822,p:269,l:75.6,h:54.1},
-  {c:35,f:5626,p:261,l:75.7,h:54.4},{c:53,f:5358,p:234,l:76.3,h:55.2},{c:27,f:5253,p:237,l:76.1,h:55.1},
-  {c:40,f:5060,p:236,l:76.0,h:54.6},{c:12,f:4697,p:211,l:75.3,h:53.7},{c:48,f:1173,p:54,l:75.9,h:55.8},
-].map(s => ({ ...s, name: SSA[s.c]?.n || "Unknown", abbr: SSA[s.c]?.a || "??" }));
+/* SSA State Code mapping (hardcoded from CMS DE-SynPUF codebook) */
+const SSA_MAP = {
+  1:"AL",2:"AK",3:"AZ",4:"AR",5:"CA",6:"CO",7:"CT",8:"DE",9:"DC",10:"FL",
+  11:"GA",12:"HI",13:"ID",14:"IL",15:"IN",16:"IA",17:"KS",18:"KY",19:"LA",
+  20:"ME",21:"MD",22:"MA",23:"MI",24:"MN",25:"MS",26:"MO",27:"MT",28:"NE",
+  29:"NV",30:"NH",31:"NJ",32:"NM",33:"NY",34:"NC",35:"ND",36:"OH",37:"OK",
+  38:"OR",39:"PA",40:"PR",41:"RI",42:"SC",43:"SD",44:"TN",45:"TX",46:"UT",
+  47:"VT",48:"VI",49:"VA",50:"WA",51:"WV",52:"WI",53:"WY",
+};
 
-/* US state grid layout (cartogram approximation) */
-const GRID = [
-  [null,null,null,null,null,null,null,null,null,null,"ME"],
-  [null,null,null,null,null,null,"WI",null,null,"VT","NH"],
-  ["WA","MT","ND","MN","IL","MI",null,"NY","MA","RI","CT"],
-  ["OR","ID","SD","IA","IN","OH","PA","NJ","DE",null,null],
-  ["NV","WY","NE","MO","KY","WV","VA","MD","DC",null,null],
-  ["CA","UT","CO","KS","TN","NC","SC",null,null,null,null],
-  [null,"AZ","NM","OK","AR","MS","AL","GA",null,null,null],
-  [null,null,null,"TX","LA",null,null,"FL",null,null,null],
-  ["AK",null,null,null,null,null,"HI",null,"PR","VI",null],
+const ABBR_TO_NAME = {
+  AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",
+  CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",
+  FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",
+  IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",
+  MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",
+  MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",
+  NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",
+  OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",PR:"Puerto Rico",RI:"Rhode Island",
+  SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",
+  VT:"Vermont",VI:"Virgin Islands",VA:"Virginia",WA:"Washington",
+  WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",Other:"Other/Unknown",
+};
+
+/* Top 30 states by volume — exact numbers from supply_chain.json */
+const STATE_DATA = [
+  { ssa: 5,  abbr: "CA", fills: 162_129, patients: 7_321, pctLate: 76.1, pctHigh: 54.8 },
+  { ssa: 10, abbr: "FL", fills: 104_216, patients: 4_760, pctLate: 76.4, pctHigh: 55.1 },
+  { ssa: 33, abbr: "NY", fills: 92_334,  patients: 4_095, pctLate: 75.9, pctHigh: 54.7 },
+  { ssa: 45, abbr: "TX", fills: 90_949,  patients: 4_072, pctLate: 76.2, pctHigh: 55.0 },
+  { ssa: 39, abbr: "PA", fills: 77_543,  patients: 3_489, pctLate: 76.3, pctHigh: 55.0 },
+  { ssa: 14, abbr: "IL", fills: 56_099,  patients: 2_535, pctLate: 76.1, pctHigh: 54.8 },
+  { ssa: 36, abbr: "OH", fills: 53_564,  patients: 2_474, pctLate: 76.1, pctHigh: 55.1 },
+  { ssa: 34, abbr: "NC", fills: 49_501,  patients: 2_162, pctLate: 76.2, pctHigh: 54.9 },
+  { ssa: 23, abbr: "MI", fills: 46_427,  patients: 2_208, pctLate: 76.3, pctHigh: 55.2 },
+  { ssa: 31, abbr: "NJ", fills: 40_221,  patients: 1_781, pctLate: 76.0, pctHigh: 54.4 },
+  { ssa: 11, abbr: "GA", fills: 40_110,  patients: 1_720, pctLate: 75.9, pctHigh: 54.9 },
+  { ssa: 44, abbr: "TN", fills: 38_557,  patients: 1_624, pctLate: 76.3, pctHigh: 54.9 },
+  { ssa: 26, abbr: "MO", fills: 34_210,  patients: 1_483, pctLate: 76.0, pctHigh: 54.3 },
+  { ssa: 49, abbr: "VA", fills: 33_995,  patients: 1_515, pctLate: 76.1, pctHigh: 54.8 },
+  { ssa: 15, abbr: "IN", fills: 31_942,  patients: 1_399, pctLate: 75.6, pctHigh: 54.5 },
+  { ssa: 22, abbr: "MA", fills: 30_607,  patients: 1_463, pctLate: 76.7, pctHigh: 55.6 },
+  { ssa: 50, abbr: "WA", fills: 27_634,  patients: 1_264, pctLate: 76.2, pctHigh: 55.0 },
+  { ssa: 1,  abbr: "AL", fills: 26_924,  patients: 1_224, pctLate: 76.5, pctHigh: 55.3 },
+  { ssa: 3,  abbr: "AZ", fills: 26_729,  patients: 1_294, pctLate: 76.0, pctHigh: 54.9 },
+  { ssa: 24, abbr: "MN", fills: 25_917,  patients: 1_249, pctLate: 76.9, pctHigh: 55.2 },
+  { ssa: 18, abbr: "KY", fills: 25_880,  patients: 1_087, pctLate: 76.2, pctHigh: 55.2 },
+  { ssa: 52, abbr: "WI", fills: 24_704,  patients: 1_158, pctLate: 76.1, pctHigh: 55.1 },
+  { ssa: 54, abbr: "Other", fills: 24_139, patients: 1_045, pctLate: 76.1, pctHigh: 55.5 },
+  { ssa: 19, abbr: "LA", fills: 23_018,  patients: 1_025, pctLate: 76.2, pctHigh: 55.5 },
+  { ssa: 42, abbr: "SC", fills: 21_734,  patients: 980,   pctLate: 76.3, pctHigh: 54.7 },
+  { ssa: 21, abbr: "MD", fills: 18_830,  patients: 877,   pctLate: 76.8, pctHigh: 55.8 },
+  { ssa: 37, abbr: "OK", fills: 18_396,  patients: 837,   pctLate: 76.2, pctHigh: 55.2 },
+  { ssa: 25, abbr: "MS", fills: 18_246,  patients: 746,   pctLate: 75.9, pctHigh: 55.0 },
+  { ssa: 38, abbr: "OR", fills: 17_770,  patients: 873,   pctLate: 76.0, pctHigh: 54.2 },
+  { ssa: 16, abbr: "IA", fills: 17_593,  patients: 808,   pctLate: 76.5, pctHigh: 54.8 },
 ];
 
+const TOTALS = { states: 52, counties: 2_978, fills: 1_473_595, patients: 67_085 };
+const MAX_FILLS = STATE_DATA[0].fills; // CA
+
+/* Build lookup by abbreviation */
+const STATE_BY_ABBR = {};
+STATE_DATA.forEach((s) => { STATE_BY_ABBR[s.abbr] = s; });
+
+/* ── US Cartogram grid (row-major, 9 rows x 11 cols) ────────── */
+/* Standard US tile grid (NPR / FiveThirtyEight layout) — 8 rows × 12 cols */
+const CARTO_GRID = [
+  ["AK", null, null, null, null, null, null, null, null, null, null, "ME"],
+  [null, null, null, null, null, "WI", null, null, null, "VT", "NH", null],
+  ["WA", "ID", "MT", "ND", "MN", "IL", "MI", null, null, "NY", "MA", null],
+  ["OR", "NV", "WY", "SD", "IA", "IN", "OH", "PA", "NJ", "CT", "RI", null],
+  ["CA", "UT", "CO", "NE", "MO", "KY", "WV", "VA", "MD", "DE", "DC", null],
+  [null, "AZ", "NM", "KS", "AR", "TN", "NC", "SC", null, null, null, null],
+  [null, null, null, "OK", "LA", "MS", "AL", "GA", null, null, null, null],
+  ["HI", null, null, "TX", null, null, null, "FL", null, null, "PR", "VI"],
+];
+
+/* ── Risk colour helpers ──────────────────────────── */
 function riskColor(pctHigh) {
-  if (pctHigh >= 55.5) return "#ef4444";
-  if (pctHigh >= 55.0) return "#f97316";
-  if (pctHigh >= 54.5) return "#eab308";
-  if (pctHigh >= 54.0) return "#84cc16";
-  return "#22c55e";
+  if (pctHigh >= 55.5) return "#dc2626";
+  if (pctHigh >= 55.0) return "#ea580c";
+  if (pctHigh >= 54.5) return "#d97706";
+  if (pctHigh >= 54.0) return "#65a30d";
+  return "#059669";
 }
 
 function riskBg(pctHigh) {
   if (pctHigh >= 55.5) return "#fef2f2";
   if (pctHigh >= 55.0) return "#fff7ed";
-  if (pctHigh >= 54.5) return "#fefce8";
+  if (pctHigh >= 54.5) return "#fffbeb";
   if (pctHigh >= 54.0) return "#f7fee7";
   return "#f0fdf4";
 }
 
+/* ── Sort configuration ──────────────────────────── */
+const COLUMNS = [
+  { key: "abbr",    label: "State",      align: "left" },
+  { key: "fills",   label: "Fills",      align: "right" },
+  { key: "patients",label: "Patients",   align: "right" },
+  { key: "pctLate", label: "Late %",     align: "right" },
+  { key: "pctHigh", label: "High-Risk %",align: "right" },
+];
+
+/* ── Reusable sub-components (same design system as AnalyticsDashboard) ── */
+
+function StatCard({ icon, value, label, color, sub }) {
+  return (
+    <div className="an-stat">
+      <span
+        className="material-symbols-outlined"
+        style={{
+          fontSize: 28, color,
+          background: `${color}14`,
+          borderRadius: 10, width: 44, height: 44,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0,
+        }}
+      >
+        {icon}
+      </span>
+      <div>
+        <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Nunito',sans-serif", color: "var(--navy)", lineHeight: 1.1 }}>{value}</div>
+        <div style={{ fontSize: 12, color: "#6b7280", fontWeight: 500, marginTop: 2 }}>{label}</div>
+        {sub && <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 1 }}>{sub}</div>}
+      </div>
+    </div>
+  );
+}
+
+function HBar({ label, value, pct, maxPct = 100, color = "var(--accent)", sub }) {
+  const w = Math.max(2, (pct / maxPct) * 100);
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+      <div style={{ width: 140, textAlign: "right", fontSize: 13, fontWeight: 500, color: "#374151", flexShrink: 0 }}>{label}</div>
+      <div style={{ flex: 1, height: 22, background: "#f3f4f6", borderRadius: 4, overflow: "hidden" }}>
+        <div
+          style={{
+            width: `${w}%`, height: "100%", background: color, borderRadius: 4,
+            display: "flex", alignItems: "center", justifyContent: "flex-end",
+            paddingRight: 6, fontSize: 10, fontWeight: 700, color: "#fff",
+            minWidth: 28, transition: "width 600ms ease-out",
+          }}
+        >
+          {value}
+        </div>
+      </div>
+      {sub && <div style={{ fontSize: 11, color: "#9ca3af", width: 80, flexShrink: 0 }}>{sub}</div>}
+    </div>
+  );
+}
+
+function SectionCard({ icon, title, sub, children }) {
+  return (
+    <div className="an-section">
+      <div className="an-section-hdr">
+        <span className="material-symbols-outlined" style={{ fontSize: 22, color: "var(--accent)" }}>{icon}</span>
+        <div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "var(--navy)" }}>{title}</div>
+          {sub && <div style={{ fontSize: 12, color: "#6b7280" }}>{sub}</div>}
+        </div>
+      </div>
+      <div className="an-section-body">{children}</div>
+    </div>
+  );
+}
+
+/* ── Main dashboard component ──────────────────────── */
 export default function SupplyChainDashboard({ onBack }) {
-  const [sortKey, setSortKey] = useState("f");
+  const [selectedState, setSelectedState] = useState(null);
+  const [sortKey, setSortKey] = useState("fills");
   const [sortAsc, setSortAsc] = useState(false);
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState(null);
+  const [filter, setFilter] = useState("");
 
-  const abbrMap = useMemo(() => {
-    const m = {};
-    STATES.forEach(s => { m[s.abbr] = s; });
-    return m;
-  }, []);
+  /* Sort/filter the table data */
+  const filteredData = useMemo(() => {
+    const term = filter.toLowerCase().trim();
+    let rows = [...STATE_DATA];
+    if (term) {
+      rows = rows.filter((s) => {
+        const name = (ABBR_TO_NAME[s.abbr] || "").toLowerCase();
+        return s.abbr.toLowerCase().includes(term) || name.includes(term);
+      });
+    }
+    rows.sort((a, b) => {
+      const va = a[sortKey];
+      const vb = b[sortKey];
+      if (typeof va === "string") return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+      return sortAsc ? va - vb : vb - va;
+    });
+    return rows;
+  }, [filter, sortKey, sortAsc]);
 
-  const sorted = useMemo(() => {
-    let list = STATES.filter(s =>
-      !search || s.name.toLowerCase().includes(search.toLowerCase()) || s.abbr.toLowerCase().includes(search.toLowerCase())
-    );
-    list.sort((a, b) => sortAsc ? a[sortKey] - b[sortKey] : b[sortKey] - a[sortKey]);
-    return list;
-  }, [sortKey, sortAsc, search]);
-
-  const toggleSort = (key) => {
+  const handleSort = (key) => {
     if (sortKey === key) setSortAsc(!sortAsc);
-    else { setSortKey(key); setSortAsc(false); }
+    else { setSortKey(key); setSortAsc(key === "abbr"); }
   };
 
-  const sortIcon = (key) => sortKey === key ? (sortAsc ? "arrow_upward" : "arrow_downward") : "unfold_more";
+  const selectedData = selectedState ? STATE_BY_ABBR[selectedState] : null;
 
-  const maxFills = Math.max(...STATES.map(s => s.f));
+  /* Risk-rate range across the dataset */
+  const minHigh = Math.min(...STATE_DATA.map((s) => s.pctHigh));
+  const maxHigh = Math.max(...STATE_DATA.map((s) => s.pctHigh));
 
   return (
     <div className="section">
       <div className="container">
+
+        {/* ── Back button ── */}
         <button onClick={onBack} className="btn btn-s btn-sm" style={{ marginBottom: 24 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_back</span> Back
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>arrow_back</span> Back to Risk Tool
         </button>
 
+        {/* ── Page header ── */}
         <div style={{ marginBottom: 24 }}>
           <h2 className="sec-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 32, color: "var(--accent)" }}>local_shipping</span>
-            Supply Chain Intelligence
+            Supply Chain Geography
           </h2>
           <p className="sec-sub" style={{ marginBottom: 0 }}>
-            Geographic risk distribution across 52 states and territories — identify where intervention resources are needed most
+            Geographic distribution of prescription refill risk across {TOTALS.states} states and territories — {TOTALS.fills.toLocaleString()} fills, {TOTALS.patients.toLocaleString()} patients
           </p>
         </div>
 
-        {/* Stat cards */}
+        {/* ── Stat cards ── */}
         <div className="an-stats-grid">
-          <div className="an-stat">
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: "#005c8f", background: "#005c8f14", borderRadius: 10, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>map</span>
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Nunito',sans-serif", color: "var(--navy)", lineHeight: 1.1 }}>52</div>
-              <div style={{ fontSize: 12, color: "#6b7280", fontWeight: 500, marginTop: 2 }}>States &amp; Territories</div>
-            </div>
-          </div>
-          <div className="an-stat">
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: "var(--accent)", background: "rgba(0,224,188,.1)", borderRadius: 10, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>location_city</span>
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Nunito',sans-serif", color: "var(--navy)", lineHeight: 1.1 }}>2,978</div>
-              <div style={{ fontSize: 12, color: "#6b7280", fontWeight: 500, marginTop: 2 }}>Counties Covered</div>
-            </div>
-          </div>
-          <div className="an-stat">
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: "#8b5cf6", background: "#8b5cf614", borderRadius: 10, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>groups</span>
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Nunito',sans-serif", color: "var(--navy)", lineHeight: 1.1 }}>67,085</div>
-              <div style={{ fontSize: 12, color: "#6b7280", fontWeight: 500, marginTop: 2 }}>Total Patients</div>
-            </div>
-          </div>
-          <div className="an-stat">
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: "var(--coral)", background: "rgba(232,66,58,.1)", borderRadius: 10, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>trending_down</span>
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Nunito',sans-serif", color: "var(--navy)", lineHeight: 1.1 }}>54.2–55.8%</div>
-              <div style={{ fontSize: 12, color: "#6b7280", fontWeight: 500, marginTop: 2 }}>High-Risk Range Across States</div>
-            </div>
-          </div>
+          <StatCard icon="description" value={TOTALS.fills.toLocaleString()} label="Total Prescription Fills" color="#005c8f" sub="across all geographies" />
+          <StatCard icon="groups" value={TOTALS.patients.toLocaleString()} label="Unique Patients" color="var(--accent)" sub="with state data" />
+          <StatCard icon="map" value={String(TOTALS.states)} label="States & Territories" color="#8b5cf6" sub="including DC, PR, VI" />
+          <StatCard icon="location_on" value={TOTALS.counties.toLocaleString()} label="Counties" color="#d97706" sub="SSA county codes" />
         </div>
 
-        {/* US Cartogram */}
-        <div className="an-section">
-          <div className="an-section-hdr">
-            <span className="material-symbols-outlined" style={{ fontSize: 22, color: "var(--accent)" }}>map</span>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: "var(--navy)" }}>US Risk Heatmap</div>
-              <div style={{ fontSize: 12, color: "#6b7280" }}>Click a state to see details. Colour indicates % of fills classified as HIGH risk.</div>
+        {/* ── Cartogram ── */}
+        <SectionCard
+          icon="grid_view"
+          title="US State Risk Cartogram"
+          sub={`Cell colour = high-risk patient % (${minHigh}%\u2013${maxHigh}%). Click a state for details.`}
+        >
+          {/* Legend */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#6b7280" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>palette</span>
+              <span style={{ fontWeight: 600 }}>High-Risk %:</span>
             </div>
+            {[
+              ["#059669", "<54%"],
+              ["#65a30d", "54\u201354.5%"],
+              ["#d97706", "54.5\u201355%"],
+              ["#ea580c", "55\u201355.5%"],
+              ["#dc2626", "\u226555.5%"],
+            ].map(([c, l]) => (
+              <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ width: 14, height: 14, borderRadius: 3, background: c }} />
+                <span style={{ fontSize: 10, color: "#6b7280" }}>{l}</span>
+              </div>
+            ))}
           </div>
-          <div className="an-section-body" style={{ overflowX: "auto" }}>
-            {/* Legend */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, fontSize: 12, color: "#6b7280" }}>
-              <span style={{ fontWeight: 600 }}>% High-Risk:</span>
-              {[["#22c55e","<54%"],["#84cc16","54–54.5%"],["#eab308","54.5–55%"],["#f97316","55–55.5%"],["#ef4444","≥55.5%"]].map(([c,l]) => (
-                <span key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <span style={{ width: 14, height: 14, borderRadius: 3, background: c, display: "inline-block" }} />
-                  {l}
-                </span>
-              ))}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(11, 52px)", gap: 3, justifyContent: "center" }}>
-              {GRID.flat().map((abbr, i) => {
-                if (!abbr) return <div key={i} style={{ width: 52, height: 44 }} />;
-                const st = abbrMap[abbr];
-                if (!st) return <div key={i} style={{ width: 52, height: 44, background: "#f3f4f6", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#9ca3af" }}>{abbr}</div>;
-                const isSelected = selected === st.c;
+
+          {/* Grid */}
+          <div style={{ display: "flex", justifyContent: "center", overflowX: "auto", paddingBottom: 8 }}>
+            <div style={{ display: "inline-grid", gridTemplateColumns: "repeat(12, 50px)", gap: 3 }}>
+              {CARTO_GRID.flat().map((abbr, i) => {
+                if (!abbr) return <div key={i} style={{ width: 50, height: 44 }} />;
+                const st = STATE_BY_ABBR[abbr];
+                const isActive = selectedState === abbr;
+
+                /* States not in top-30 appear as muted placeholders */
+                if (!st) {
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        width: 50, height: 44, borderRadius: 6,
+                        background: "#f3f4f6", border: "1px solid #e5e7eb",
+                        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                      }}
+                    >
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af" }}>{abbr}</span>
+                      <span style={{ fontSize: 8, color: "#d1d5db" }}>---</span>
+                    </div>
+                  );
+                }
+
+                /* Volume-scaled opacity (larger states more prominent) */
+                const baseOpacity = 0.55 + 0.45 * (st.fills / MAX_FILLS);
+
                 return (
                   <button
                     key={i}
-                    onClick={() => setSelected(isSelected ? null : st.c)}
-                    title={`${st.name}: ${st.h}% high-risk, ${st.p.toLocaleString()} patients`}
+                    onClick={() => setSelectedState(isActive ? null : abbr)}
+                    title={`${ABBR_TO_NAME[abbr]}: ${st.pctHigh}% high-risk, ${st.patients.toLocaleString()} patients, ${st.fills.toLocaleString()} fills`}
                     style={{
-                      width: 52, height: 44, borderRadius: 6, border: isSelected ? "2px solid var(--navy)" : "1px solid #e5e7eb",
-                      background: riskBg(st.h), display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                      cursor: "pointer", transition: "transform 100ms, box-shadow 100ms", position: "relative",
-                      boxShadow: isSelected ? "0 0 0 3px rgba(0,92,143,.2)" : "none", fontFamily: "inherit",
+                      width: 50, height: 44, borderRadius: 6,
+                      border: isActive ? "2.5px solid var(--navy)" : "1.5px solid #e5e7eb",
+                      background: riskBg(st.pctHigh),
+                      opacity: baseOpacity,
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer",
+                      transition: "all 150ms ease",
+                      transform: isActive ? "scale(1.12)" : "scale(1)",
+                      boxShadow: isActive ? "0 4px 14px rgba(0,48,82,0.25)" : "0 1px 3px rgba(0,0,0,0.06)",
+                      fontFamily: "inherit",
+                      padding: 0,
+                      position: "relative",
+                      zIndex: isActive ? 10 : 1,
                     }}
-                    onMouseOver={e => { e.currentTarget.style.transform = "scale(1.1)"; e.currentTarget.style.zIndex = "10"; }}
-                    onMouseOut={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.zIndex = "1"; }}
+                    onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.zIndex = "5"; } }}
+                    onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.zIndex = "1"; } }}
                   >
-                    <div style={{ fontSize: 13, fontWeight: 700, color: riskColor(st.h) }}>{abbr}</div>
-                    <div style={{ fontSize: 9, color: "#6b7280" }}>{st.h}%</div>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: riskColor(st.pctHigh), lineHeight: 1 }}>{abbr}</span>
+                    <span style={{ fontSize: 8, color: "#6b7280", lineHeight: 1, marginTop: 2 }}>{st.pctHigh}%</span>
                   </button>
                 );
               })}
             </div>
-
-            {/* Selected state detail */}
-            {selected && (() => {
-              const st = STATES.find(s => s.c === selected);
-              if (!st) return null;
-              return (
-                <div style={{ marginTop: 16, padding: 20, background: riskBg(st.h), border: `1px solid ${riskColor(st.h)}40`, borderRadius: 10, display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
-                  <div style={{ fontSize: 36, fontWeight: 800, fontFamily: "'Nunito',sans-serif", color: riskColor(st.h), minWidth: 60, textAlign: "center" }}>{st.abbr}</div>
-                  <div style={{ flex: 1, minWidth: 200 }}>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: "var(--navy)" }}>{st.name}</div>
-                    <div style={{ fontSize: 13, color: "#6b7280", marginTop: 4 }}>SSA Code: {st.c}</div>
-                  </div>
-                  {[
-                    ["description", st.f.toLocaleString(), "Fills"],
-                    ["groups", st.p.toLocaleString(), "Patients"],
-                    ["trending_down", `${st.l}%`, "Late Rate"],
-                    ["warning", `${st.h}%`, "High-Risk"],
-                  ].map(([icon, val, lbl]) => (
-                    <div key={lbl} style={{ textAlign: "center", minWidth: 80 }}>
-                      <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--accent)" }}>{icon}</span>
-                      <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'Nunito',sans-serif", color: "var(--navy)" }}>{val}</div>
-                      <div style={{ fontSize: 11, color: "#6b7280" }}>{lbl}</div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
           </div>
-        </div>
 
-        {/* Sortable state table */}
-        <div className="an-section">
-          <div className="an-section-hdr" style={{ justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 22, color: "var(--accent)" }}>table_chart</span>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "var(--navy)" }}>State-Level Data</div>
-                <div style={{ fontSize: 12, color: "#6b7280" }}>Click column headers to sort. All 52 states and territories.</div>
+          {/* Selected state detail panel */}
+          {selectedData && (
+            <div
+              style={{
+                marginTop: 16,
+                background: riskBg(selectedData.pctHigh),
+                border: `1.5px solid ${riskColor(selectedData.pctHigh)}30`,
+                borderRadius: 10, padding: 20,
+                animation: "fadeIn 200ms ease-out",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{
+                    fontSize: 28, fontWeight: 900, fontFamily: "'Nunito',sans-serif",
+                    color: riskColor(selectedData.pctHigh),
+                    background: `${riskColor(selectedData.pctHigh)}14`,
+                    width: 56, height: 56, borderRadius: 12,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    {selectedData.abbr}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "var(--navy)" }}>
+                      {ABBR_TO_NAME[selectedData.abbr] || selectedData.abbr}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#6b7280" }}>SSA Code {selectedData.ssa} &middot; Rank #{STATE_DATA.indexOf(selectedData) + 1} by volume</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedState(null)}
+                  style={{ background: "none", border: "none", cursor: "pointer", padding: 6, borderRadius: 6, display: "flex", alignItems: "center" }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#9ca3af" }}>close</span>
+                </button>
+              </div>
+              <div className="an-stats-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", marginBottom: 0 }}>
+                <StatCard icon="description" value={selectedData.fills.toLocaleString()} label="Prescription Fills" color="#005c8f" />
+                <StatCard icon="groups" value={selectedData.patients.toLocaleString()} label="Patients" color="var(--accent)" />
+                <StatCard icon="schedule" value={`${selectedData.pctLate}%`} label="Late Refill Rate" color="#d97706" />
+                <StatCard icon="warning" value={`${selectedData.pctHigh}%`} label="High-Risk Segment" color="var(--coral)" />
               </div>
             </div>
-            <div style={{ position: "relative" }}>
-              <span className="material-symbols-outlined" style={{ position: "absolute", left: 10, top: 9, fontSize: 18, color: "#9ca3af" }}>search</span>
+          )}
+        </SectionCard>
+
+        {/* ── Sortable state table ── */}
+        <SectionCard icon="table_chart" title="State Rankings" sub="Top 30 states by volume. Click column headers to sort, or use the search box to filter.">
+          {/* Search input */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <div style={{ position: "relative", flex: 1, maxWidth: 340 }}>
+              <span
+                className="material-symbols-outlined"
+                style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: "#9ca3af", pointerEvents: "none" }}
+              >
+                search
+              </span>
               <input
                 type="text"
-                placeholder="Filter states..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                style={{ fontFamily: "inherit", fontSize: 13, padding: "8px 12px 8px 34px", border: "1px solid var(--border)", borderRadius: 8, width: 200, outline: "none", background: "#fff" }}
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Search states (e.g. California, TX)..."
+                style={{
+                  width: "100%",
+                  padding: "10px 36px 10px 36px",
+                  border: "1.5px solid var(--border)",
+                  borderRadius: 8, fontSize: 13,
+                  fontFamily: "'Inter',sans-serif",
+                  outline: "none",
+                  transition: "border-color 150ms, background 150ms",
+                  background: "#f9fafb",
+                }}
+                onFocus={(e) => { e.target.style.borderColor = "var(--accent)"; e.target.style.background = "#fff"; }}
+                onBlur={(e) => { e.target.style.borderColor = "var(--border)"; e.target.style.background = "#f9fafb"; }}
               />
+              {filter && (
+                <button
+                  onClick={() => setFilter("")}
+                  style={{
+                    position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)",
+                    background: "none", border: "none", cursor: "pointer", padding: 2, display: "flex",
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: "#9ca3af" }}>close</span>
+                </button>
+              )}
             </div>
+            <span style={{ fontSize: 11, color: "#9ca3af", whiteSpace: "nowrap" }}>
+              {filteredData.length} of {STATE_DATA.length} states
+            </span>
           </div>
-          <div className="an-section-body" style={{ padding: 0 }}>
-            <div style={{ overflowX: "auto" }}>
-              <table className="an-table" style={{ minWidth: 700 }}>
-                <thead>
-                  <tr>
-                    <th style={{ paddingLeft: 22 }}>State</th>
-                    <th style={{ cursor: "pointer", userSelect: "none" }} onClick={() => toggleSort("f")}>
-                      Fills <span className="material-symbols-outlined" style={{ fontSize: 14, verticalAlign: "middle" }}>{sortIcon("f")}</span>
+
+          {/* Table */}
+          <div style={{ overflowX: "auto" }}>
+            <table className="an-table" style={{ minWidth: 720 }}>
+              <thead>
+                <tr>
+                  <th style={{ width: 36, textAlign: "center" }}>#</th>
+                  {COLUMNS.map((col) => (
+                    <th
+                      key={col.key}
+                      onClick={() => handleSort(col.key)}
+                      style={{ cursor: "pointer", textAlign: col.align, userSelect: "none", whiteSpace: "nowrap" }}
+                    >
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+                        {col.label}
+                        {sortKey === col.key ? (
+                          <span className="material-symbols-outlined" style={{ fontSize: 14, color: "var(--accent)" }}>
+                            {sortAsc ? "arrow_upward" : "arrow_downward"}
+                          </span>
+                        ) : (
+                          <span className="material-symbols-outlined" style={{ fontSize: 14, color: "#d1d5db" }}>unfold_more</span>
+                        )}
+                      </span>
                     </th>
-                    <th>Volume</th>
-                    <th style={{ cursor: "pointer", userSelect: "none" }} onClick={() => toggleSort("p")}>
-                      Patients <span className="material-symbols-outlined" style={{ fontSize: 14, verticalAlign: "middle" }}>{sortIcon("p")}</span>
-                    </th>
-                    <th style={{ cursor: "pointer", userSelect: "none" }} onClick={() => toggleSort("l")}>
-                      Late % <span className="material-symbols-outlined" style={{ fontSize: 14, verticalAlign: "middle" }}>{sortIcon("l")}</span>
-                    </th>
-                    <th style={{ cursor: "pointer", userSelect: "none" }} onClick={() => toggleSort("h")}>
-                      High-Risk % <span className="material-symbols-outlined" style={{ fontSize: 14, verticalAlign: "middle" }}>{sortIcon("h")}</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sorted.map(s => (
-                    <tr key={s.c} style={{ cursor: "pointer", background: selected === s.c ? "rgba(0,224,188,.06)" : undefined }} onClick={() => setSelected(selected === s.c ? null : s.c)}>
-                      <td style={{ paddingLeft: 22 }}>
-                        <span style={{ fontWeight: 700, color: "var(--navy)", marginRight: 8 }}>{s.abbr}</span>
-                        <span style={{ color: "#6b7280", fontSize: 13 }}>{s.name}</span>
-                      </td>
-                      <td style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13 }}>{s.f.toLocaleString()}</td>
+                  ))}
+                  <th style={{ width: 150 }}>Volume</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredData.map((s, i) => {
+                  const isActive = selectedState === s.abbr;
+                  return (
+                    <tr
+                      key={`${s.abbr}-${s.ssa}`}
+                      onClick={() => setSelectedState(isActive ? null : s.abbr)}
+                      style={{
+                        cursor: "pointer",
+                        background: isActive ? "rgba(0,224,188,0.07)" : undefined,
+                        transition: "background 100ms",
+                      }}
+                    >
+                      <td style={{ textAlign: "center", fontSize: 11, color: "#9ca3af", fontWeight: 600 }}>{i + 1}</td>
+
+                      {/* State */}
                       <td>
-                        <div style={{ width: 120, height: 10, background: "#f3f4f6", borderRadius: 3, overflow: "hidden" }}>
-                          <div style={{ width: `${(s.f / maxFills) * 100}%`, height: "100%", background: "var(--accent)", borderRadius: 3, transition: "width 400ms" }} />
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{
+                            fontFamily: "'JetBrains Mono',monospace",
+                            fontSize: 11, fontWeight: 800, color: "#fff",
+                            background: riskColor(s.pctHigh),
+                            padding: "2px 6px", borderRadius: 4,
+                            width: 36, textAlign: "center",
+                            display: "inline-block",
+                          }}>
+                            {s.abbr}
+                          </span>
+                          <span style={{ fontSize: 13, fontWeight: 500, color: "#374151" }}>{ABBR_TO_NAME[s.abbr] || s.abbr}</span>
                         </div>
                       </td>
-                      <td style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13 }}>{s.p.toLocaleString()}</td>
-                      <td style={{ fontWeight: 600, color: s.l >= 76.5 ? "var(--coral)" : s.l >= 76.0 ? "#d97706" : "#059669" }}>{s.l}%</td>
+
+                      {/* Fills */}
+                      <td style={{ textAlign: "right", fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 600, color: "var(--navy)" }}>
+                        {s.fills.toLocaleString()}
+                      </td>
+
+                      {/* Patients */}
+                      <td style={{ textAlign: "right", fontFamily: "'JetBrains Mono',monospace", fontSize: 13 }}>
+                        {s.patients.toLocaleString()}
+                      </td>
+
+                      {/* Late % */}
+                      <td style={{
+                        textAlign: "right", fontWeight: 700,
+                        color: s.pctLate >= 76.5 ? "var(--coral)" : s.pctLate >= 76.0 ? "#d97706" : "#059669",
+                      }}>
+                        {s.pctLate}%
+                      </td>
+
+                      {/* High-Risk % */}
+                      <td style={{ textAlign: "right" }}>
+                        <span style={{
+                          fontWeight: 700,
+                          fontSize: 13,
+                          color: riskColor(s.pctHigh),
+                          background: riskBg(s.pctHigh),
+                          padding: "2px 8px", borderRadius: 4,
+                        }}>
+                          {s.pctHigh}%
+                        </span>
+                      </td>
+
+                      {/* Volume bar */}
                       <td>
-                        <span style={{ fontWeight: 700, color: riskColor(s.h), background: riskBg(s.h), padding: "2px 8px", borderRadius: 4, fontSize: 13 }}>{s.h}%</span>
+                        <div style={{ width: 140, height: 14, background: "#f3f4f6", borderRadius: 3, overflow: "hidden" }}>
+                          <div style={{
+                            width: `${Math.max(4, (s.fills / MAX_FILLS) * 100)}%`,
+                            height: "100%",
+                            background: `linear-gradient(90deg, var(--accent), ${riskColor(s.pctHigh)})`,
+                            borderRadius: 3,
+                            transition: "width 600ms ease-out",
+                          }} />
+                        </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-        </div>
 
-        {/* Key insight */}
-        <div className="an-section">
-          <div className="an-section-hdr">
-            <span className="material-symbols-outlined" style={{ fontSize: 22, color: "var(--accent)" }}>lightbulb</span>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: "var(--navy)" }}>Geographic Insight</div>
+          {filteredData.length === 0 && (
+            <div style={{ textAlign: "center", padding: "32px 0", color: "#9ca3af", fontSize: 14 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, display: "block", marginBottom: 8 }}>search_off</span>
+              No states match &ldquo;{filter}&rdquo;
             </div>
-          </div>
-          <div className="an-section-body">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-              <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: 16 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#1d4ed8", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>explore</span> What the data shows
-                </div>
-                <ul style={{ fontSize: 13, color: "#4b5563", lineHeight: 1.7, paddingLeft: 18, margin: 0 }}>
-                  <li>Late rates vary only 1.6pp across states (75.3%–76.9%)</li>
-                  <li>High-risk share ranges 53.5%–55.8% — a 2.3pp spread</li>
-                  <li>Top 5 states (CA, FL, NY, TX, PA) hold 36% of all fills</li>
-                  <li>Volume differences are significant but risk rates are not</li>
-                </ul>
-              </div>
-              <div style={{ background: "#fef9c3", border: "1px solid #fde68a", borderRadius: 8, padding: 16 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#a16207", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>science</span> Why geography looks flat
-                </div>
-                <ul style={{ fontSize: 13, color: "#4b5563", lineHeight: 1.7, paddingLeft: 18, margin: 0 }}>
-                  <li>CMS DE-SynPUF deliberately coarsens geographic correlations</li>
-                  <li>Real dispensing data would show meaningful regional variation</li>
-                  <li>Supply chain decisions should use <strong>volume</strong>, not risk rate, for resource allocation in this demo</li>
-                  <li>Rural vs urban, pharmacy desert effects would appear in real data</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+          )}
+        </SectionCard>
 
-        {/* Disclaimer */}
-        <div style={{ background: "#fff", borderRadius: "var(--card)", boxShadow: "var(--shadow)", padding: "16px 20px", display: "flex", alignItems: "flex-start", gap: 12, marginTop: 8 }}>
+        {/* ── Top 10 by volume bar chart ── */}
+        <SectionCard icon="bar_chart" title="Top 10 States by Fill Volume" sub="California alone accounts for 11% of all fills — nearly matching Florida and New York combined">
+          {STATE_DATA.slice(0, 10).map((s) => (
+            <HBar
+              key={`${s.abbr}-vol`}
+              label={`${s.abbr} \u2014 ${(ABBR_TO_NAME[s.abbr] || "").split(" ")[0]}`}
+              value={`${(s.fills / 1000).toFixed(0)}K`}
+              pct={s.fills}
+              maxPct={MAX_FILLS}
+              color={riskColor(s.pctHigh)}
+              sub={`${s.patients.toLocaleString()} pts`}
+            />
+          ))}
+        </SectionCard>
+
+        {/* ── High-risk hotspots ── */}
+        <SectionCard icon="local_fire_department" title="Highest High-Risk Rates" sub="States where the largest share of patients fall into the high-risk segment">
+          {[...STATE_DATA]
+            .sort((a, b) => b.pctHigh - a.pctHigh)
+            .slice(0, 10)
+            .map((s) => (
+              <HBar
+                key={`${s.abbr}-hr`}
+                label={`${s.abbr} \u2014 ${(ABBR_TO_NAME[s.abbr] || "").split(" ")[0]}`}
+                value={`${s.pctHigh}%`}
+                pct={s.pctHigh}
+                maxPct={57}
+                color={riskColor(s.pctHigh)}
+                sub={`${s.pctLate}% late`}
+              />
+            ))}
+        </SectionCard>
+
+        {/* ── Key insights ── */}
+        <SectionCard icon="lightbulb" title="Key Insights" sub="What the geographic data reveals about refill risk distribution">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#1d4ed8", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>explore</span> Geographic uniformity
+              </div>
+              <ul style={{ fontSize: 13, color: "#4b5563", lineHeight: 1.7, paddingLeft: 18, margin: 0 }}>
+                <li>Late refill rates vary only 75.6% to 76.9% across all states (1.3pp)</li>
+                <li>High-risk percentages span just 54.2% to 55.8% (1.6pp range)</li>
+                <li>No state is a clear outlier or safe harbour</li>
+                <li>Volume differences are dramatic but risk rates are remarkably flat</li>
+              </ul>
+            </div>
+            <div style={{ background: "#fef9c3", border: "1px solid #fde68a", borderRadius: 8, padding: 16 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#a16207", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>science</span> Why geography appears flat
+              </div>
+              <ul style={{ fontSize: 13, color: "#4b5563", lineHeight: 1.7, paddingLeft: 18, margin: 0 }}>
+                <li>CMS DE-SynPUF deliberately coarsens geographic correlations during synthesis</li>
+                <li>Real dispensing data would show meaningful regional variation</li>
+                <li>Pharmacy deserts, rural vs urban access gaps, and socioeconomic effects are not preserved</li>
+                <li>Supply chain routing should prioritise <strong>volume hubs</strong> in this demo</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style={{
+            marginTop: 16, background: "#f0fdf4", border: "1px solid #bbf7d0",
+            borderRadius: 8, padding: 14,
+            display: "flex", alignItems: "flex-start", gap: 10,
+          }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#059669", flexShrink: 0, marginTop: 2 }}>check_circle</span>
+            <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>
+              <strong style={{ color: "#065f46" }}>Operational recommendation:</strong> In production, Pharmacy2U would focus fulfilment centre placement and proactive outreach resources on the five highest-volume states (CA, FL, NY, TX, PA) which together account for 36% of all fills. Risk-rate-based targeting becomes relevant only with real claims data where geographic variation is preserved.
+            </div>
+          </div>
+        </SectionCard>
+
+        {/* ── Disclaimer footer ── */}
+        <div style={{
+          background: "#fff", borderRadius: "var(--card)", boxShadow: "var(--shadow)",
+          padding: "16px 20px", display: "flex", alignItems: "flex-start", gap: 12, marginTop: 24,
+        }}>
           <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--accent)", flexShrink: 0, marginTop: 2 }}>info</span>
           <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.6 }}>
-            <strong style={{ color: "var(--navy)" }}>Synthetic data.</strong> Geographic codes use CMS SSA numbering (not FIPS). State-level risk variation is minimal due to the DE-SynPUF synthesis process. Real Pharmacy2U data would enable postcode-level supply chain optimisation.
+            <strong style={{ color: "var(--navy)" }}>Synthetic data.</strong> All figures are from CMS DE-SynPUF (2008-2010) &mdash; a fully synthetic dataset with deliberately altered correlations. Geographic codes use CMS SSA numbering (not FIPS). The uniformity in risk rates across states is an artefact of the data synthesis process. Real pharmacy claims data would exhibit meaningful regional variation driven by healthcare access, socioeconomic factors, and local pharmacy density.
           </div>
         </div>
+
       </div>
     </div>
   );
