@@ -1,0 +1,1356 @@
+{
+  "overview": {
+    "total_fills": 1473595,
+    "total_patients": 67085,
+    "total_unique_drugs": 1271,
+    "pct_late": 76.2,
+    "mean_risk_score": 0.525,
+    "median_risk_score": 0.586,
+    "tier_counts": {
+      "HIGH": 809536,
+      "MODERATE": 397695,
+      "LOW": 266364
+    },
+    "tier_pct": {
+      "HIGH": 54.9,
+      "MODERATE": 27.0,
+      "LOW": 18.1
+    },
+    "tier_actual_late": {
+      "LOW": 46.3,
+      "MODERATE": 71.6,
+      "HIGH": 88.2
+    }
+  },
+  "by_time": [
+    {
+      "fill_yearmonth": "2008-01",
+      "n_fills": 34729,
+      "pct_late": 82.3,
+      "mean_risk": 0.584,
+      "n_high": 28485,
+      "n_mod": 5854,
+      "n_low": 390
+    },
+    {
+      "fill_yearmonth": "2008-02",
+      "n_fills": 50482,
+      "pct_late": 82.5,
+      "mean_risk": 0.586,
+      "n_high": 39046,
+      "n_mod": 9747,
+      "n_low": 1689
+    },
+    {
+      "fill_yearmonth": "2008-03",
+      "n_fills": 63539,
+      "pct_late": 82.5,
+      "mean_risk": 0.585,
+      "n_high": 46379,
+      "n_mod": 13656,
+      "n_low": 3504
+    },
+    {
+      "fill_yearmonth": "2008-04",
+      "n_fills": 66372,
+      "pct_late": 82.2,
+      "mean_risk": 0.583,
+      "n_high": 46161,
+      "n_mod": 15344,
+      "n_low": 4867
+    },
+    {
+      "fill_yearmonth": "2008-05",
+      "n_fills": 68644,
+      "pct_late": 81.9,
+      "mean_risk": 0.579,
+      "n_high": 45272,
+      "n_mod": 16914,
+      "n_low": 6458
+    },
+    {
+      "fill_yearmonth": "2008-06",
+      "n_fills": 65878,
+      "pct_late": 81.3,
+      "mean_risk": 0.575,
+      "n_high": 41914,
+      "n_mod": 16715,
+      "n_low": 7249
+    },
+    {
+      "fill_yearmonth": "2008-07",
+      "n_fills": 67059,
+      "pct_late": 81.3,
+      "mean_risk": 0.571,
+      "n_high": 41852,
+      "n_mod": 16995,
+      "n_low": 8212
+    },
+    {
+      "fill_yearmonth": "2008-08",
+      "n_fills": 65612,
+      "pct_late": 80.6,
+      "mean_risk": 0.565,
+      "n_high": 40077,
+      "n_mod": 16830,
+      "n_low": 8705
+    },
+    {
+      "fill_yearmonth": "2008-09",
+      "n_fills": 62157,
+      "pct_late": 80.8,
+      "mean_risk": 0.561,
+      "n_high": 37625,
+      "n_mod": 15685,
+      "n_low": 8847
+    },
+    {
+      "fill_yearmonth": "2008-10",
+      "n_fills": 63230,
+      "pct_late": 80.3,
+      "mean_risk": 0.553,
+      "n_high": 37337,
+      "n_mod": 16240,
+      "n_low": 9653
+    },
+    {
+      "fill_yearmonth": "2008-11",
+      "n_fills": 59879,
+      "pct_late": 80.0,
+      "mean_risk": 0.55,
+      "n_high": 35276,
+      "n_mod": 15151,
+      "n_low": 9452
+    },
+    {
+      "fill_yearmonth": "2008-12",
+      "n_fills": 60187,
+      "pct_late": 79.7,
+      "mean_risk": 0.543,
+      "n_high": 34498,
+      "n_mod": 15638,
+      "n_low": 10051
+    },
+    {
+      "fill_yearmonth": "2009-01",
+      "n_fills": 58659,
+      "pct_late": 78.8,
+      "mean_risk": 0.534,
+      "n_high": 32737,
+      "n_mod": 15381,
+      "n_low": 10541
+    },
+    {
+      "fill_yearmonth": "2009-02",
+      "n_fills": 51766,
+      "pct_late": 78.4,
+      "mean_risk": 0.525,
+      "n_high": 27981,
+      "n_mod": 13936,
+      "n_low": 9849
+    },
+    {
+      "fill_yearmonth": "2009-03",
+      "n_fills": 55362,
+      "pct_late": 77.9,
+      "mean_risk": 0.522,
+      "n_high": 29528,
+      "n_mod": 15067,
+      "n_low": 10767
+    },
+    {
+      "fill_yearmonth": "2009-04",
+      "n_fills": 51878,
+      "pct_late": 77.2,
+      "mean_risk": 0.513,
+      "n_high": 26774,
+      "n_mod": 14436,
+      "n_low": 10668
+    },
+    {
+      "fill_yearmonth": "2009-05",
+      "n_fills": 51670,
+      "pct_late": 76.1,
+      "mean_risk": 0.505,
+      "n_high": 25769,
+      "n_mod": 14578,
+      "n_low": 11323
+    },
+    {
+      "fill_yearmonth": "2009-06",
+      "n_fills": 48471,
+      "pct_late": 75.4,
+      "mean_risk": 0.499,
+      "n_high": 23589,
+      "n_mod": 13927,
+      "n_low": 10955
+    },
+    {
+      "fill_yearmonth": "2009-07",
+      "n_fills": 47738,
+      "pct_late": 74.8,
+      "mean_risk": 0.49,
+      "n_high": 22460,
+      "n_mod": 13838,
+      "n_low": 11440
+    },
+    {
+      "fill_yearmonth": "2009-08",
+      "n_fills": 45642,
+      "pct_late": 73.8,
+      "mean_risk": 0.484,
+      "n_high": 20846,
+      "n_mod": 13558,
+      "n_low": 11238
+    },
+    {
+      "fill_yearmonth": "2009-09",
+      "n_fills": 41982,
+      "pct_late": 72.7,
+      "mean_risk": 0.476,
+      "n_high": 18518,
+      "n_mod": 12485,
+      "n_low": 10979
+    },
+    {
+      "fill_yearmonth": "2009-10",
+      "n_fills": 40595,
+      "pct_late": 71.6,
+      "mean_risk": 0.471,
+      "n_high": 17441,
+      "n_mod": 12392,
+      "n_low": 10762
+    },
+    {
+      "fill_yearmonth": "2009-11",
+      "n_fills": 36806,
+      "pct_late": 70.2,
+      "mean_risk": 0.463,
+      "n_high": 15150,
+      "n_mod": 11410,
+      "n_low": 10246
+    },
+    {
+      "fill_yearmonth": "2009-12",
+      "n_fills": 35100,
+      "pct_late": 68.7,
+      "mean_risk": 0.456,
+      "n_high": 13885,
+      "n_mod": 11044,
+      "n_low": 10171
+    },
+    {
+      "fill_yearmonth": "2010-01",
+      "n_fills": 32406,
+      "pct_late": 67.8,
+      "mean_risk": 0.451,
+      "n_high": 12513,
+      "n_mod": 10374,
+      "n_low": 9519
+    },
+    {
+      "fill_yearmonth": "2010-02",
+      "n_fills": 26722,
+      "pct_late": 65.7,
+      "mean_risk": 0.445,
+      "n_high": 9937,
+      "n_mod": 8653,
+      "n_low": 8132
+    },
+    {
+      "fill_yearmonth": "2010-03",
+      "n_fills": 26074,
+      "pct_late": 63.6,
+      "mean_risk": 0.438,
+      "n_high": 9342,
+      "n_mod": 8530,
+      "n_low": 8202
+    },
+    {
+      "fill_yearmonth": "2010-04",
+      "n_fills": 22036,
+      "pct_late": 62.1,
+      "mean_risk": 0.432,
+      "n_high": 7527,
+      "n_mod": 7436,
+      "n_low": 7073
+    },
+    {
+      "fill_yearmonth": "2010-05",
+      "n_fills": 19587,
+      "pct_late": 58.5,
+      "mean_risk": 0.423,
+      "n_high": 6299,
+      "n_mod": 6726,
+      "n_low": 6562
+    },
+    {
+      "fill_yearmonth": "2010-06",
+      "n_fills": 15569,
+      "pct_late": 56.4,
+      "mean_risk": 0.418,
+      "n_high": 4794,
+      "n_mod": 5517,
+      "n_low": 5258
+    },
+    {
+      "fill_yearmonth": "2010-07",
+      "n_fills": 12643,
+      "pct_late": 52.5,
+      "mean_risk": 0.417,
+      "n_high": 3907,
+      "n_mod": 4322,
+      "n_low": 4414
+    },
+    {
+      "fill_yearmonth": "2010-08",
+      "n_fills": 9840,
+      "pct_late": 47.3,
+      "mean_risk": 0.405,
+      "n_high": 2709,
+      "n_mod": 3590,
+      "n_low": 3541
+    },
+    {
+      "fill_yearmonth": "2010-09",
+      "n_fills": 7013,
+      "pct_late": 42.1,
+      "mean_risk": 0.399,
+      "n_high": 1862,
+      "n_mod": 2575,
+      "n_low": 2576
+    },
+    {
+      "fill_yearmonth": "2010-10",
+      "n_fills": 4851,
+      "pct_late": 32.9,
+      "mean_risk": 0.398,
+      "n_high": 1241,
+      "n_mod": 1865,
+      "n_low": 1745
+    },
+    {
+      "fill_yearmonth": "2010-11",
+      "n_fills": 2581,
+      "pct_late": 15.7,
+      "mean_risk": 0.388,
+      "n_high": 625,
+      "n_mod": 951,
+      "n_low": 1005
+    },
+    {
+      "fill_yearmonth": "2010-12",
+      "n_fills": 836,
+      "pct_late": 1.9,
+      "mean_risk": 0.38,
+      "n_high": 180,
+      "n_mod": 335,
+      "n_low": 321
+    }
+  ],
+  "by_drug_class": [
+    {
+      "drug_class": "Unknown",
+      "n_fills": 1262574,
+      "n_patients": 66558,
+      "pct_late": 74.1,
+      "mean_risk": 0.505,
+      "pct_high": 50.4
+    },
+    {
+      "drug_class": "Angiotensin II receptor blockers (ARBs), plain",
+      "n_fills": 85042,
+      "n_patients": 35267,
+      "pct_late": 88.4,
+      "mean_risk": 0.643,
+      "pct_high": 81.6
+    },
+    {
+      "drug_class": "HMG CoA reductase inhibitors",
+      "n_fills": 73074,
+      "n_patients": 32863,
+      "pct_late": 88.6,
+      "mean_risk": 0.643,
+      "pct_high": 81.8
+    },
+    {
+      "drug_class": "Fibrates",
+      "n_fills": 32076,
+      "n_patients": 19598,
+      "pct_late": 88.0,
+      "mean_risk": 0.638,
+      "pct_high": 80.4
+    },
+    {
+      "drug_class": "Platelet aggregation inhibitors excl. heparin",
+      "n_fills": 6939,
+      "n_patients": 5808,
+      "pct_late": 90.4,
+      "mean_risk": 0.661,
+      "pct_high": 85.9
+    },
+    {
+      "drug_class": "Aminosalicylic acid and similar agents",
+      "n_fills": 4618,
+      "n_patients": 3854,
+      "pct_late": 89.6,
+      "mean_risk": 0.652,
+      "pct_high": 83.8
+    },
+    {
+      "drug_class": "Bile acid sequestrants",
+      "n_fills": 3154,
+      "n_patients": 2784,
+      "pct_late": 91.3,
+      "mean_risk": 0.656,
+      "pct_high": 84.5
+    },
+    {
+      "drug_class": "Allergen extracts",
+      "n_fills": 2586,
+      "n_patients": 2320,
+      "pct_late": 89.5,
+      "mean_risk": 0.664,
+      "pct_high": 85.1
+    },
+    {
+      "drug_class": "Parathyroid hormones and analogues",
+      "n_fills": 2195,
+      "n_patients": 1869,
+      "pct_late": 89.9,
+      "mean_risk": 0.66,
+      "pct_high": 86.3
+    },
+    {
+      "drug_class": "Thyroid hormones",
+      "n_fills": 1337,
+      "n_patients": 1209,
+      "pct_late": 89.9,
+      "mean_risk": 0.645,
+      "pct_high": 84.2
+    }
+  ],
+  "by_drug": [
+    {
+      "NDC5": "67544",
+      "drug_name": "Cozaar",
+      "n_fills": 22119,
+      "n_patients": 14620,
+      "pct_late": 87.0,
+      "mean_risk": 0.624
+    },
+    {
+      "NDC5": "66267",
+      "drug_name": "gemfibrozil 600 MG Oral Tablet",
+      "n_fills": 17777,
+      "n_patients": 12394,
+      "pct_late": 88.0,
+      "mean_risk": 0.638
+    },
+    {
+      "NDC5": "00781",
+      "drug_name": "simvastatin 20 MG Oral Tablet",
+      "n_fills": 17192,
+      "n_patients": 11939,
+      "pct_late": 88.1,
+      "mean_risk": 0.635
+    },
+    {
+      "NDC5": "55887",
+      "drug_name": "Avapro",
+      "n_fills": 14372,
+      "n_patients": 10335,
+      "pct_late": 88.2,
+      "mean_risk": 0.645
+    },
+    {
+      "NDC5": "55289",
+      "drug_name": "Lipitor",
+      "n_fills": 12632,
+      "n_patients": 9268,
+      "pct_late": 87.8,
+      "mean_risk": 0.646
+    },
+    {
+      "NDC5": "51079",
+      "drug_name": "gemfibrozil 600 MG Oral Tablet",
+      "n_fills": 12258,
+      "n_patients": 8941,
+      "pct_late": 87.8,
+      "mean_risk": 0.636
+    },
+    {
+      "NDC5": "52959",
+      "drug_name": "Diovan",
+      "n_fills": 12056,
+      "n_patients": 8788,
+      "pct_late": 89.1,
+      "mean_risk": 0.664
+    },
+    {
+      "NDC5": "00378",
+      "drug_name": "lovastatin 10 MG Oral Tablet",
+      "n_fills": 11339,
+      "n_patients": 8486,
+      "pct_late": 88.3,
+      "mean_risk": 0.637
+    },
+    {
+      "NDC5": "00093",
+      "drug_name": "lovastatin 10 MG Oral Tablet",
+      "n_fills": 10422,
+      "n_patients": 7963,
+      "pct_late": 88.6,
+      "mean_risk": 0.644
+    },
+    {
+      "NDC5": "49999",
+      "drug_name": "Atacand",
+      "n_fills": 9535,
+      "n_patients": 7364,
+      "pct_late": 89.6,
+      "mean_risk": 0.653
+    },
+    {
+      "NDC5": "00006",
+      "drug_name": "Cozaar",
+      "n_fills": 7321,
+      "n_patients": 5847,
+      "pct_late": 88.3,
+      "mean_risk": 0.635
+    },
+    {
+      "NDC5": "63629",
+      "drug_name": "Cozaar",
+      "n_fills": 5714,
+      "n_patients": 4713,
+      "pct_late": 89.3,
+      "mean_risk": 0.653
+    },
+    {
+      "NDC5": "60505",
+      "drug_name": "lovastatin 40 MG Oral Tablet",
+      "n_fills": 5602,
+      "n_patients": 4632,
+      "pct_late": 88.3,
+      "mean_risk": 0.644
+    },
+    {
+      "NDC5": "13411",
+      "drug_name": "Avapro",
+      "n_fills": 5462,
+      "n_patients": 4486,
+      "pct_late": 88.6,
+      "mean_risk": 0.638
+    },
+    {
+      "NDC5": "00591",
+      "drug_name": "sulfasalazine 500 MG Oral Tablet",
+      "n_fills": 4618,
+      "n_patients": 3854,
+      "pct_late": 89.6,
+      "mean_risk": 0.652
+    },
+    {
+      "NDC5": "55111",
+      "drug_name": "pravastatin sodium 40 MG Oral Tablet",
+      "n_fills": 3440,
+      "n_patients": 2944,
+      "pct_late": 89.5,
+      "mean_risk": 0.65
+    },
+    {
+      "NDC5": "00078",
+      "drug_name": "Diovan",
+      "n_fills": 3136,
+      "n_patients": 2683,
+      "pct_late": 90.5,
+      "mean_risk": 0.647
+    },
+    {
+      "NDC5": "66105",
+      "drug_name": "Avapro",
+      "n_fills": 2986,
+      "n_patients": 2542,
+      "pct_late": 89.0,
+      "mean_risk": 0.642
+    },
+    {
+      "NDC5": "00555",
+      "drug_name": "dipyridamole 75 MG Oral Tablet",
+      "n_fills": 2853,
+      "n_patients": 2463,
+      "pct_late": 90.3,
+      "mean_risk": 0.662
+    },
+    {
+      "NDC5": "65862",
+      "drug_name": "simvastatin 10 MG Oral Tablet",
+      "n_fills": 2663,
+      "n_patients": 2318,
+      "pct_late": 89.3,
+      "mean_risk": 0.652
+    },
+    {
+      "NDC5": "58864",
+      "drug_name": "Avapro",
+      "n_fills": 2341,
+      "n_patients": 2062,
+      "pct_late": 89.1,
+      "mean_risk": 0.649
+    },
+    {
+      "NDC5": "00002",
+      "drug_name": "Forteo",
+      "n_fills": 2195,
+      "n_patients": 1869,
+      "pct_late": 89.9,
+      "mean_risk": 0.66
+    },
+    {
+      "NDC5": "00143",
+      "drug_name": "gemfibrozil 600 MG Oral Tablet",
+      "n_fills": 2041,
+      "n_patients": 1812,
+      "pct_late": 89.9,
+      "mean_risk": 0.659
+    },
+    {
+      "NDC5": "00185",
+      "drug_name": "Sugar-Free cholestyramine resin 4000 MG ",
+      "n_fills": 2020,
+      "n_patients": 1782,
+      "pct_late": 91.0,
+      "mean_risk": 0.644
+    },
+    {
+      "NDC5": "63739",
+      "drug_name": "lovastatin 20 MG Oral Tablet",
+      "n_fills": 1815,
+      "n_patients": 1628,
+      "pct_late": 89.8,
+      "mean_risk": 0.651
+    },
+    {
+      "NDC5": "50111",
+      "drug_name": "pravastatin sodium 40 MG Oral Tablet",
+      "n_fills": 1627,
+      "n_patients": 1456,
+      "pct_late": 90.5,
+      "mean_risk": 0.652
+    },
+    {
+      "NDC5": "68071",
+      "drug_name": "Lipitor",
+      "n_fills": 1515,
+      "n_patients": 1373,
+      "pct_late": 91.2,
+      "mean_risk": 0.667
+    },
+    {
+      "NDC5": "00268",
+      "drug_name": "bahia grass pollen extract 10000 UNT/ML ",
+      "n_fills": 1492,
+      "n_patients": 1341,
+      "pct_late": 89.2,
+      "mean_risk": 0.663
+    },
+    {
+      "NDC5": "00527",
+      "drug_name": "dipyridamole 25 MG Oral Tablet",
+      "n_fills": 1476,
+      "n_patients": 1333,
+      "pct_late": 90.5,
+      "mean_risk": 0.663
+    },
+    {
+      "NDC5": "57664",
+      "drug_name": "ticlopidine hydrochloride 250 MG Oral Ta",
+      "n_fills": 1439,
+      "n_patients": 1307,
+      "pct_late": 89.2,
+      "mean_risk": 0.659
+    }
+  ],
+  "by_age": [
+    {
+      "age_group": "<55",
+      "n_fills": 164040,
+      "n_patients": 6931,
+      "pct_late": 76.0,
+      "mean_risk": 0.523,
+      "pct_high": 55.2
+    },
+    {
+      "age_group": "55-64",
+      "n_fills": 123957,
+      "n_patients": 5823,
+      "pct_late": 76.0,
+      "mean_risk": 0.523,
+      "pct_high": 55.1
+    },
+    {
+      "age_group": "65-74",
+      "n_fills": 502648,
+      "n_patients": 26884,
+      "pct_late": 76.7,
+      "mean_risk": 0.529,
+      "pct_high": 55.5
+    },
+    {
+      "age_group": "75-84",
+      "n_fills": 438378,
+      "n_patients": 23284,
+      "pct_late": 76.0,
+      "mean_risk": 0.525,
+      "pct_high": 54.7
+    },
+    {
+      "age_group": "85+",
+      "n_fills": 244572,
+      "n_patients": 12023,
+      "pct_late": 75.5,
+      "mean_risk": 0.519,
+      "pct_high": 54.0
+    }
+  ],
+  "by_sex": [
+    {
+      "sex_label": "Female",
+      "n_fills": 908309,
+      "n_patients": 39826,
+      "pct_late": 76.1,
+      "mean_risk": 0.525,
+      "pct_high": 54.9
+    },
+    {
+      "sex_label": "Male",
+      "n_fills": 565286,
+      "n_patients": 27259,
+      "pct_late": 76.3,
+      "mean_risk": 0.526,
+      "pct_high": 54.9
+    }
+  ],
+  "by_race": [
+    {
+      "race_label": "Black",
+      "n_fills": 159752,
+      "n_patients": 7189,
+      "pct_late": 76.3,
+      "mean_risk": 0.526,
+      "pct_high": 55.0
+    },
+    {
+      "race_label": "Hispanic",
+      "n_fills": 47632,
+      "n_patients": 1958,
+      "pct_late": 75.9,
+      "mean_risk": 0.524,
+      "pct_high": 54.6
+    },
+    {
+      "race_label": "Other",
+      "n_fills": 66435,
+      "n_patients": 2953,
+      "pct_late": 75.8,
+      "mean_risk": 0.522,
+      "pct_high": 54.3
+    },
+    {
+      "race_label": "White",
+      "n_fills": 1199776,
+      "n_patients": 54985,
+      "pct_late": 76.2,
+      "mean_risk": 0.525,
+      "pct_high": 55.0
+    }
+  ],
+  "by_chronic_count": [
+    {
+      "n_chronic_conditions": 0,
+      "n_fills": 362004,
+      "n_patients": 28158,
+      "pct_late": 77.2,
+      "mean_risk": 0.539,
+      "pct_high": 55.8
+    },
+    {
+      "n_chronic_conditions": 1,
+      "n_fills": 138355,
+      "n_patients": 17291,
+      "pct_late": 75.7,
+      "mean_risk": 0.525,
+      "pct_high": 53.6
+    },
+    {
+      "n_chronic_conditions": 2,
+      "n_fills": 150619,
+      "n_patients": 16827,
+      "pct_late": 76.0,
+      "mean_risk": 0.525,
+      "pct_high": 54.4
+    },
+    {
+      "n_chronic_conditions": 3,
+      "n_fills": 162980,
+      "n_patients": 16148,
+      "pct_late": 75.7,
+      "mean_risk": 0.521,
+      "pct_high": 54.3
+    },
+    {
+      "n_chronic_conditions": 4,
+      "n_fills": 169888,
+      "n_patients": 14645,
+      "pct_late": 75.8,
+      "mean_risk": 0.519,
+      "pct_high": 54.6
+    },
+    {
+      "n_chronic_conditions": 5,
+      "n_fills": 157185,
+      "n_patients": 12361,
+      "pct_late": 75.6,
+      "mean_risk": 0.516,
+      "pct_high": 54.4
+    },
+    {
+      "n_chronic_conditions": 6,
+      "n_fills": 135334,
+      "n_patients": 9439,
+      "pct_late": 75.8,
+      "mean_risk": 0.516,
+      "pct_high": 54.9
+    },
+    {
+      "n_chronic_conditions": 7,
+      "n_fills": 101323,
+      "n_patients": 6613,
+      "pct_late": 75.9,
+      "mean_risk": 0.517,
+      "pct_high": 55.4
+    },
+    {
+      "n_chronic_conditions": 8,
+      "n_fills": 60695,
+      "n_patients": 3741,
+      "pct_late": 76.5,
+      "mean_risk": 0.522,
+      "pct_high": 56.5
+    },
+    {
+      "n_chronic_conditions": 9,
+      "n_fills": 27062,
+      "n_patients": 1652,
+      "pct_late": 76.4,
+      "mean_risk": 0.522,
+      "pct_high": 56.5
+    },
+    {
+      "n_chronic_conditions": 10,
+      "n_fills": 7294,
+      "n_patients": 453,
+      "pct_late": 77.4,
+      "mean_risk": 0.536,
+      "pct_high": 59.2
+    },
+    {
+      "n_chronic_conditions": 11,
+      "n_fills": 856,
+      "n_patients": 62,
+      "pct_late": 80.1,
+      "mean_risk": 0.541,
+      "pct_high": 58.3
+    }
+  ],
+  "by_state": [
+    {
+      "state_code": 5,
+      "n_fills": 161996,
+      "n_patients": 7283,
+      "pct_late": 76.1,
+      "mean_risk": 0.525,
+      "pct_high": 54.8
+    },
+    {
+      "state_code": 10,
+      "n_fills": 104070,
+      "n_patients": 4726,
+      "pct_late": 76.4,
+      "mean_risk": 0.527,
+      "pct_high": 55.1
+    },
+    {
+      "state_code": 33,
+      "n_fills": 92238,
+      "n_patients": 4070,
+      "pct_late": 76.0,
+      "mean_risk": 0.524,
+      "pct_high": 54.7
+    },
+    {
+      "state_code": 45,
+      "n_fills": 90880,
+      "n_patients": 4052,
+      "pct_late": 76.2,
+      "mean_risk": 0.524,
+      "pct_high": 55.0
+    },
+    {
+      "state_code": 39,
+      "n_fills": 77482,
+      "n_patients": 3472,
+      "pct_late": 76.3,
+      "mean_risk": 0.526,
+      "pct_high": 55.0
+    },
+    {
+      "state_code": 14,
+      "n_fills": 56099,
+      "n_patients": 2535,
+      "pct_late": 76.1,
+      "mean_risk": 0.524,
+      "pct_high": 54.8
+    },
+    {
+      "state_code": 36,
+      "n_fills": 53564,
+      "n_patients": 2474,
+      "pct_late": 76.1,
+      "mean_risk": 0.526,
+      "pct_high": 55.1
+    },
+    {
+      "state_code": 34,
+      "n_fills": 49501,
+      "n_patients": 2162,
+      "pct_late": 76.2,
+      "mean_risk": 0.523,
+      "pct_high": 54.9
+    },
+    {
+      "state_code": 23,
+      "n_fills": 46427,
+      "n_patients": 2208,
+      "pct_late": 76.3,
+      "mean_risk": 0.527,
+      "pct_high": 55.2
+    },
+    {
+      "state_code": 31,
+      "n_fills": 40221,
+      "n_patients": 1781,
+      "pct_late": 76.0,
+      "mean_risk": 0.522,
+      "pct_high": 54.4
+    },
+    {
+      "state_code": 11,
+      "n_fills": 40110,
+      "n_patients": 1720,
+      "pct_late": 75.9,
+      "mean_risk": 0.524,
+      "pct_high": 54.9
+    },
+    {
+      "state_code": 44,
+      "n_fills": 38557,
+      "n_patients": 1624,
+      "pct_late": 76.3,
+      "mean_risk": 0.524,
+      "pct_high": 54.9
+    },
+    {
+      "state_code": 26,
+      "n_fills": 34210,
+      "n_patients": 1483,
+      "pct_late": 76.0,
+      "mean_risk": 0.523,
+      "pct_high": 54.3
+    },
+    {
+      "state_code": 49,
+      "n_fills": 33995,
+      "n_patients": 1515,
+      "pct_late": 76.1,
+      "mean_risk": 0.523,
+      "pct_high": 54.8
+    },
+    {
+      "state_code": 15,
+      "n_fills": 31942,
+      "n_patients": 1399,
+      "pct_late": 75.6,
+      "mean_risk": 0.522,
+      "pct_high": 54.5
+    },
+    {
+      "state_code": 22,
+      "n_fills": 30607,
+      "n_patients": 1463,
+      "pct_late": 76.7,
+      "mean_risk": 0.529,
+      "pct_high": 55.6
+    },
+    {
+      "state_code": 50,
+      "n_fills": 27634,
+      "n_patients": 1264,
+      "pct_late": 76.2,
+      "mean_risk": 0.524,
+      "pct_high": 55.0
+    },
+    {
+      "state_code": 1,
+      "n_fills": 26924,
+      "n_patients": 1224,
+      "pct_late": 76.5,
+      "mean_risk": 0.524,
+      "pct_high": 55.3
+    },
+    {
+      "state_code": 3,
+      "n_fills": 26729,
+      "n_patients": 1294,
+      "pct_late": 76.0,
+      "mean_risk": 0.527,
+      "pct_high": 54.9
+    },
+    {
+      "state_code": 24,
+      "n_fills": 25917,
+      "n_patients": 1249,
+      "pct_late": 76.9,
+      "mean_risk": 0.528,
+      "pct_high": 55.2
+    },
+    {
+      "state_code": 18,
+      "n_fills": 25880,
+      "n_patients": 1087,
+      "pct_late": 76.2,
+      "mean_risk": 0.524,
+      "pct_high": 55.2
+    },
+    {
+      "state_code": 52,
+      "n_fills": 24704,
+      "n_patients": 1158,
+      "pct_late": 76.1,
+      "mean_risk": 0.525,
+      "pct_high": 55.1
+    },
+    {
+      "state_code": 54,
+      "n_fills": 24139,
+      "n_patients": 1045,
+      "pct_late": 76.1,
+      "mean_risk": 0.527,
+      "pct_high": 55.5
+    },
+    {
+      "state_code": 19,
+      "n_fills": 23018,
+      "n_patients": 1025,
+      "pct_late": 76.2,
+      "mean_risk": 0.526,
+      "pct_high": 55.5
+    },
+    {
+      "state_code": 42,
+      "n_fills": 21734,
+      "n_patients": 980,
+      "pct_late": 76.3,
+      "mean_risk": 0.524,
+      "pct_high": 54.7
+    },
+    {
+      "state_code": 21,
+      "n_fills": 18830,
+      "n_patients": 877,
+      "pct_late": 76.8,
+      "mean_risk": 0.527,
+      "pct_high": 55.8
+    },
+    {
+      "state_code": 37,
+      "n_fills": 18396,
+      "n_patients": 837,
+      "pct_late": 76.2,
+      "mean_risk": 0.524,
+      "pct_high": 55.2
+    },
+    {
+      "state_code": 25,
+      "n_fills": 18246,
+      "n_patients": 746,
+      "pct_late": 75.9,
+      "mean_risk": 0.523,
+      "pct_high": 55.0
+    },
+    {
+      "state_code": 38,
+      "n_fills": 17770,
+      "n_patients": 873,
+      "pct_late": 76.0,
+      "mean_risk": 0.523,
+      "pct_high": 54.2
+    },
+    {
+      "state_code": 16,
+      "n_fills": 17593,
+      "n_patients": 808,
+      "pct_late": 76.5,
+      "mean_risk": 0.524,
+      "pct_high": 54.8
+    }
+  ],
+  "by_quarter": [
+    {
+      "label": "2008 Q1",
+      "n_fills": 148750,
+      "pct_late": 82.5,
+      "mean_risk": 0.585,
+      "pct_high": 76.6
+    },
+    {
+      "label": "2008 Q2",
+      "n_fills": 200894,
+      "pct_late": 81.8,
+      "mean_risk": 0.579,
+      "pct_high": 66.4
+    },
+    {
+      "label": "2008 Q3",
+      "n_fills": 194828,
+      "pct_late": 80.9,
+      "mean_risk": 0.566,
+      "pct_high": 61.4
+    },
+    {
+      "label": "2008 Q4",
+      "n_fills": 183296,
+      "pct_late": 80.0,
+      "mean_risk": 0.549,
+      "pct_high": 58.4
+    },
+    {
+      "label": "2009 Q1",
+      "n_fills": 165787,
+      "pct_late": 78.4,
+      "mean_risk": 0.527,
+      "pct_high": 54.4
+    },
+    {
+      "label": "2009 Q2",
+      "n_fills": 152019,
+      "pct_late": 76.2,
+      "mean_risk": 0.506,
+      "pct_high": 50.1
+    },
+    {
+      "label": "2009 Q3",
+      "n_fills": 135362,
+      "pct_late": 73.8,
+      "mean_risk": 0.484,
+      "pct_high": 45.7
+    },
+    {
+      "label": "2009 Q4",
+      "n_fills": 112501,
+      "pct_late": 70.3,
+      "mean_risk": 0.463,
+      "pct_high": 41.3
+    },
+    {
+      "label": "2010 Q1",
+      "n_fills": 85202,
+      "pct_late": 65.8,
+      "mean_risk": 0.445,
+      "pct_high": 37.3
+    },
+    {
+      "label": "2010 Q2",
+      "n_fills": 57192,
+      "pct_late": 59.3,
+      "mean_risk": 0.425,
+      "pct_high": 32.6
+    },
+    {
+      "label": "2010 Q3",
+      "n_fills": 29496,
+      "pct_late": 48.3,
+      "mean_risk": 0.408,
+      "pct_high": 28.7
+    },
+    {
+      "label": "2010 Q4",
+      "n_fills": 8268,
+      "pct_late": 24.4,
+      "mean_risk": 0.393,
+      "pct_high": 24.7
+    }
+  ],
+  "patient_risk_distribution": {
+    "bin_edges": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      1.0
+    ],
+    "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      35,
+      536,
+      2230,
+      11213,
+      20625,
+      17661,
+      10154,
+      3120,
+      825,
+      298,
+      379,
+      4,
+      0,
+      0
+    ]
+  },
+  "high_risk_patients": {
+    "count": 47272,
+    "pct_of_total": 70.5,
+    "mean_fills": 23.4,
+    "mean_drugs": 11.2,
+    "mean_late_pct": 80.2
+  },
+  "score_distribution": {
+    "bin_edges": [
+      0.0,
+      0.02,
+      0.04,
+      0.06,
+      0.08,
+      0.1,
+      0.12,
+      0.14,
+      0.16,
+      0.18,
+      0.2,
+      0.22,
+      0.24,
+      0.26,
+      0.28,
+      0.3,
+      0.32,
+      0.34,
+      0.36,
+      0.38,
+      0.4,
+      0.42,
+      0.44,
+      0.46,
+      0.48,
+      0.5,
+      0.52,
+      0.54,
+      0.56,
+      0.58,
+      0.6,
+      0.62,
+      0.64,
+      0.66,
+      0.68,
+      0.7,
+      0.72,
+      0.74,
+      0.76,
+      0.78,
+      0.8,
+      0.82,
+      0.84,
+      0.86,
+      0.88,
+      0.9,
+      0.92,
+      0.94,
+      0.96,
+      0.98,
+      1.0
+    ],
+    "counts": [
+      0,
+      3835,
+      6818,
+      6886,
+      6872,
+      12629,
+      16299,
+      16849,
+      19003,
+      24619,
+      31728,
+      30460,
+      28482,
+      30104,
+      31780,
+      31050,
+      30294,
+      30946,
+      33640,
+      34738,
+      32546,
+      33435,
+      37386,
+      41767,
+      29918,
+      23832,
+      24657,
+      29760,
+      40926,
+      46111,
+      50871,
+      75433,
+      73913,
+      72847,
+      88708,
+      162923,
+      70933,
+      18223,
+      17033,
+      16394,
+      17320,
+      29251,
+      11518,
+      812,
+      46,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
