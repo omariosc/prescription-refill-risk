@@ -28,4 +28,4 @@
 |------|--------|
 | Xin Ci Wong | |
 | Arpita Saggar | |
-| Omar Choudhry | |
+| Omar Choudhry | [@omariosc](https://github.com/omariosc) |
