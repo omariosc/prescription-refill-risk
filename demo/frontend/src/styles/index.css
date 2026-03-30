@@ -906,7 +906,8 @@ header {
 .stats-tag.teal  { background: var(--accent-muted); color: var(--heading); }
 .stats-tag.accent{ background: var(--accent-muted); color: var(--heading); }
 .stats-title { font-size: 24px; margin-bottom: 6px; }
-.stats-sub { font-size: 14px; color: #6b7280; max-width: 580px; line-height: 1.65; }
+.stats-sub { font-size: 14px; color: #6b7280; line-height: 1.65; }
+.stats-p2u .stats-sub { white-space: nowrap; }
 
 /* Stat cards grid */
 .stats-grid {

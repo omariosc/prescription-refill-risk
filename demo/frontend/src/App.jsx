@@ -75,9 +75,11 @@ export default function App() {
           onLogout={handleLogout}
           onHomeClick={goToLanding}
         />
-        <div className="disc-bar">
-          <strong>Synthetic Data Demo</strong> — Modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.
-        </div>
+        {(showLogin || showRegister) && (
+          <div className="disc-bar">
+            <strong>Synthetic Data Demo</strong> — Modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.
+          </div>
+        )}
         {showRegister ? (
           <RegisterPage
             onCancel={goToLanding}
@@ -123,9 +125,11 @@ export default function App() {
         onSupplyChainClick={() => { setShowLanding(false); setSupplyChainView(true); setAnalyticsView(false); setResults(null); setProcessing(false); }}
         onLogoClick={() => { setShowLanding(true); setAnalyticsView(false); setSupplyChainView(false); handleReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
       />
-      <div className="disc-bar">
-        <strong>Synthetic Data Demo</strong> — Modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.
-      </div>
+      {(!showLanding || analyticsView || supplyChainView) && (
+        <div className="disc-bar">
+          <strong>Synthetic Data Demo</strong> — Modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.
+        </div>
+      )}
 
       {showLanding && !analyticsView && !supplyChainView && (
         <LandingPage onGetStarted={() => { setShowLanding(false); }} />

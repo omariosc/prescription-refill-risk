@@ -102,15 +102,17 @@ export default function InterventionPanel({ patient, onConfirm }) {
             <button
               key={item.id}
               onClick={() => setSelected(item.id)}
+              className="intervention-btn"
+              data-color={item.color}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
                 padding: '14px 16px',
-                background: isSelected ? `${item.color}08` : '#fff',
+                background: isSelected ? `${item.color}12` : '#fff',
                 border: '1px solid',
-                borderColor: isSelected ? item.color : 'var(--border)',
-                borderLeft: isSelected ? `10px solid ${item.color}` : '10px solid transparent',
+                borderColor: isSelected ? `${item.color}60` : '#e5e7eb',
+                borderLeft: `10px solid ${isSelected ? item.color : item.color + '30'}`,
                 borderRadius: 'var(--sm)',
                 cursor: 'pointer',
                 textAlign: 'left',
@@ -118,7 +120,11 @@ export default function InterventionPanel({ patient, onConfirm }) {
                 transition: 'all 150ms',
                 position: 'relative',
                 width: '100%',
+                '--hover-bg': `${item.color}08`,
+                '--hover-border': `${item.color}40`,
               }}
+              onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.background = `${item.color}08`; e.currentTarget.style.borderColor = `${item.color}40`; }}}
+              onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e5e7eb'; }}}
             >
               <span
                 className="material-symbols-outlined"
