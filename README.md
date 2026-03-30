@@ -99,8 +99,8 @@ Open [http://localhost:5173](http://localhost:5173) — make sure the worker is 
 
 ## Team
 
-| Name | GitHub |
-|------|--------|
-| Xin Ci Wong | [@X-ksana](https://github.com/X-ksana) |
-| Arpita Saggar | [@arpita2512](https://github.com/arpita2512) |
-| Omar Choudhry | [@omariosc](https://github.com/omariosc) |
+| Name | GitHub | Email |
+|------|--------|-------|
+| Xin Ci Wong | [@X-ksana](https://github.com/X-ksana) | scxcw@leeds.ac.uk |
+| Arpita Saggar | [@arpita2512](https://github.com/arpita2512) | scasag@leeds.ac.uk |
+| Omar Choudhry | [@omariosc](https://github.com/omariosc) | O.Choudhry@leeds.ac.uk |
