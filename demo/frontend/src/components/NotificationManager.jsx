@@ -29,8 +29,8 @@ export default function NotificationManager() {
 
   return (
     <div style={{
-      position: 'fixed', bottom: 24, right: 24, zIndex: 9000,
-      display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 400,
+      position: 'fixed', bottom: 16, right: 16, left: 16, zIndex: 9000,
+      display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10, pointerEvents: 'none',
     }}>
       {notifications.map((n) => (
         <div
@@ -43,6 +43,7 @@ export default function NotificationManager() {
             fontSize: 13, fontWeight: 500, color: '#001b1c',
             animation: 'slideUp 300ms ease-out',
             fontFamily: "'Inter', sans-serif",
+            pointerEvents: 'auto', maxWidth: 400, width: '100%',
           }}
         >
           <span

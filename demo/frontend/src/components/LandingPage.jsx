@@ -50,6 +50,68 @@ const REFERENCES = [
   },
 ];
 
+const TEAM = [
+  {
+    name: 'Dr Xin Ci Wong',
+    photo: 'https://dhri.crc.gov.my/images/Team/Profile/wong.jpg',
+    github: 'https://github.com/X-ksana',
+    linkedin: 'https://uk.linkedin.com/in/xin-ci-wong-a74833159',
+    email: 'scxcw@leeds.ac.uk',
+  },
+  {
+    name: 'Arpita Saggar',
+    photo: 'https://media.licdn.com/dms/image/v2/D4E03AQFbUd8YSSjSjQ/profile-displayphoto-shrink_200_200/B4EZOi37HzGQAg-/0/1733604389876?e=2147483647&v=beta&t=epKr5ZG5GYbb-9jTafc_DReI3KPgJSoZMR821bzx-j8',
+    github: 'https://github.com/arpita2512',
+    linkedin: 'https://www.linkedin.com/in/arpitasaggar/',
+    email: 'scasag@leeds.ac.uk',
+  },
+  {
+    name: 'Omar Choudhry',
+    photo: 'https://media.licdn.com/dms/image/v2/D4E03AQFGHW0j5uOYlg/profile-displayphoto-scale_200_200/B4EZgf4RDOGUAY-/0/1752881501982?e=2147483647&v=beta&t=fmWyEFp6uJogKDKiAZ8asTmShJIUlefUPgv-W2DG76Y',
+    github: 'https://github.com/omariosc',
+    linkedin: 'https://uk.linkedin.com/in/omarchoudhry01',
+    email: 'O.Choudhry@leeds.ac.uk',
+  },
+];
+
+function MeetTheTeam() {
+  return (
+    <section className="references-section">
+      <div className="container">
+        <h3 className="references-title">
+          <span className="material-symbols-outlined">group</span>
+          Meet the Team
+        </h3>
+        <div style={{ display: 'flex', gap: 32, justifyContent: 'center', flexWrap: 'wrap', marginTop: 24 }}>
+          {TEAM.map((member) => (
+            <div key={member.name} style={{ textAlign: 'center', width: 160 }}>
+              <img
+                src={member.photo}
+                alt={member.name}
+                width={80}
+                height={80}
+                style={{ borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--teal)' }}
+              />
+              <p style={{ fontWeight: 700, marginTop: 10, marginBottom: 6, fontSize: 14 }}>{member.name}</p>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                <a href={member.github} target="_blank" rel="noreferrer" title="GitHub" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>code</span>
+                </a>
+                <a href={member.linkedin} target="_blank" rel="noreferrer" title="LinkedIn" style={{ color: 'var(--teal)' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>work</span>
+                </a>
+                <a href={`mailto:${member.email}`} title="Email" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>mail</span>
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ReferencesSection() {
   return (
     <section className="references-section">
@@ -101,6 +163,7 @@ export default function LandingPage({ onGetStarted }) {
       <TrustBar />
       <PipelineExplainer />
       <StatsSection />
+      <MeetTheTeam />
       <ReferencesSection />
     </>
   );
