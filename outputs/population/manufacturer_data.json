@@ -1,0 +1,497 @@
+{
+  "overview": {
+    "total_manufacturers": 3743,
+    "total_ingredients": 10,
+    "total_dosage_forms": 10,
+    "total_routes": 10,
+    "total_strengths": 10
+  },
+  "top_manufacturers": [
+    {
+      "code": "58016",
+      "fills": 610690
+    },
+    {
+      "code": "54868",
+      "fills": 163915
+    },
+    {
+      "code": "36987",
+      "fills": 121813
+    },
+    {
+      "code": "00247",
+      "fills": 105057
+    },
+    {
+      "code": "61392",
+      "fills": 97640
+    },
+    {
+      "code": "51129",
+      "fills": 91991
+    },
+    {
+      "code": "54569",
+      "fills": 82488
+    },
+    {
+      "code": "00904",
+      "fills": 66041
+    },
+    {
+      "code": "67544",
+      "fills": 59219
+    },
+    {
+      "code": "66267",
+      "fills": 52935
+    },
+    {
+      "code": "00179",
+      "fills": 52403
+    },
+    {
+      "code": "63874",
+      "fills": 52069
+    },
+    {
+      "code": "00781",
+      "fills": 50901
+    },
+    {
+      "code": "55887",
+      "fills": 46468
+    },
+    {
+      "code": "55154",
+      "fills": 45613
+    },
+    {
+      "code": "00615",
+      "fills": 44867
+    },
+    {
+      "code": "55045",
+      "fills": 44359
+    },
+    {
+      "code": "55289",
+      "fills": 42933
+    },
+    {
+      "code": "52959",
+      "fills": 42024
+    },
+    {
+      "code": "51079",
+      "fills": 41395
+    },
+    {
+      "code": "23490",
+      "fills": 40127
+    },
+    {
+      "code": "00378",
+      "fills": 39931
+    },
+    {
+      "code": "00093",
+      "fills": 38266
+    },
+    {
+      "code": "00182",
+      "fills": 38126
+    },
+    {
+      "code": "00490",
+      "fills": 37157
+    },
+    {
+      "code": "00603",
+      "fills": 37059
+    },
+    {
+      "code": "49999",
+      "fills": 36817
+    },
+    {
+      "code": "00536",
+      "fills": 36396
+    },
+    {
+      "code": "00074",
+      "fills": 33091
+    },
+    {
+      "code": "49288",
+      "fills": 32373
+    }
+  ],
+  "by_state": {
+    "1": {
+      "manufacturers": 2652,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "2": {
+      "manufacturers": 871,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "3": {
+      "manufacturers": 2659,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "4": {
+      "manufacturers": 2349,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "5": {
+      "manufacturers": 3493,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "6": {
+      "manufacturers": 2380,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "7": {
+      "manufacturers": 2313,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "8": {
+      "manufacturers": 1446,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "9": {
+      "manufacturers": 1054,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "10": {
+      "manufacturers": 3352,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "11": {
+      "manufacturers": 2906,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "12": {
+      "manufacturers": 1623,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "13": {
+      "manufacturers": 1691,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "14": {
+      "manufacturers": 3101,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "15": {
+      "manufacturers": 2790,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "16": {
+      "manufacturers": 2375,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "17": {
+      "manufacturers": 2309,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "18": {
+      "manufacturers": 2610,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "19": {
+      "manufacturers": 2578,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "20": {
+      "manufacturers": 1900,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "21": {
+      "manufacturers": 2421,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "22": {
+      "manufacturers": 2747,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "23": {
+      "manufacturers": 3021,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "24": {
+      "manufacturers": 2667,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "25": {
+      "manufacturers": 2409,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "26": {
+      "manufacturers": 2823,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "27": {
+      "manufacturers": 1459,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "28": {
+      "manufacturers": 1953,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "29": {
+      "manufacturers": 1912,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "30": {
+      "manufacturers": 1636,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "31": {
+      "manufacturers": 2936,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "32": {
+      "manufacturers": 1845,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "33": {
+      "manufacturers": 3329,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "34": {
+      "manufacturers": 3004,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "35": {
+      "manufacturers": 1355,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "36": {
+      "manufacturers": 3040,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "37": {
+      "manufacturers": 2417,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "38": {
+      "manufacturers": 2412,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "39": {
+      "manufacturers": 3252,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "41": {
+      "manufacturers": 1652,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "42": {
+      "manufacturers": 2542,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "43": {
+      "manufacturers": 1479,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "44": {
+      "manufacturers": 2886,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "45": {
+      "manufacturers": 3298,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "46": {
+      "manufacturers": 1809,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "47": {
+      "manufacturers": 1293,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "49": {
+      "manufacturers": 2818,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "50": {
+      "manufacturers": 2677,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "51": {
+      "manufacturers": 2184,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "52": {
+      "manufacturers": 2608,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "53": {
+      "manufacturers": 1098,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    },
+    "54": {
+      "manufacturers": 2570,
+      "ingredients": 10,
+      "dosage_forms": 10,
+      "routes": 10,
+      "strengths": 10
+    }
+  }
+}

@@ -102,6 +102,23 @@ const STATE_DATA = [
   { ssa: 48, abbr: "VI", fills: 1_173,   patients: 54,    pctLate: 75.9, pctHigh: 55.8, drugs: 0, providers: 0 },
 ];
 
+/* Manufacturer (labeler) counts per state from clean_main.csv via manufacturer_data.json */
+const MFR_BY_SSA = {5:3493,10:3352,33:3329,45:3298,39:3252,14:3101,36:3040,23:3021,34:3004,31:2936,11:2905,44:2886,26:2822,49:2817,15:2789,22:2746,50:2677,1:2651,3:2658,24:2665,18:2608,52:2608,19:2576,42:2542,21:2421,37:2418,25:2408,38:2411,16:2374,6:2379,9:1054,4:2348,17:2307,29:1911,7:2314,20:1899,28:1951,46:1808,30:1636,41:1651,51:2183,43:1477,8:1447,2:870,32:1843,47:1295,13:1690,35:1353,53:1098,27:1459,40:0,12:1622,48:0,54:2568};
+STATE_DATA.forEach((s) => { s.manufacturers = MFR_BY_SSA[s.ssa] || 0; });
+
+/* Top 15 manufacturers (labeler codes) by fill volume */
+const TOP_MANUFACTURERS = [
+  { code: "58016", fills: 610_690 }, { code: "54868", fills: 163_915 },
+  { code: "36987", fills: 121_813 }, { code: "00247", fills: 105_057 },
+  { code: "61392", fills: 97_640 },  { code: "51129", fills: 91_991 },
+  { code: "54569", fills: 82_488 },  { code: "00904", fills: 66_041 },
+  { code: "67544", fills: 59_219 },  { code: "66267", fills: 52_935 },
+  { code: "00179", fills: 52_403 },  { code: "63874", fills: 52_069 },
+  { code: "00781", fills: 50_901 },  { code: "55887", fills: 46_468 },
+  { code: "55154", fills: 45_613 },
+];
+const TOTAL_MANUFACTURERS = 3_743;
+
 const TOTALS = { states: 52, counties: 2_978, fills: 1_473_595, patients: 67_085 };
 const MAX_FILLS = STATE_DATA[0].fills; // CA
 
@@ -303,8 +320,8 @@ export default function SupplyChainDashboard({ onBack }) {
           </div>
 
           {/* Grid */}
-          <div style={{ overflowX: "auto", paddingBottom: 8 }}>
-            <div style={{ display: "inline-grid", gridTemplateColumns: "repeat(12, 50px)", gap: 3 }}>
+          <div style={{ overflowX: "auto", paddingBottom: 8, display: "flex", justifyContent: "center" }}>
+            <div style={{ display: "inline-grid", gridTemplateColumns: "repeat(12, 50px)", gap: 3, flexShrink: 0 }}>
               {CARTO_GRID.flat().map((abbr, i) => {
                 if (!abbr) return <div key={i} style={{ width: 50, height: 44 }} />;
                 const st = STATE_BY_ABBR[abbr];
@@ -397,11 +414,14 @@ export default function SupplyChainDashboard({ onBack }) {
                   <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#9ca3af" }}>close</span>
                 </button>
               </div>
-              <div className="an-stats-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", marginBottom: 0 }}>
+              <div className="an-stats-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", marginBottom: 0 }}>
                 <StatCard icon="description" value={selectedData.fills.toLocaleString()} label="Prescription Fills" color="#005c8f" />
                 <StatCard icon="groups" value={selectedData.patients.toLocaleString()} label="Patients" color="var(--accent)" />
-                <StatCard icon="schedule" value={`${selectedData.pctLate}%`} label="Late Refill Rate" color="#d97706" />
-                <StatCard icon="warning" value={`${selectedData.pctHigh}%`} label="High-Risk Segment" color="var(--coral)" />
+                <StatCard icon="schedule" value={`${selectedData.pctLate}%`} label="Late Refill Rate" color="#d97706" sub={wilsonCI(selectedData.pctLate, selectedData.fills)} />
+                <StatCard icon="warning" value={`${selectedData.pctHigh}%`} label="High-Risk" color="var(--coral)" />
+                <StatCard icon="factory" value={selectedData.manufacturers.toLocaleString()} label="Manufacturers" color="#8b5cf6" />
+                <StatCard icon="local_pharmacy" value={selectedData.providers.toLocaleString()} label="Providers" color="#0088b3" />
+                <StatCard icon="medication" value={selectedData.drugs.toLocaleString()} label="Drug Codes" color="#059669" />
               </div>
             </div>
           )}
@@ -604,6 +624,35 @@ export default function SupplyChainDashboard({ onBack }) {
                 sub={`${s.pctLate}% late`}
               />
             ))}
+        </SectionCard>
+
+        {/* ── Supplier concentration ── */}
+        <SectionCard icon="factory" title="Supplier Landscape" sub={`${TOTAL_MANUFACTURERS.toLocaleString()} unique manufacturers (NDC-5 labeler codes) across the dataset`}>
+          <div className="an-stats-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: 16 }}>
+            <StatCard icon="factory" value={TOTAL_MANUFACTURERS.toLocaleString()} label="Unique Manufacturers" color="#8b5cf6" />
+            <StatCard icon="inventory_2" value="610,690" label="Top Supplier Fills" color="#005c8f" sub="Labeler 58016" />
+            <StatCard icon="pie_chart" value="41.4%" label="Top Supplier Market Share" color="var(--coral)" sub="58016 alone" />
+            <StatCard icon="balance" value="84.4%" label="Top 15 Combined Share" color="#d97706" />
+          </div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "var(--navy)", marginBottom: 8 }}>Top 15 manufacturers by prescription fill volume</div>
+          {TOP_MANUFACTURERS.map((m, i) => {
+            const pct = (m.fills / TOTALS.fills * 100);
+            return (
+              <div key={m.code} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 5 }}>
+                <div style={{ width: 22, textAlign: "right", fontSize: 12, color: "#9ca3af", fontWeight: 600 }}>{i + 1}</div>
+                <div style={{ width: 60, fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "var(--navy)", fontWeight: 600 }}>{m.code}</div>
+                <div style={{ flex: 1, height: 18, background: "#f3f4f6", borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ width: `${Math.max(1, pct / 42 * 100)}%`, height: "100%", background: i === 0 ? "var(--navy)" : i < 5 ? "#0088b3" : "var(--accent)", borderRadius: 3, display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 4, fontSize: 10, fontWeight: 700, color: "#fff", minWidth: 36 }}>
+                    {m.fills.toLocaleString()}
+                  </div>
+                </div>
+                <div style={{ width: 50, textAlign: "right", fontSize: 11, color: "#6b7280" }}>{pct.toFixed(1)}%</div>
+              </div>
+            );
+          })}
+          <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 12, fontStyle: "italic" }}>
+            Manufacturer code 58016 dominates with 41.4% of all fills. In a real supply chain context, this concentration would flag dependency risk: disruption to a single supplier could affect hundreds of thousands of patients. Diversification analysis would be a key operational recommendation.
+          </div>
         </SectionCard>
 
         {/* ── Key insights ── */}
