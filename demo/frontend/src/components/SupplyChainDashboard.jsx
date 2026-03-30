@@ -414,14 +414,12 @@ export default function SupplyChainDashboard({ onBack }) {
                   <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#9ca3af" }}>close</span>
                 </button>
               </div>
-              <div className="an-stats-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", marginBottom: 0 }}>
-                <StatCard icon="description" value={selectedData.fills.toLocaleString()} label="Prescription Fills" color="#005c8f" />
-                <StatCard icon="groups" value={selectedData.patients.toLocaleString()} label="Patients" color="var(--accent)" />
-                <StatCard icon="schedule" value={`${selectedData.pctLate}%`} label="Late Refill Rate" color="#d97706" sub={wilsonCI(selectedData.pctLate, selectedData.fills)} />
+              <div className="an-stats-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", marginBottom: 0 }}>
+                <StatCard icon="description" value={selectedData.fills.toLocaleString()} label="Fills" color="#005c8f" sub={`${selectedData.patients.toLocaleString()} patients`} />
+                <StatCard icon="schedule" value={`${selectedData.pctLate}%`} label="Late Rate" color="#d97706" sub={wilsonCI(selectedData.pctLate, selectedData.fills)} />
                 <StatCard icon="warning" value={`${selectedData.pctHigh}%`} label="High-Risk" color="var(--coral)" />
-                <StatCard icon="factory" value={selectedData.manufacturers.toLocaleString()} label="Manufacturers" color="#8b5cf6" />
+                <StatCard icon="factory" value={selectedData.manufacturers.toLocaleString()} label="Manufacturers" color="#8b5cf6" sub={`${selectedData.drugs.toLocaleString()} drug codes`} />
                 <StatCard icon="local_pharmacy" value={selectedData.providers.toLocaleString()} label="Providers" color="#0088b3" />
-                <StatCard icon="medication" value={selectedData.drugs.toLocaleString()} label="Drug Codes" color="#059669" />
               </div>
             </div>
           )}
