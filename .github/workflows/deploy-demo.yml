@@ -31,6 +31,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: demo
           command: d1 execute refill-risk-auth --remote --file=schema.sql
+        continue-on-error: true
 
       - name: Seed database
         uses: cloudflare/wrangler-action@v3
