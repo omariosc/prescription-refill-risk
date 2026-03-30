@@ -58,6 +58,7 @@ def plot_patient_timeline(
     model: lgb.Booster,
     feature_cols: list[str],
     ndc5_filter: str | None = None,
+    drug_name: str | None = None,
 ) -> None:
     """Plot a patient's prescription timeline with risk scores.
 
@@ -78,6 +79,13 @@ def plot_patient_timeline(
     # Predict risk scores
     risk_scores = model.predict(patient_data[feature_cols])
     patient_data["risk_score"] = risk_scores
+
+    # Build title with drug name if available
+    ndc5_label = patient_data["NDC5"].iloc[0]
+    if drug_name:
+        title = f"Patient {patient_id[:12]}... | {drug_name} (NDC5={ndc5_label})"
+    else:
+        title = f"Patient {patient_id[:12]}... | NDC5={ndc5_label}"
 
     # Plot
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8), height_ratios=[3, 1],
@@ -107,7 +115,7 @@ def plot_patient_timeline(
             ax1.plot([rd, nd], [1, 1], color=gap_color, linewidth=2, linestyle="--", alpha=0.5)
 
     ax1.set_yticks([])
-    ax1.set_title(f"Patient {patient_id[:12]}... | NDC5={patient_data['NDC5'].iloc[0]}")
+    ax1.set_title(title)
     ax1.legend(loc="upper left", fontsize=8)
 
     # Bottom: Risk scores over time

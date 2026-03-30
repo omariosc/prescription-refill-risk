@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import numpy as np
+import pandas as pd
 
 from src.data_loading import (
     build_ever_had_chronic,
@@ -41,6 +42,7 @@ from src.model import (
     save_metrics,
     train_model,
 )
+from src.utils import OUTPUTS
 
 
 def main() -> None:
@@ -142,13 +144,31 @@ def main() -> None:
     save_metrics([val_metrics, test_metrics])
 
     # ===================================================================
-    # Phase 5: Explainability
+    # Phase 5: Explainability + NDC Enrichment
     # ===================================================================
     print("\n" + "=" * 60)
-    print("PHASE 5: EXPLAINABILITY")
+    print("PHASE 5: EXPLAINABILITY + NDC ENRICHMENT")
     print("=" * 60)
 
+    # NDC-to-drug-name enrichment
+    from src.ndc_lookup import build_ndc5_lookup_table, get_drug_name, _load_cache
+
+    ndc_table = build_ndc5_lookup_table(pde, top_n=100, max_tries_per_group=10)
+    ndc_cache = _load_cache()
+
+    # Save lookup table
+    ndc_table.to_csv(OUTPUTS / "ndc_lookup.csv", index=False)
+    print(f"  NDC lookup table saved to outputs/ndc_lookup.csv")
+
+    # Print resolved drugs
+    resolved = ndc_table[ndc_table["name"].notna()]
+    if len(resolved) > 0:
+        print(f"\n  Resolved {len(resolved)} drug groups:")
+        for _, row in resolved.head(15).iterrows():
+            print(f"    NDC5={row['ndc5']} ({row['n_fills']:,} fills): {row['name']}")
+
     # SHAP analysis
+    print()
     shap_values = compute_shap_values(model, test_merged, feature_cols)
     plot_shap_importance(shap_values)
     plot_shap_summary(shap_values)
@@ -159,30 +179,40 @@ def main() -> None:
     plot_calibration(y_true, y_prob)
 
     # Patient timeline demo — pick a patient with interesting mix of late/on-time
-    # Find a patient with both late and on-time fills in the test set
+    # Prefer a patient whose NDC5 group resolved to a real drug name
     test_patient_stats = (
-        test_merged.groupby("DESYNPUF_ID")
+        test_merged.groupby(["DESYNPUF_ID", "NDC5"])
         .agg(n_fills=("late", "count"), n_late=("late", "sum"))
+        .reset_index()
     )
     test_patient_stats["n_ontime"] = test_patient_stats["n_fills"] - test_patient_stats["n_late"]
-    interesting = test_patient_stats[
-        (test_patient_stats["n_late"] >= 2) & (test_patient_stats["n_ontime"] >= 1)
-    ]
 
-    if len(interesting) > 0:
-        demo_patient = interesting.sort_values("n_fills", ascending=False).index[0]
+    # Try to find patients with resolved drug names first
+    resolved_ndc5s = set(resolved["ndc5"].tolist()) if len(resolved) > 0 else set()
+    interesting = test_patient_stats[
+        (test_patient_stats["n_late"] >= 2)
+        & (test_patient_stats["n_ontime"] >= 1)
+        & (test_patient_stats["n_fills"] >= 5)
+    ].sort_values("n_fills", ascending=False)
+
+    # Prefer resolved drug names
+    with_names = interesting[interesting["NDC5"].isin(resolved_ndc5s)]
+    demo_source = with_names if len(with_names) > 0 else interesting
+
+    if len(demo_source) > 0:
+        demo_row = demo_source.iloc[0]
+        demo_patient = demo_row["DESYNPUF_ID"]
+        demo_ndc5 = demo_row["NDC5"]
+        drug_name = get_drug_name(demo_ndc5, ndc_cache)
         print(f"\nDemo patient: {demo_patient}")
-        # Find the NDC5 with most fills for this patient
-        patient_ndc5 = (
-            test_merged[test_merged["DESYNPUF_ID"] == demo_patient]
-            .groupby("NDC5")
-            .size()
-            .sort_values(ascending=False)
+        print(f"  Drug: {drug_name} (NDC5={demo_ndc5})")
+        print(f"  Fills: {int(demo_row['n_fills'])} ({int(demo_row['n_late'])} late, {int(demo_row['n_ontime'])} on-time)")
+        plot_patient_timeline(
+            demo_patient, merged_df, model, feature_cols,
+            ndc5_filter=demo_ndc5, drug_name=drug_name,
         )
-        demo_ndc5 = patient_ndc5.index[0]
-        plot_patient_timeline(demo_patient, merged_df, model, feature_cols, ndc5_filter=demo_ndc5)
     else:
-        print("\n  No patient with mixed late/on-time fills in test set for demo")
+        print("\n  No suitable patient found for timeline demo")
 
     # ===================================================================
     # Done
@@ -193,6 +223,7 @@ def main() -> None:
     print(f"{'=' * 60}")
     print(f"  Outputs saved to: outputs/")
     print(f"  - metrics.json")
+    print(f"  - ndc_lookup.csv")
     print(f"  - shap_importance.png")
     print(f"  - shap_summary.png")
     print(f"  - calibration.png")
