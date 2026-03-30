@@ -41,10 +41,19 @@ All datasets join on `DESYNPUF_ID`. Beneficiary files are joined year-matched to
 ### Key columns (PDE)
 - `DESYNPUF_ID` — pseudonymised patient ID
 - `SRVC_DT` — fill date (format: YYYYMMDD integer)
-- `PROD_SRVC_ID` — NDC-11 drug code
-- `DAYS_SUPLY_NUM` — days of supply dispensed
+- `PROD_SRVC_ID` — NDC-11 drug code. **Use first 5 digits (NDC-5) for drug grouping** — NDC-11 is unusable because the synthetic data randomised NDC codes per event (99.9% of NDC-11 pairs have only 1 fill).
+- `DAYS_SUPLY_NUM` — days of supply dispensed. **2.1% are zero — must filter.**
 - `QTY_DSPNSD_NUM` — quantity dispensed
-- `PTNT_PAY_AMT` / `TOT_RX_CST_AMT` — cost signals
+- `PTNT_PAY_AMT` / `TOT_RX_CST_AMT` — cost signals (coarsely binned, multiples of $10)
+
+### Critical data notes
+- **NDC-5 grouping gives 717K multi-fill pairs (2.2M rows)** — this is our working dataset
+- **~80% of refills are "late"** at NDC-5 level — late is the majority class
+- Chronic condition flags: **1=Yes, 2=No** — must remap to 0/1
+- `BENE_ESRD_IND`: **"0"/"Y"** string — remap to 0/1
+- `BENE_RACE_CD`: codes {1,2,3,5} only — no code 4
+- Death dates are **month-granularity** (always day=01)
+- 2010 volume drops significantly (truncation artifact)
 
 ---
 
