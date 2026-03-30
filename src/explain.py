@@ -8,6 +8,7 @@ import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 import shap
+from sklearn.calibration import calibration_curve
 
 from src.utils import OUTPUTS
 
