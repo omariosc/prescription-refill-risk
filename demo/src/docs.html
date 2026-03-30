@@ -32,11 +32,14 @@ a:hover{text-decoration:underline}
 .nav-item .method{font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 6px;border-radius:3px;min-width:40px;text-align:center}
 .method.post{background:#1f3d2e;color:var(--green)}
 .method.get{background:#1f2d3d;color:var(--blue)}
+.method.delete{background:#3d1f1f;color:var(--red)}
 .endpoint{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:24px;overflow:hidden}
 .ep-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .ep-header .method{font-family:var(--mono);font-size:13px;font-weight:700;padding:4px 10px;border-radius:4px}
 .ep-header .path{font-family:var(--mono);font-size:15px;color:var(--heading);font-weight:500}
 .ep-header .desc{font-size:13px;color:var(--text-muted);flex-basis:100%;margin-top:4px}
+.ep-header .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;margin-left:auto}
+.ep-header .badge.admin{background:#3d1f3d;color:var(--purple)}
 .ep-body{padding:20px 24px}
 .ep-body h3{font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;font-family:'Inter',sans-serif}
 .ep-body h3:first-child{margin-top:0}
@@ -46,10 +49,12 @@ a:hover{text-decoration:underline}
 .term-bar .dot{width:10px;height:10px;border-radius:50%}
 .term-bar .dot.r{background:#f85149}.dot.y{background:#d29922}.dot.g{background:#3fb950}
 .term-body{padding:16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--text);max-height:500px;overflow-y:auto}
-.run-btn{background:var(--accent);color:#0d1117;border:none;padding:8px 18px;border-radius:6px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:8px 0;transition:opacity 150ms}
+.run-btn{background:var(--accent);color:#0d1117;border:none;padding:8px 18px;border-radius:6px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:8px 0;transition:opacity 150ms;position:relative}
 .run-btn:hover{opacity:.85}
 .run-btn:disabled{opacity:.5;cursor:not-allowed}
 .run-btn .material-symbols-outlined{font-size:16px}
+.run-btn[data-tooltip]:disabled:hover::after{content:attr(data-tooltip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--yellow);color:#0d1117;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:10}
+.run-btn[data-tooltip]:disabled:hover::before{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--yellow);pointer-events:none;z-index:10}
 .fields{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:13px}
 .fields th{text-align:left;padding:8px 12px;color:var(--text-muted);font-weight:600;border-bottom:1px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
 .fields td{padding:8px 12px;border-bottom:1px solid rgba(48,54,61,.5);vertical-align:top}
@@ -69,7 +74,38 @@ a:hover{text-decoration:underline}
 .tier-card.high .rate{color:var(--red)}.tier-card.mod .rate{color:var(--yellow)}.tier-card.low .rate{color:var(--green)}
 .info-box{background:rgba(0,224,188,.06);border:1px solid rgba(0,224,188,.2);border-radius:6px;padding:14px 18px;margin:12px 0;font-size:13px;line-height:1.6;color:var(--text)}
 .info-box strong{color:var(--accent)}
+.warn-box{background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.3);border-radius:6px;padding:14px 18px;margin:12px 0;font-size:13px;line-height:1.6;color:var(--text);display:flex;align-items:center;gap:10px}
+.warn-box .material-symbols-outlined{color:var(--yellow);font-size:20px}
+.auth-banner{border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:13px;line-height:1.6;display:flex;align-items:center;gap:10px}
+.auth-banner.ok{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3)}
+.auth-banner.ok .material-symbols-outlined{color:var(--green)}
+.auth-banner.ok .auth-name{color:var(--green);font-weight:600}
+.auth-banner.warn{background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.3)}
+.auth-banner.warn .material-symbols-outlined{color:var(--yellow)}
+.auth-banner.warn a{color:var(--yellow);text-decoration:underline}
+.auth-banner.loading{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.2)}
+.auth-banner.loading .material-symbols-outlined{color:var(--blue)}
+.input-field{font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px}
+.input-field:focus{outline:none;border-color:var(--accent)}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.nav-section-title{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;grid-column:1/-1;margin-top:8px;padding:0 4px;opacity:.7}
+.nav-section-title:first-child{margin-top:0}
 .foot{text-align:center;padding:32px 0;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:48px}
+/* SSE progress rendering */
+.sse-step{display:flex;align-items:center;gap:8px;padding:2px 0;font-family:var(--mono);font-size:13px}
+.sse-step .step-icon{color:var(--green);font-size:16px;flex-shrink:0}
+.sse-step .step-text{color:var(--text-muted)}
+.sse-step .step-detail{color:var(--text);margin-left:4px}
+.sse-timing{display:flex;align-items:center;gap:6px;padding:8px 0 4px;font-family:var(--mono);font-size:12px;color:var(--accent);border-top:1px solid var(--border);margin-top:8px}
+.sse-timing .material-symbols-outlined{font-size:14px}
+/* JSON syntax highlighting */
+.json-key{color:var(--blue)}
+.json-string{color:var(--green)}
+.json-number{color:var(--purple)}
+.json-bool{color:var(--yellow)}
+.json-null{color:var(--text-muted)}
+.json-brace{color:var(--text-muted)}
+.sse-result-label{font-weight:700;color:var(--accent);padding:8px 0 4px;font-family:var(--mono);font-size:13px;border-top:1px solid var(--border);margin-top:8px;display:block}
 </style>
 </head>
 <body>
@@ -85,12 +121,26 @@ a:hover{text-decoration:underline}
 
 <div class="wrap">
 
+<!-- Auth status banner -->
+<div class="auth-banner loading" id="auth-banner">
+  <span class="material-symbols-outlined">hourglass_empty</span>
+  <span id="auth-banner-text">Checking authentication...</span>
+</div>
+
 <div class="nav">
   <h2>Endpoints</h2>
   <div class="nav-grid">
+    <div class="nav-section-title">Prediction</div>
     <a href="#predict" class="nav-item"><span class="method post">POST</span> /api/predict</a>
     <a href="#template" class="nav-item"><span class="method get">GET</span> /api/template</a>
     <a href="#ndc-search" class="nav-item"><span class="method get">GET</span> /api/ndc-search</a>
+    <div class="nav-section-title">Authentication</div>
+    <a href="#auth-login" class="nav-item"><span class="method post">POST</span> /api/auth/login</a>
+    <a href="#auth-logout" class="nav-item"><span class="method post">POST</span> /api/auth/logout</a>
+    <a href="#auth-me" class="nav-item"><span class="method get">GET</span> /api/auth/me</a>
+    <div class="nav-section-title">Admin</div>
+    <a href="#admin-users-list" class="nav-item"><span class="method get">GET</span> /api/admin/users</a>
+    <a href="#admin-users-create" class="nav-item"><span class="method post">POST</span> /api/admin/users</a>
   </div>
 </div>
 
@@ -157,7 +207,7 @@ a:hover{text-decoration:underline}
       <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> request</div>
       <div class="term-body" id="req-display"></div>
     </div>
-    <button class="run-btn" id="run-predict" onclick="runPredict()">
+    <button class="run-btn requires-auth" id="run-predict" onclick="runPredict()">
       <span class="material-symbols-outlined">play_arrow</span> Run request
     </button>
     <button class="run-btn" style="background:var(--border);color:var(--text)" onclick="loadBatchDemo()">
@@ -203,7 +253,7 @@ a:hover{text-decoration:underline}
       <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> request</div>
       <div class="term-body">$ curl -O /api/template</div>
     </div>
-    <button class="run-btn" onclick="runTemplate()">
+    <button class="run-btn requires-auth" onclick="runTemplate()">
       <span class="material-symbols-outlined">download</span> Download CSV
     </button>
     <div class="terminal">
@@ -229,15 +279,175 @@ a:hover{text-decoration:underline}
       </tbody>
     </table>
     <h3>Try it</h3>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <input type="text" id="ndc-q" value="metformin" placeholder="Drug name..." style="font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;width:240px">
-      <button class="run-btn" onclick="runNdc()" style="margin:0">
+    <div class="input-row">
+      <input type="text" id="ndc-q" value="metformin" placeholder="Drug name..." class="input-field" style="width:240px">
+      <button class="run-btn requires-auth" onclick="runNdc()" style="margin:0">
         <span class="material-symbols-outlined">search</span> Search
       </button>
     </div>
     <div class="terminal">
       <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
       <div class="term-body" id="resp-ndc"></div>
+    </div>
+  </div>
+</div>
+
+<!-- POST /api/auth/login -->
+<div class="endpoint" id="auth-login">
+  <div class="ep-header">
+    <span class="method post">POST</span>
+    <span class="path">/api/auth/login</span>
+    <span class="desc">Authenticate with email and TOTP code. Sets a session cookie on success.</span>
+  </div>
+  <div class="ep-body">
+    <h3>Request Body</h3>
+    <table class="fields">
+      <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fname">email</td><td class="ftype">string</td><td class="freq">required</td><td>User email address</td></tr>
+        <tr><td class="fname">code</td><td class="ftype">string</td><td class="freq">required</td><td>6-digit TOTP code from authenticator app</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Response</h3>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> 200 OK</div>
+      <div class="term-body" id="auth-login-example"></div>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">On success, a <code>Set-Cookie</code> header is returned with an <code>HttpOnly</code> session cookie. Subsequent requests include this cookie automatically.</p>
+
+    <h3>Try it</h3>
+    <div class="input-row">
+      <input type="email" id="login-email" placeholder="Email address" class="input-field" style="width:240px">
+      <input type="text" id="login-code" placeholder="6-digit code" class="input-field" style="width:130px" maxlength="6" pattern="[0-9]{6}">
+      <button class="run-btn" onclick="runAuthLogin()" style="margin:0">
+        <span class="material-symbols-outlined">login</span> Run
+      </button>
+    </div>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-auth-login"></div>
+    </div>
+  </div>
+</div>
+
+<!-- POST /api/auth/logout -->
+<div class="endpoint" id="auth-logout">
+  <div class="ep-header">
+    <span class="method post">POST</span>
+    <span class="path">/api/auth/logout</span>
+    <span class="desc">End the current session and clear the session cookie</span>
+  </div>
+  <div class="ep-body">
+    <h3>Response</h3>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> 200 OK</div>
+      <div class="term-body" id="auth-logout-example"></div>
+    </div>
+
+    <h3>Try it</h3>
+    <button class="run-btn requires-auth" onclick="runAuthLogout()">
+      <span class="material-symbols-outlined">logout</span> Run
+    </button>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-auth-logout"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GET /api/auth/me -->
+<div class="endpoint" id="auth-me">
+  <div class="ep-header">
+    <span class="method get">GET</span>
+    <span class="path">/api/auth/me</span>
+    <span class="desc">Get the currently authenticated user, or null if not logged in</span>
+  </div>
+  <div class="ep-body">
+    <h3>Response</h3>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> 200 OK</div>
+      <div class="term-body" id="auth-me-example"></div>
+    </div>
+
+    <h3>Try it</h3>
+    <button class="run-btn" onclick="runAuthMe()">
+      <span class="material-symbols-outlined">person</span> Run
+    </button>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-auth-me"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GET /api/admin/users -->
+<div class="endpoint" id="admin-users-list">
+  <div class="ep-header">
+    <span class="method get">GET</span>
+    <span class="path">/api/admin/users</span>
+    <span class="badge admin">admin</span>
+    <span class="desc">List all registered users. Requires admin role.</span>
+  </div>
+  <div class="ep-body">
+    <h3>Response</h3>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> 200 OK</div>
+      <div class="term-body" id="admin-users-list-example"></div>
+    </div>
+
+    <h3>Try it</h3>
+    <button class="run-btn requires-auth" onclick="runAdminUsersList()">
+      <span class="material-symbols-outlined">group</span> Run
+    </button>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-admin-users-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- POST /api/admin/users -->
+<div class="endpoint" id="admin-users-create">
+  <div class="ep-header">
+    <span class="method post">POST</span>
+    <span class="path">/api/admin/users</span>
+    <span class="badge admin">admin</span>
+    <span class="desc">Create a new user. Returns TOTP secret for authenticator setup. Requires admin role.</span>
+  </div>
+  <div class="ep-body">
+    <h3>Request Body</h3>
+    <table class="fields">
+      <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fname">name</td><td class="ftype">string</td><td class="freq">required</td><td>User display name</td></tr>
+        <tr><td class="fname">email</td><td class="ftype">string</td><td class="freq">required</td><td>User email address</td></tr>
+        <tr><td class="fname">organization</td><td class="ftype">string</td><td class="freq">required</td><td>Organization name</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Response</h3>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> 201 Created</div>
+      <div class="term-body" id="admin-users-create-example"></div>
+    </div>
+    <div class="warn-box">
+      <span class="material-symbols-outlined">warning</span>
+      <span>The <code>totp_secret</code> and <code>otpauth_uri</code> are returned only once at creation. Store or share them securely with the user.</span>
+    </div>
+
+    <h3>Try it</h3>
+    <div class="input-row">
+      <input type="text" id="create-user-name" placeholder="Name" class="input-field" style="width:160px">
+      <input type="email" id="create-user-email" placeholder="Email" class="input-field" style="width:200px">
+      <input type="text" id="create-user-org" placeholder="Organization" class="input-field" style="width:160px">
+      <button class="run-btn requires-auth" onclick="runAdminUsersCreate()" style="margin:0">
+        <span class="material-symbols-outlined">person_add</span> Run
+      </button>
+    </div>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-admin-users-create"></div>
     </div>
   </div>
 </div>
@@ -276,17 +486,127 @@ a:hover{text-decoration:underline}
 </div>
 
 <script>
-// Safe text rendering - all output uses textContent or createTextNode, not innerHTML
-function escHtml(s) {
-  var d = document.createElement('div');
-  d.appendChild(document.createTextNode(String(s)));
-  return d.textContent;
+// ── Auth state ──────────────────────────────────────────────────────────
+var isAuthenticated = false;
+var currentUser = null;
+
+function setTermText(id, text) {
+  document.getElementById(id).textContent = text;
 }
 
-function formatJson(obj, indent) {
-  return JSON.stringify(obj, null, 2);
+function appendTermText(id, text) {
+  document.getElementById(id).textContent += text;
 }
 
+// ── JSON syntax highlighting (safe — builds DOM nodes, no innerHTML) ──
+function syntaxHighlightJson(json) {
+  var frag = document.createDocumentFragment();
+  var re = /("(?:\\.|[^"\\])*"\s*:)|("(?:\\.|[^"\\])*")|(\b(?:true|false)\b)|(\bnull\b)|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|([{}\[\],])|(\s+)/g;
+  var match;
+  while ((match = re.exec(json)) !== null) {
+    var span = document.createElement('span');
+    if (match[1]) {
+      span.className = 'json-key';
+      span.textContent = match[1];
+    } else if (match[2]) {
+      span.className = 'json-string';
+      span.textContent = match[2];
+    } else if (match[3]) {
+      span.className = 'json-bool';
+      span.textContent = match[3];
+    } else if (match[4]) {
+      span.className = 'json-null';
+      span.textContent = match[4];
+    } else if (match[5]) {
+      span.className = 'json-number';
+      span.textContent = match[5];
+    } else if (match[6]) {
+      span.className = 'json-brace';
+      span.textContent = match[6];
+    } else if (match[7]) {
+      span.textContent = match[7];
+    }
+    frag.appendChild(span);
+  }
+  return frag;
+}
+
+function renderHighlightedJson(elementId, obj) {
+  var el = document.getElementById(elementId);
+  el.textContent = '';
+  el.appendChild(syntaxHighlightJson(JSON.stringify(obj, null, 2)));
+}
+
+// ── Auth check on page load ──────────────────────────────────────────────
+function updateAuthUI() {
+  var banner = document.getElementById('auth-banner');
+  var text = document.getElementById('auth-banner-text');
+  banner.className = 'auth-banner';
+
+  if (isAuthenticated && currentUser) {
+    banner.classList.add('ok');
+    text.textContent = '';
+    var icon = document.createElement('span');
+    icon.textContent = 'Authenticated as ';
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'auth-name';
+    nameSpan.textContent = currentUser.name || currentUser.email;
+    text.appendChild(icon);
+    text.appendChild(nameSpan);
+    if (currentUser.role) {
+      var roleSpan = document.createTextNode(' (' + currentUser.role + ')');
+      text.appendChild(roleSpan);
+    }
+    banner.querySelector('.material-symbols-outlined').textContent = 'check_circle';
+  } else {
+    banner.classList.add('warn');
+    text.textContent = '';
+    var warning = document.createTextNode('Not authenticated \u2014 ');
+    text.appendChild(warning);
+    var link = document.createElement('a');
+    link.href = '/';
+    link.textContent = 'log in at the main app';
+    text.appendChild(link);
+    var suffix = document.createTextNode(' first to use Try It');
+    text.appendChild(suffix);
+    banner.querySelector('.material-symbols-outlined').textContent = 'warning';
+  }
+
+  var btns = document.querySelectorAll('.run-btn.requires-auth');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].disabled = !isAuthenticated;
+    if (!isAuthenticated) {
+      btns[i].setAttribute('data-tooltip', 'Login required');
+    } else {
+      btns[i].removeAttribute('data-tooltip');
+    }
+  }
+}
+
+async function checkAuth() {
+  try {
+    var resp = await fetch('/api/auth/me', { credentials: 'same-origin' });
+    if (resp.ok) {
+      var data = await resp.json();
+      if (data.user) {
+        isAuthenticated = true;
+        currentUser = data.user;
+      } else {
+        isAuthenticated = false;
+        currentUser = null;
+      }
+    } else {
+      isAuthenticated = false;
+      currentUser = null;
+    }
+  } catch (e) {
+    isAuthenticated = false;
+    currentUser = null;
+  }
+  updateAuthUI();
+}
+
+// ── Demo payloads ────────────────────────────────────────────────────────
 var DEMO_SINGLE = {
   patients: [{
     patient_id: "P-10003", drug_name: "Atorvastatin", drug_ndc: "00093-5057-01",
@@ -305,14 +625,6 @@ var DEMO_BATCH = {
 
 var currentPayload = DEMO_SINGLE;
 
-function setTermText(id, text) {
-  document.getElementById(id).textContent = text;
-}
-
-function appendTermText(id, text) {
-  document.getElementById(id).textContent += text;
-}
-
 function renderRequest() {
   var curl = '$ curl -X POST /api/predict \\\n  -H "Content-Type: application/json" \\\n  -d \'' + JSON.stringify(currentPayload, null, 2) + '\'';
   setTermText('req-display', curl);
@@ -323,28 +635,66 @@ function loadBatchDemo() {
   renderRequest();
 }
 
-// Init
+// ── Init ─────────────────────────────────────────────────────────────────
 setTermText('resp-predict', '// Click "Run request" to see the response');
 setTermText('resp-template', '// Click "Download CSV" to see the template');
 setTermText('resp-ndc', '// Click "Search" to see results');
+setTermText('resp-auth-login', '// Enter email and TOTP code, then click Run');
+setTermText('resp-auth-logout', '// Click Run to end session');
+setTermText('resp-auth-me', '// Click Run to check current session');
+setTermText('resp-admin-users-list', '// Click Run to list users (admin only)');
+setTermText('resp-admin-users-create', '// Fill in fields and click Run (admin only)');
 renderRequest();
 
+// Populate example responses with syntax highlighting
+renderHighlightedJson('auth-login-example', {
+  success: true,
+  user: { name: "Jane Smith", email: "jane@pharmacy2u.co.uk", role: "user", organization: "Pharmacy2U" }
+});
+renderHighlightedJson('auth-logout-example', { success: true });
+renderHighlightedJson('auth-me-example', {
+  user: { name: "Jane Smith", email: "jane@pharmacy2u.co.uk", role: "user", organization: "Pharmacy2U" }
+});
+renderHighlightedJson('admin-users-list-example', [
+  { name: "Jane Smith", email: "jane@pharmacy2u.co.uk", role: "user", organization: "Pharmacy2U" },
+  { name: "Admin User", email: "admin@pharmacy2u.co.uk", role: "admin", organization: "Pharmacy2U" }
+]);
+renderHighlightedJson('admin-users-create-example', {
+  user: { name: "New User", email: "new@pharmacy2u.co.uk", role: "user", organization: "Pharmacy2U" },
+  totp_secret: "JBSWY3DPEHPK3PXP",
+  otpauth_uri: "otpauth://totp/RefillRisk:new@pharmacy2u.co.uk?secret=JBSWY3DPEHPK3PXP&issuer=RefillRisk"
+});
+
+// Run auth check on page load
+checkAuth();
+
+// ── SSE Predict with improved rendering ──────────────────────────────────
 async function runPredict() {
   var btn = document.getElementById('run-predict');
   var out = document.getElementById('resp-predict');
   btn.disabled = true;
-  setTermText('resp-predict', '// Connecting...\n');
+  out.textContent = '';
+  var startTime = performance.now();
 
   try {
     var resp = await fetch('/api/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
       body: JSON.stringify(currentPayload)
     });
+
+    if (!resp.ok) {
+      var errText = '';
+      try { var errJson = await resp.json(); errText = JSON.stringify(errJson, null, 2); } catch(e) { errText = resp.status + ' ' + resp.statusText; }
+      setTermText('resp-predict', 'Error: ' + errText);
+      btn.disabled = false;
+      return;
+    }
+
     var reader = resp.body.getReader();
     var decoder = new TextDecoder();
     var buffer = '';
-    setTermText('resp-predict', '');
 
     while (true) {
       var chunk = await reader.read();
@@ -357,9 +707,41 @@ async function runPredict() {
         try {
           var data = JSON.parse(parts[i].slice(6));
           if (data.type === 'progress') {
-            appendTermText('resp-predict', 'event: progress\ndata: ' + JSON.stringify(data, null, 2) + '\n\n');
+            var step = document.createElement('div');
+            step.className = 'sse-step';
+            var icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined step-icon';
+            icon.textContent = 'check_circle';
+            var stepText = document.createElement('span');
+            stepText.className = 'step-text';
+            stepText.textContent = (data.step || '?') + '/' + (data.total || '?');
+            var stepDetail = document.createElement('span');
+            stepDetail.className = 'step-detail';
+            stepDetail.textContent = data.message || '';
+            step.appendChild(icon);
+            step.appendChild(stepText);
+            step.appendChild(stepDetail);
+            out.appendChild(step);
           } else if (data.type === 'result') {
-            appendTermText('resp-predict', '--- RESULT ---\ndata: ' + JSON.stringify(data, null, 2) + '\n');
+            var label = document.createElement('span');
+            label.className = 'sse-result-label';
+            label.textContent = 'RESULT';
+            out.appendChild(label);
+            var jsonContainer = document.createElement('div');
+            jsonContainer.style.cssText = 'white-space:pre-wrap;word-break:break-word';
+            jsonContainer.appendChild(syntaxHighlightJson(JSON.stringify(data, null, 2)));
+            out.appendChild(jsonContainer);
+            var elapsed = Math.round(performance.now() - startTime);
+            var timing = document.createElement('div');
+            timing.className = 'sse-timing';
+            var timerIcon = document.createElement('span');
+            timerIcon.className = 'material-symbols-outlined';
+            timerIcon.textContent = 'timer';
+            var timerText = document.createElement('span');
+            timerText.textContent = 'Completed in ' + elapsed + 'ms';
+            timing.appendChild(timerIcon);
+            timing.appendChild(timerText);
+            out.appendChild(timing);
           }
         } catch(e) {}
       }
@@ -371,9 +753,16 @@ async function runPredict() {
   btn.disabled = false;
 }
 
+// ── Template ─────────────────────────────────────────────────────────────
 async function runTemplate() {
   try {
-    var resp = await fetch('/api/template');
+    var resp = await fetch('/api/template', { credentials: 'same-origin' });
+    if (!resp.ok) {
+      var errText = resp.status + ' ' + resp.statusText;
+      try { var ej = await resp.json(); errText = JSON.stringify(ej, null, 2); } catch(e) {}
+      setTermText('resp-template', 'Error: ' + errText);
+      return;
+    }
     var text = await resp.text();
     setTermText('resp-template', text);
   } catch(e) {
@@ -381,16 +770,139 @@ async function runTemplate() {
   }
 }
 
+// ── NDC Search ───────────────────────────────────────────────────────────
 async function runNdc() {
   var q = document.getElementById('ndc-q').value.trim();
   if (!q) return;
   setTermText('resp-ndc', '// Searching...');
   try {
-    var resp = await fetch('/api/ndc-search?q=' + encodeURIComponent(q));
+    var resp = await fetch('/api/ndc-search?q=' + encodeURIComponent(q), { credentials: 'same-origin' });
+    if (!resp.ok) {
+      var errText = resp.status + ' ' + resp.statusText;
+      try { var ej = await resp.json(); errText = JSON.stringify(ej, null, 2); } catch(e) {}
+      setTermText('resp-ndc', 'Error: ' + errText);
+      return;
+    }
     var data = await resp.json();
-    setTermText('resp-ndc', '$ GET /api/ndc-search?q=' + q + '\n\n' + JSON.stringify(data, null, 2));
+    var el = document.getElementById('resp-ndc');
+    el.textContent = '';
+    var header = document.createTextNode('$ GET /api/ndc-search?q=' + q + '\n\n');
+    el.appendChild(header);
+    el.appendChild(syntaxHighlightJson(JSON.stringify(data, null, 2)));
   } catch(e) {
     setTermText('resp-ndc', 'Error: ' + e.message);
+  }
+}
+
+// ── Auth: Login ──────────────────────────────────────────────────────────
+async function runAuthLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var code = document.getElementById('login-code').value.trim();
+  if (!email || !code) {
+    setTermText('resp-auth-login', 'Error: email and 6-digit code are both required');
+    return;
+  }
+  setTermText('resp-auth-login', '// Authenticating...');
+  try {
+    var resp = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ email: email, code: code })
+    });
+    var data = await resp.json();
+    var el = document.getElementById('resp-auth-login');
+    el.textContent = '';
+    var header = document.createTextNode('HTTP ' + resp.status + '\n\n');
+    el.appendChild(header);
+    el.appendChild(syntaxHighlightJson(JSON.stringify(data, null, 2)));
+    if (data.success) {
+      await checkAuth();
+    }
+  } catch(e) {
+    setTermText('resp-auth-login', 'Error: ' + e.message);
+  }
+}
+
+// ── Auth: Logout ─────────────────────────────────────────────────────────
+async function runAuthLogout() {
+  setTermText('resp-auth-logout', '// Logging out...');
+  try {
+    var resp = await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'same-origin'
+    });
+    var data = await resp.json();
+    var el = document.getElementById('resp-auth-logout');
+    el.textContent = '';
+    var header = document.createTextNode('HTTP ' + resp.status + '\n\n');
+    el.appendChild(header);
+    el.appendChild(syntaxHighlightJson(JSON.stringify(data, null, 2)));
+    isAuthenticated = false;
+    currentUser = null;
+    updateAuthUI();
+  } catch(e) {
+    setTermText('resp-auth-logout', 'Error: ' + e.message);
+  }
+}
+
+// ── Auth: Me ─────────────────────────────────────────────────────────────
+async function runAuthMe() {
+  setTermText('resp-auth-me', '// Checking session...');
+  try {
+    var resp = await fetch('/api/auth/me', { credentials: 'same-origin' });
+    var data = await resp.json();
+    var el = document.getElementById('resp-auth-me');
+    el.textContent = '';
+    var header = document.createTextNode('HTTP ' + resp.status + '\n\n');
+    el.appendChild(header);
+    el.appendChild(syntaxHighlightJson(JSON.stringify(data, null, 2)));
+  } catch(e) {
+    setTermText('resp-auth-me', 'Error: ' + e.message);
+  }
+}
+
+// ── Admin: List Users ────────────────────────────────────────────────────
+async function runAdminUsersList() {
+  setTermText('resp-admin-users-list', '// Loading...');
+  try {
+    var resp = await fetch('/api/admin/users', { credentials: 'same-origin' });
+    var data = await resp.json();
+    var el = document.getElementById('resp-admin-users-list');
+    el.textContent = '';
+    var header = document.createTextNode('HTTP ' + resp.status + '\n\n');
+    el.appendChild(header);
+    el.appendChild(syntaxHighlightJson(JSON.stringify(data, null, 2)));
+  } catch(e) {
+    setTermText('resp-admin-users-list', 'Error: ' + e.message);
+  }
+}
+
+// ── Admin: Create User ───────────────────────────────────────────────────
+async function runAdminUsersCreate() {
+  var name = document.getElementById('create-user-name').value.trim();
+  var email = document.getElementById('create-user-email').value.trim();
+  var org = document.getElementById('create-user-org').value.trim();
+  if (!name || !email || !org) {
+    setTermText('resp-admin-users-create', 'Error: name, email, and organization are all required');
+    return;
+  }
+  setTermText('resp-admin-users-create', '// Creating user...');
+  try {
+    var resp = await fetch('/api/admin/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ name: name, email: email, organization: org })
+    });
+    var data = await resp.json();
+    var el = document.getElementById('resp-admin-users-create');
+    el.textContent = '';
+    var header = document.createTextNode('HTTP ' + resp.status + '\n\n');
+    el.appendChild(header);
+    el.appendChild(syntaxHighlightJson(JSON.stringify(data, null, 2)));
+  } catch(e) {
+    setTermText('resp-admin-users-create', 'Error: ' + e.message);
   }
 }
 </script>
