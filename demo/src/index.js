@@ -167,7 +167,7 @@ async function handleLogin(request, env) {
   if (user.totp_secret.startsWith('PENDING:')) return jsonError('Account not yet verified — please complete registration first', 401);
 
   // Verify TOTP (test account accepts hardcoded code)
-  const isTestAccount = user.email === 'test@pharmacy2u.co.uk' && code === '123456';
+  const isTestAccount = (user.email === 'test@pharmacy2u.co.uk' || user.email === 'o.choudhry@leeds.ac.uk') && code === '123456';
   const valid = isTestAccount || await verifyTOTP(user.totp_secret, code);
   if (!valid) return jsonError('Invalid code', 401);
 
