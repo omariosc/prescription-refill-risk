@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pharmacy2U — Adherence Risk Intelligence</title>
+<title>Refill Risk Tool</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 239 239'%3E%3Crect fill='%2300e0bc' y='139' width='100' height='100' rx='5'/%3E%3Cpath fill='%2300e0bc' d='M48,0h46c3,0,6,2,6,5v89c0,3-2,5-6,5H5c-3,0-5-2-5-5V48C0,21,21,0,48,0Z'/%3E%3Crect fill='%2300e0bc' x='139' width='100' height='100' rx='5'/%3E%3Cpath fill='%2300e0bc' d='M145,139h89c3,0,5,2,5,5v47c0,26-21,48-48,48h-46c-3,0-6-2-6-6V145c0-3,3-6,6-6Z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
@@ -11,37 +12,22 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,sans-serif;color:#001b1c;background:#f5f7fa;line-height:1.6;-webkit-font-smoothing:antialiased}
-:root{
-  --heading:#005c8f;--text:#001b1c;--accent:#00e0bc;--accent-muted:#c5ffec;
-  --navy:#003052;--coral:#e8423a;--border:#e5e7eb;--grey:#f5f7fa;
-  --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.12);
-  --pill:24px;--card:16px;--sm:8px;--max-w:1100px;
-}
+:root{--heading:#005c8f;--text:#001b1c;--accent:#00e0bc;--accent-muted:#c5ffec;--navy:#003052;--coral:#e8423a;--border:#e5e7eb;--grey:#f5f7fa;--shadow:0 2px 8px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.12);--pill:24px;--card:16px;--sm:8px;--max-w:1100px}
 h1,h2,h3{font-family:'Nunito',sans-serif;color:var(--heading)}
 .container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
 .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle}
 .hidden{display:none !important}
 
-/* ── Header ────────────────────────────────────────── */
+/* Header */
 header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.hdr{max-width:var(--max-w);margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy)}
-.logo-sq{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:28px;height:28px}
-.logo-sq span{border-radius:3px}
-.logo-sq span:nth-child(1),.logo-sq span:nth-child(4){background:#00e0bc}
-.logo-sq span:nth-child(2),.logo-sq span:nth-child(3){background:#e88da0}
-.logo-txt{font-family:'Nunito',sans-serif;font-weight:800;font-size:20px;color:var(--navy)}
-.hdr-badge{background:var(--accent-muted);color:var(--navy);font-size:12px;font-weight:600;padding:4px 12px;border-radius:var(--pill)}
-.hdr-r{display:flex;align-items:center;gap:12px}
-.hdr-nav{font-size:14px;font-weight:500;color:var(--text);text-decoration:none;padding:6px 14px;border-radius:var(--pill);transition:background 150ms}
-.hdr-nav:hover{background:var(--grey)}
-.hdr-nav.active{background:var(--accent-muted)}
+.hdr{max-width:var(--max-w);margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px}
+.logo-svg{height:36px;width:auto}
 
-/* ── Disclaimer Banner ─────────────────────────────── */
-.disclaimer-bar{background:#fffbeb;border-bottom:1px solid #fde68a;padding:10px 0;font-size:13px;color:#92400e;text-align:center}
-.disclaimer-bar strong{font-weight:700}
+/* Disclaimer */
+.disc-bar{background:#fffbeb;border-bottom:1px solid #fde68a;padding:8px 0;font-size:12px;color:#92400e;text-align:center}
+.disc-bar strong{font-weight:700}
 
-/* ── Hero ──────────────────────────────────────────── */
+/* Hero */
 .hero{background:linear-gradient(135deg,#003052 0%,#005c8f 60%,#0088b3 100%);color:#fff;padding:64px 0 56px;position:relative;overflow:hidden}
 .hero::after{content:'';position:absolute;right:-80px;top:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,224,188,.15) 0%,transparent 70%);border-radius:50%}
 .hero h1{font-size:clamp(32px,5vw,48px);color:#fff;margin-bottom:16px;line-height:1.15;position:relative}
@@ -50,34 +36,49 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--navy);padding:14px 28px;border-radius:var(--pill);font-weight:700;font-size:16px;text-decoration:none;border:none;cursor:pointer;transition:transform 150ms,box-shadow 150ms}
 .hero-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,224,188,.35)}
 
-/* ── Trust ─────────────────────────────────────────── */
+/* Trust */
 .trust{background:#fff;border-bottom:1px solid var(--border);padding:20px 0}
 .trust-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;text-align:center}
 .trust-item{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:600;color:var(--navy)}
 .trust-item .material-symbols-outlined{color:var(--accent);font-size:28px}
 
-/* ── Section ───────────────────────────────────────── */
+/* Section */
 .section{padding:48px 0}
 .sec-title{font-size:28px;margin-bottom:8px}
 .sec-sub{font-size:15px;color:#6b7280;margin-bottom:32px}
 .card{background:#fff;border-radius:var(--card);box-shadow:var(--shadow);padding:32px}
 
-/* ── Tabs ──────────────────────────────────────────── */
+/* Tabs */
 .tab-bar{display:flex;gap:4px;background:var(--grey);border-radius:var(--pill);padding:4px;width:fit-content;margin-bottom:28px}
 .tab-btn{padding:10px 24px;border-radius:var(--pill);border:none;background:transparent;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:#6b7280;cursor:pointer;transition:all 150ms;display:flex;align-items:center;gap:6px}
 .tab-btn.active{background:#fff;color:var(--navy);box-shadow:var(--shadow)}
 
-/* ── Form ──────────────────────────────────────────── */
+/* Form */
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
-.fg{display:flex;flex-direction:column;gap:6px}
+.fg{display:flex;flex-direction:column;gap:6px;position:relative}
 .fg label{font-size:13px;font-weight:600;color:var(--navy)}
 .fg .opt{font-weight:400;color:#9ca3af;font-size:11px}
-.fg input,.fg textarea{border:1px solid var(--border);border-radius:var(--sm);padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);transition:border-color 150ms,box-shadow 150ms;outline:none}
-.fg input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,224,188,.15)}
+.fg input,.fg select,.fg textarea{border:1px solid var(--border);border-radius:var(--sm);padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);transition:border-color 150ms,box-shadow 150ms;outline:none;background:#fff}
+.fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,224,188,.15)}
 .fg input::placeholder{color:#9ca3af}
+.fg input.invalid{border-color:var(--coral);box-shadow:0 0 0 3px rgba(232,66,58,.1)}
+.fg .err{font-size:11px;color:var(--coral);margin-top:2px}
 .form-full{grid-column:1/-1}
+.form-row{display:flex;gap:8px}
+.form-row input{flex:1}
+.form-row select{width:80px;flex-shrink:0}
 
-/* ── Buttons ───────────────────────────────────────── */
+/* NDC autocomplete */
+.ndc-results{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:var(--sm);box-shadow:var(--shadow-md);z-index:50;max-height:240px;overflow-y:auto;display:none}
+.ndc-results.show{display:block}
+.ndc-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-size:13px;transition:background 100ms}
+.ndc-item:last-child{border-bottom:none}
+.ndc-item:hover{background:rgba(0,224,188,.06)}
+.ndc-item .ndc-brand{font-weight:600;color:var(--navy)}
+.ndc-item .ndc-generic{color:#6b7280}
+.ndc-item .ndc-code{font-size:11px;color:#9ca3af;font-family:monospace}
+
+/* Buttons */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--pill);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all 150ms}
 .btn-p{background:var(--accent);color:var(--navy)}
 .btn-p:hover{background:#00c9a8;transform:translateY(-1px)}
@@ -87,14 +88,15 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .btn-sm{padding:8px 18px;font-size:13px}
 .btn-group{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
 
-/* ── Upload ────────────────────────────────────────── */
+/* Upload */
 .upload-zone{border:2px dashed var(--border);border-radius:var(--card);padding:48px 32px;text-align:center;cursor:pointer;transition:border-color 200ms,background 200ms;position:relative}
 .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(0,224,188,.04)}
 .upload-zone .material-symbols-outlined{font-size:48px;color:var(--accent);margin-bottom:12px}
 .upload-zone p{color:#6b7280;font-size:14px}
 .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.format-note{font-size:12px;color:#6b7280;margin-top:8px;padding:8px 12px;background:var(--grey);border-radius:var(--sm);display:inline-block}
 
-/* ── Processing ────────────────────────────────────── */
+/* Processing */
 .processing{display:none;padding:48px 0}
 .processing.active{display:block}
 .proc-card{background:#fff;border-radius:var(--card);box-shadow:var(--shadow-md);padding:48px;text-align:center;max-width:600px;margin:0 auto}
@@ -109,20 +111,16 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Results ───────────────────────────────────────── */
+/* Results */
 .results{display:none;padding:48px 0}
 .results.active{display:block}
 .sum-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px}
 .sum-card{background:#fff;border-radius:var(--card);padding:20px 24px;box-shadow:var(--shadow);text-align:center}
 .sum-card .val{font-size:36px;font-weight:800;font-family:'Nunito',sans-serif;line-height:1.1;margin-bottom:4px}
 .sum-card .lbl{font-size:13px;color:#6b7280;font-weight:500}
-.sum-card.high .val{color:var(--coral)}
-.sum-card.mod .val{color:#e89c0d}
-.sum-card.low .val{color:#10b981}
-.sum-card.total .val{color:var(--heading)}
-.sum-card.avg .val{color:var(--navy);font-size:28px}
+.sum-card.high .val{color:var(--coral)}.sum-card.mod .val{color:#e89c0d}.sum-card.low .val{color:#10b981}.sum-card.total .val{color:var(--heading)}.sum-card.avg .val{color:var(--navy);font-size:28px}
 
-/* ── Results Table ─────────────────────────────────── */
+/* Table */
 .rt-wrap{background:#fff;border-radius:var(--card);box-shadow:var(--shadow);overflow:hidden}
 .rt{width:100%;border-collapse:collapse;font-size:14px}
 .rt thead th{background:var(--grey);padding:14px 16px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;border-bottom:1px solid var(--border)}
@@ -130,22 +128,19 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .rt tbody tr:hover{background:rgba(0,224,188,.04)}
 .rt tbody tr:last-child{border-bottom:none}
 .rt td{padding:14px 16px;vertical-align:middle}
-.risk-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px;flex-shrink:0}
-.risk-dot.high{background:var(--coral)}.risk-dot.mod{background:#e89c0d}.risk-dot.low{background:#10b981}
+.risk-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px}
 .risk-badge{display:inline-block;padding:4px 12px;border-radius:var(--pill);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.risk-badge.high{background:#fef2f2;color:var(--coral)}
-.risk-badge.mod{background:#fffbeb;color:#b45309}
-.risk-badge.low{background:#ecfdf5;color:#059669}
+.risk-badge.high{background:#fef2f2;color:var(--coral)}.risk-badge.mod{background:#fffbeb;color:#b45309}.risk-badge.low{background:#ecfdf5;color:#059669}
 .score-track{background:var(--grey);border-radius:6px;height:8px;overflow:hidden;margin-top:4px}
 .score-fill{height:100%;border-radius:6px;transition:width 600ms ease-out}
 .score-fill.high{background:var(--coral)}.score-fill.mod{background:#e89c0d}.score-fill.low{background:#10b981}
 .view-btn{background:var(--grey);border:1px solid var(--border);border-radius:var(--pill);padding:6px 14px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all 150ms}
 .view-btn:hover{background:var(--accent-muted);border-color:var(--accent)}
 
-/* ── Detail Panel ──────────────────────────────────── */
+/* Detail Panel */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,27,28,.5);z-index:200;justify-content:flex-end;backdrop-filter:blur(3px)}
 .overlay.active{display:flex}
-.panel{background:#fff;width:620px;max-width:92vw;height:100vh;overflow-y:auto;box-shadow:-4px 0 32px rgba(0,0,0,.15);animation:slideIn 300ms ease-out}
+.panel{background:#fff;width:640px;max-width:92vw;height:100vh;overflow-y:auto;box-shadow:-4px 0 32px rgba(0,0,0,.15);animation:slideIn 300ms ease-out}
 @keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
 .panel-hdr{background:var(--navy);color:#fff;padding:24px 32px;position:sticky;top:0;z-index:10}
 .panel-hdr-top{display:flex;justify-content:space-between;align-items:flex-start}
@@ -155,23 +150,15 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .panel-drug{font-size:22px;font-weight:700;font-family:'Nunito',sans-serif}
 .panel-body{padding:28px 32px}
 
-/* Gauge */
+/* SVG Gauge */
 .gauge-sec{text-align:center;margin-bottom:32px}
-.gauge-wrap{position:relative;width:180px;height:100px;margin:0 auto 12px}
-.gauge-bg,.gauge-fill{position:absolute;width:180px;height:90px;border-radius:90px 90px 0 0;overflow:hidden}
-.gauge-bg{background:var(--grey)}
-.gauge-fill{transform-origin:bottom center;transform:rotate(0deg);transition:transform 800ms ease-out}
-.gauge-fill.high{background:var(--coral)}.gauge-fill.mod{background:#e89c0d}.gauge-fill.low{background:#10b981}
-.gauge-center{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:130px;height:65px;background:#fff;border-radius:65px 65px 0 0}
-.gauge-val{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-size:32px;font-weight:800;font-family:'Nunito',sans-serif}
+.gauge-svg{display:block;margin:0 auto 8px}
 .gauge-lbl{font-size:13px;color:#6b7280;margin-top:4px}
 .conf-badge{display:inline-block;background:var(--grey);padding:4px 12px;border-radius:var(--pill);font-size:12px;color:#6b7280;margin-top:8px}
 
 /* Detail sections */
 .d-sec{margin-bottom:28px}
 .d-sec h3{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:var(--navy)}
-
-/* Info Grid */
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .info-item{background:var(--grey);border-radius:var(--sm);padding:12px 16px}
 .info-lbl{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
@@ -186,27 +173,22 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .driver-bar.risk{background:var(--coral);left:50%}
 .driver-bar.protective{background:#10b981;right:50%}
 .driver-val{font-size:12px;font-weight:700;min-width:50px;text-align:right;flex-shrink:0}
-.driver-val.risk{color:var(--coral)}
-.driver-val.protective{color:#10b981}
+.driver-val.risk{color:var(--coral)}.driver-val.protective{color:#10b981}
 
 /* Recommendations */
-.rec-item{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:var(--sm);font-size:13px;margin-bottom:6px}
-.rec-item.urgent{background:#fef2f2}
-.rec-item.high{background:#fffbeb}
-.rec-item.medium{background:#f0fdf4}
-.rec-item.low{background:var(--grey)}
+.rec-item{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border-radius:var(--sm);font-size:13px;margin-bottom:8px}
+.rec-item.urgent{background:#fef2f2}.rec-item.high{background:#fffbeb}.rec-item.medium{background:#f0fdf4}.rec-item.low{background:var(--grey)}
 .rec-icon{flex-shrink:0}
-.rec-item.urgent .rec-icon{color:var(--coral)}
-.rec-item.high .rec-icon{color:#b45309}
-.rec-item.medium .rec-icon{color:#059669}
-.rec-item.low .rec-icon{color:#6b7280}
+.rec-item.urgent .rec-icon{color:var(--coral)}.rec-item.high .rec-icon{color:#b45309}.rec-item.medium .rec-icon{color:#059669}.rec-item.low .rec-icon{color:#6b7280}
+.rec-text{font-weight:600}
+.rec-reason{font-size:12px;color:#6b7280;margin-top:4px;font-weight:400;line-height:1.5}
 
-/* ── Timeline ──────────────────────────────────────── */
+/* Timeline */
 .timeline{position:relative;padding:16px 0 16px 28px}
 .timeline::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;background:var(--border)}
 .tl-event{position:relative;margin-bottom:24px}
 .tl-event:last-child{margin-bottom:0}
-.tl-dot{position:absolute;left:-22px;top:4px;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--border)}
+.tl-dot{position:absolute;left:-22px;top:4px;width:14px;height:14px;border-radius:50%;border:3px solid #fff}
 .tl-dot.on_time{background:#10b981;box-shadow:0 0 0 2px #10b981}
 .tl-dot.early{background:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 .tl-dot.slightly_late{background:#e89c0d;box-shadow:0 0 0 2px #e89c0d}
@@ -217,67 +199,41 @@ header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top
 .tl-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .tl-fill-label{font-size:12px;font-weight:700;color:var(--navy)}
 .tl-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:var(--pill)}
-.tl-status.on_time{background:#ecfdf5;color:#059669}
-.tl-status.early{background:var(--accent-muted);color:var(--navy)}
-.tl-status.slightly_late{background:#fffbeb;color:#b45309}
-.tl-status.late{background:#fef2f2;color:var(--coral)}
-.tl-status.current{background:#e0e7ff;color:#3730a3}
+.tl-status.on_time{background:#ecfdf5;color:#059669}.tl-status.early{background:var(--accent-muted);color:var(--navy)}.tl-status.slightly_late{background:#fffbeb;color:#b45309}.tl-status.late{background:#fef2f2;color:var(--coral)}.tl-status.current{background:#e0e7ff;color:#3730a3}
 .tl-details{font-size:12px;color:#6b7280;display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
 .tl-gap{margin-top:6px;font-size:12px;font-weight:600}
-.tl-gap.positive{color:var(--coral)}
-.tl-gap.negative{color:#059669}
-.tl-gap.zero{color:#6b7280}
+.tl-gap.positive{color:var(--coral)}.tl-gap.negative{color:#059669}.tl-gap.zero{color:#6b7280}
 
-/* ── Footer ────────────────────────────────────────── */
 footer{background:#fff;border-top:1px solid var(--border);padding:28px 0;text-align:center;font-size:13px;color:#6b7280}
 footer strong{color:var(--navy)}
 
-/* ── Responsive ────────────────────────────────────── */
-@media(max-width:768px){
-  .form-grid{grid-template-columns:1fr}
-  .sum-cards{grid-template-columns:1fr 1fr}
-  .panel{width:100vw}
-  .hero{padding:40px 0}
-  .driver-label{min-width:110px;font-size:12px}
-  .info-grid{grid-template-columns:1fr}
-}
+@media(max-width:768px){.form-grid{grid-template-columns:1fr}.sum-cards{grid-template-columns:1fr 1fr}.panel{width:100vw}.hero{padding:40px 0}.driver-label{min-width:110px;font-size:12px}.info-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- ═══ HEADER ══════════════════════════════════════════════ -->
 <header>
   <div class="hdr">
-    <a href="#" class="logo" onclick="event.preventDefault()">
-      <div class="logo-sq"><span></span><span></span><span></span><span></span></div>
-      <span class="logo-txt">Pharmacy2U</span>
-    </a>
-    <div class="hdr-r">
-      <span class="hdr-badge">Adherence Risk Intelligence</span>
-      <a href="#input-section" class="hdr-nav active">Predict</a>
-      <a href="#results-section" class="hdr-nav">Results</a>
-    </div>
+    <svg class="logo-svg" viewBox="0 0 1226.57 302.38" xmlns="http://www.w3.org/2000/svg">
+      <rect fill="#00e0bc" y="139.14" width="99.67" height="99.67" rx="5.46"/>
+      <path fill="#00e0bc" d="M47.69,0h46.51c3.02,0,5.46,2.45,5.46,5.46v88.74c0,3.02-2.45,5.46-5.46,5.46H5.46c-3.02,0-5.46-2.45-5.46-5.46v-46.51C0,21.37,21.37,0,47.69,0Z"/>
+      <rect fill="#00e0bc" x="139.16" width="99.67" height="99.67" rx="5.46"/>
+      <path fill="#00e0bc" d="M144.62,139.14h88.74c3.02,0,5.46,2.45,5.46,5.46v46.51c0,26.32-21.37,47.69-47.69,47.69h-46.51c-3.02,0-5.46-2.45-5.46-5.46v-88.74c0-3.02,2.45-5.46,5.46-5.46Z"/>
+      <path fill="#005c8f" d="M398.08,276.03v20.61c0,1.76-1.43,3.19-3.19,3.19l-102.56-.02c-1.76,0-3.19-1.42-3.19-3.18,0-7.53,0-16.71,0-19.27,0-1.04.5-2,1.36-2.58,25.12-17.23,67.92-48.06,73.75-62.96,4.37-11.15-3.04-22.92-13.98-26.34-13.47-4.31-28.11,4.14-33.75,16.99-.68,1.54-2.39,2.34-3.98,1.79l-18.96-6.57c-1.74-.6-2.61-2.54-1.91-4.24,4.96-12.02,13.86-22.29,24.8-28.5,26.25-15.6,62.75-4.15,72.93,24.79,8.64,25.26-4.45,44.27-22.93,60.32-8.76,8.16-18.14,15.62-27.72,22.79h56.16c1.76,0,3.19,1.43,3.19,3.19ZM431.16,136.13v-53.96c0-14.66,8.08-22.53,20.4-22.53s19.34,7.86,19.34,22.53v53.96c0,1.77,1.44,3.21,3.21,3.21h22.91c1.77,0,3.21-1.44,3.21-3.21v-60.55c0-27.2-15.94-42.93-37.62-42.93-15.51,0-25.5,7.65-31.45,18.28V3.21c0-1.77-1.44-3.21-3.21-3.21h-22.91c-1.77,0-3.21,1.44-3.21,3.21v132.92c0,1.77,1.44,3.21,3.21,3.21h22.91c1.77,0,3.21-1.44,3.21-3.21ZM1069.89,59.86c10.02,0,17.13,5.81,20.48,9.25,1.24,1.28,3.28,1.29,4.55.03l13.45-13.34c1.15-1.15,1.28-2.97.27-4.24-4.35-5.52-17.13-18.89-40.02-18.89-31.38,0-54.6,23.56-55.02,54.62.42,31.06,23.65,54.62,55.02,54.62,22.88,0,35.65-13.37,40.01-18.89,1.01-1.28.89-3.1-.27-4.25l-13.43-13.32c-1.27-1.26-3.32-1.25-4.56.05-3.31,3.46-10.31,9.22-20.48,9.22-16.83,0-27.53-12.28-28.01-27.24,0-.12,0-.24,0-.36.48-14.95,11.19-27.24,28.01-27.24ZM1000.14,38.4v97.76c0,1.76-1.43,3.19-3.19,3.19h-20.82c-1.72,0-3.12-1.36-3.19-3.07l-.43-11.59c-7.23,10.63-18.49,17.21-34,17.21-29.33,0-49.52-23.59-49.52-54.62s20.19-54.62,49.52-54.62c15.73,0,26.99,6.38,34,17.21l.43-11.59c.06-1.71,1.47-3.07,3.19-3.07h20.82c1.76,0,3.19,1.43,3.19,3.19ZM971.02,87.27c0-16.79-10.84-27.84-26.35-27.84s-26.99,11.26-26.99,27.84,11.48,27.84,26.99,27.84,26.35-11.05,26.35-27.84ZM289.13,136.12V3.22c0-1.78,1.44-3.22,3.22-3.22h44.81c35.28,0,52.28,19.77,52.28,48.24s-17,48.45-52.28,48.45h-14.42c-1.78,0-3.22,1.44-3.22,3.22v36.21c0,1.78-1.44,3.22-3.22,3.22h-23.95c-1.78,0-3.22-1.44-3.22-3.22ZM319.52,66.49c0,1.78,1.44,3.22,3.22,3.22h13.36c12.96,0,24.23-4.46,24.23-21.46s-11.26-21.25-24.23-21.25h-13.36c-1.78,0-3.22,1.44-3.22,3.22v36.28ZM527.7,160.49h-24.03c-1.76,0-3.19,1.43-3.19,3.19v81.39c0,15.65-12.17,28.98-27.81,29.54-16.42.58-29.92-12.56-29.92-28.85v-82.08c0-1.76-1.43-3.19-3.19-3.19h-24.03c-1.76,0-3.19,1.43-3.19,3.19v80.32c0,34.97,20.09,58.39,59.27,58.39s59.27-23.42,59.27-58.39v-80.32c0-1.76-1.43-3.19-3.19-3.19ZM1223.37,35.16h-23.41c-1.35,0-2.55.84-3.01,2.11l-24.77,68.04-24.94-68.05c-.46-1.26-1.66-2.1-3.01-2.1h-23.61c-2.27,0-3.82,2.29-2.97,4.39l38.06,94.95c.31.76.31,1.61,0,2.38l-1.38,3.46c-2.31,5.83-4.66,9.91-7.05,12.23-2.38,2.32-5.67,3.48-9.86,3.48-1.88,0-3.79-.13-5.75-.4-1.23-.17-2.64-.41-4.24-.74-1.69-.34-3.35.72-3.75,2.4l-3.79,15.94c-.4,1.67.59,3.34,2.23,3.83,2.82.83,5.67,1.45,8.57,1.84,3.9.53,7.88.8,11.93.8,6.94,0,12.68-1.23,17.24-3.68,4.55-2.45,8.6-6.36,12.14-11.73,3.54-5.37,7.19-12.43,10.95-21.18l43.36-103.53c.88-2.11-.67-4.44-2.95-4.44ZM704.85,35.64c-1.89-1.46-5.1-2.98-10.24-2.98-12.33,0-18.91,8.29-22.53,19.34l-.88-13.78c-.11-1.69-1.51-3.01-3.21-3.01h-22.03c-1.78,0-3.22,1.44-3.22,3.22v97.7c0,1.78,1.44,3.22,3.22,3.22h22.9c1.78,0,3.22-1.44,3.22-3.22v-52.04c0-14.88,7.65-24.44,22.1-24.44,2.99,0,5.63.46,7.85,1.1,2.03.58,4.05-.99,4.05-3.1v-19.46c0-1-.45-1.94-1.24-2.54ZM840.9,32.66c-16.15,0-26.35,7.86-32.09,18.49-5.74-12.11-16.15-18.49-29.54-18.49-14.24,0-23.59,7.23-29.33,17l-.66-11.42c-.1-1.7-1.51-3.03-3.21-3.03h-22.03c-1.78,0-3.22,1.44-3.22,3.22v97.7c0,1.78,1.44,3.22,3.22,3.22h22.9c1.78,0,3.22-1.44,3.22-3.22v-54.59c0-14.24,6.38-21.89,17.43-21.89s16.58,7.65,16.58,21.89v54.59c0,1.78,1.44,3.22,3.22,3.22h22.89c1.78,0,3.22-1.44,3.22-3.22v-54.59c0-14.24,6.38-21.89,17.43-21.89s16.58,7.65,16.58,21.89v54.59c0,1.78,1.44,3.22,3.22,3.22h22.89c1.78,0,3.22-1.44,3.22-3.22v-60.96c0-27.2-13.6-42.5-35.92-42.5ZM624.61,38.41v97.72c0,1.77-1.44,3.21-3.21,3.21h-20.79c-1.72,0-3.14-1.36-3.2-3.09l-.43-11.58c-7.23,10.63-18.49,17.21-34,17.21-29.33,0-49.52-23.59-49.52-54.62s20.19-54.62,49.52-54.62c15.73,0,26.99,6.38,34,17.21l.43-11.58c.06-1.72,1.48-3.09,3.2-3.09h20.79c1.77,0,3.21,1.44,3.21,3.21ZM595.5,87.27c0-16.79-10.84-27.84-26.35-27.84s-26.99,11.26-26.99,27.84,11.48,27.84,26.99,27.84,26.35-11.05,26.35-27.84Z"/>
+    </svg>
   </div>
 </header>
 
-<!-- ═══ DISCLAIMER BANNER ══════════════════════════════════ -->
-<div class="disclaimer-bar">
-  <strong>Synthetic Data Demo</strong> — This is a modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.
-</div>
+<div class="disc-bar"><strong>Synthetic Data Demo</strong> — Modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.</div>
 
-<!-- ═══ HERO ════════════════════════════════════════════════ -->
 <section class="hero">
   <div class="container">
     <h1>Predict. Prevent.<br><span>Protect.</span></h1>
     <p>AI-powered late refill risk prediction for Medicare Part D beneficiaries. Identify patients at risk of medication non-adherence and intervene before they lapse.</p>
-    <a href="#input-section" class="hero-cta">
-      <span class="material-symbols-outlined">speed</span>
-      Analyse Patient Risk
-    </a>
+    <a href="#input-section" class="hero-cta"><span class="material-symbols-outlined">speed</span> Analyse Patient Risk</a>
   </div>
 </section>
 
-<!-- ═══ TRUST BAR ══════════════════════════════════════════ -->
 <section class="trust">
   <div class="container">
     <div class="trust-items">
@@ -289,35 +245,38 @@ footer strong{color:var(--navy)}
   </div>
 </section>
 
-<!-- ═══ INPUT SECTION ══════════════════════════════════════ -->
 <section class="section" id="input-section">
   <div class="container">
     <h2 class="sec-title">Patient Risk Assessment</h2>
     <p class="sec-sub">Enter patient prescription data to generate adherence risk predictions with explainable insights.</p>
-
     <div class="tab-bar">
-      <button class="tab-btn active" id="tab-btn-single" onclick="switchTab('single')">
-        <span class="material-symbols-outlined" style="font-size:18px">person</span> Single Patient
-      </button>
-      <button class="tab-btn" id="tab-btn-batch" onclick="switchTab('batch')">
-        <span class="material-symbols-outlined" style="font-size:18px">groups</span> Batch Upload
-      </button>
+      <button class="tab-btn active" id="tab-btn-single" onclick="switchTab('single')"><span class="material-symbols-outlined" style="font-size:18px">person</span> Single Patient</button>
+      <button class="tab-btn" id="tab-btn-batch" onclick="switchTab('batch')"><span class="material-symbols-outlined" style="font-size:18px">groups</span> Batch Upload</button>
     </div>
 
-    <!-- Single Patient Form -->
     <div id="tab-single" class="card">
       <div class="form-grid">
-        <div class="fg"><label>Patient ID</label><input type="text" id="f-pid" placeholder="e.g. P-10001"></div>
-        <div class="fg"><label>Drug Name</label><input type="text" id="f-drug" placeholder="e.g. Metformin 500mg"></div>
-        <div class="fg"><label>Drug NDC <span class="opt">(optional)</span></label><input type="text" id="f-ndc" placeholder="e.g. 00093-7212-01"></div>
-        <div class="fg"><label>Last Fill Date</label><input type="date" id="f-date" value="2026-03-01"></div>
-        <div class="fg"><label>Days Supply</label><input type="number" id="f-supply" value="30" min="1" max="365"></div>
-        <div class="fg"><label>Quantity Dispensed <span class="opt">(optional)</span></label><input type="number" id="f-qty" placeholder="e.g. 60"></div>
-        <div class="fg"><label>Patient Pay Amount ($) <span class="opt">(optional)</span></label><input type="number" id="f-pay" step="0.01" placeholder="e.g. 12.50"></div>
-        <div class="fg"><label>Total Drug Cost ($) <span class="opt">(optional)</span></label><input type="number" id="f-cost" step="0.01" placeholder="e.g. 45.00"></div>
-        <div class="fg"><label>Prior Refill Count <span class="opt">(optional)</span></label><input type="number" id="f-refills" placeholder="e.g. 8" min="0"></div>
+        <div class="fg"><label>Patient ID</label><input type="text" id="f-pid" placeholder="e.g. P-10001" maxlength="50"></div>
+        <div class="fg">
+          <label>Drug Name / NDC Search</label>
+          <input type="text" id="f-drug" placeholder="Type drug name to search..." autocomplete="off" maxlength="100">
+          <div class="ndc-results" id="ndc-results"></div>
+        </div>
+        <div class="fg"><label>NDC Code <span class="opt">(auto-filled or manual)</span></label><input type="text" id="f-ndc" placeholder="e.g. 00093-7212-01" maxlength="20"></div>
+        <div class="fg"><label>Drug Dose &amp; Unit <span class="opt">(optional)</span></label>
+          <div class="form-row">
+            <input type="number" id="f-dose" placeholder="e.g. 500" min="0" step="any">
+            <select id="f-unit"><option value="mg">mg</option><option value="mcg">mcg</option><option value="ml">ml</option><option value="g">g</option><option value="units">units</option><option value="puffs">puffs</option></select>
+          </div>
+        </div>
+        <div class="fg"><label>Last Fill Date</label><input type="date" id="f-date" value="2026-03-01" required></div>
+        <div class="fg"><label>Days Supply</label><input type="number" id="f-supply" value="30" min="1" max="365" required></div>
+        <div class="fg"><label>Quantity Dispensed <span class="opt">(optional)</span></label><input type="number" id="f-qty" placeholder="e.g. 60" min="0"></div>
+        <div class="fg"><label>Patient Pay Amount ($) <span class="opt">(optional)</span></label><input type="number" id="f-pay" step="0.01" placeholder="e.g. 12.50" min="0"></div>
+        <div class="fg"><label>Total Drug Cost ($) <span class="opt">(optional)</span></label><input type="number" id="f-cost" step="0.01" placeholder="e.g. 45.00" min="0"></div>
+        <div class="fg"><label>Prior Refill Count <span class="opt">(optional)</span></label><input type="number" id="f-refills" placeholder="e.g. 8" min="0" max="999"></div>
         <div class="fg"><label>Age <span class="opt">(optional)</span></label><input type="number" id="f-age" placeholder="e.g. 72" min="18" max="120"></div>
-        <div class="fg form-full"><label>Chronic Conditions <span class="opt">(optional, comma-separated)</span></label><input type="text" id="f-conds" placeholder="e.g. Diabetes, Hypertension, CHF"></div>
+        <div class="fg form-full"><label>Chronic Conditions <span class="opt">(optional, comma-separated)</span></label><input type="text" id="f-conds" placeholder="e.g. Diabetes, Hypertension, CHF" maxlength="500"></div>
       </div>
       <div class="btn-group">
         <button class="btn btn-p" onclick="submitSingle()"><span class="material-symbols-outlined" style="font-size:20px">speed</span> Analyse Risk</button>
@@ -325,17 +284,17 @@ footer strong{color:var(--navy)}
       </div>
     </div>
 
-    <!-- Batch Upload -->
     <div id="tab-batch" class="card hidden">
-      <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
         <button class="btn btn-s btn-sm" onclick="downloadTemplate()"><span class="material-symbols-outlined" style="font-size:18px">download</span> Download Template CSV</button>
         <button class="btn btn-s btn-sm" onclick="loadDemoBatch()"><span class="material-symbols-outlined" style="font-size:18px">science</span> Load Sample Data (3 patients)</button>
       </div>
-      <div class="upload-zone" id="upload-zone">
+      <div class="format-note"><strong>Supported formats:</strong> Our template format or raw CMS PDE columns (DESYNPUF_ID, SRVC_DT, PROD_SRVC_ID, etc.)</div>
+      <div class="upload-zone" id="upload-zone" style="margin-top:16px">
         <input type="file" accept=".csv" id="csv-input" onchange="handleFile(event)">
         <span class="material-symbols-outlined">cloud_upload</span>
         <p><strong>Drop your CSV file here</strong> or click to browse</p>
-        <p style="font-size:12px;margin-top:6px;color:#9ca3af">Accepts .csv files matching the template format</p>
+        <p style="font-size:12px;margin-top:6px;color:#9ca3af">Accepts .csv files — auto-detects column format</p>
         <div class="hidden" id="upload-fn" style="margin-top:12px;font-weight:600;color:var(--navy)"></div>
       </div>
       <div id="batch-preview" class="hidden" style="margin-top:20px">
@@ -354,7 +313,6 @@ footer strong{color:var(--navy)}
   </div>
 </section>
 
-<!-- ═══ PROCESSING ═════════════════════════════════════════ -->
 <section class="processing" id="proc-section">
   <div class="container">
     <div class="proc-card">
@@ -365,7 +323,6 @@ footer strong{color:var(--navy)}
   </div>
 </section>
 
-<!-- ═══ RESULTS ════════════════════════════════════════════ -->
 <section class="results" id="results-section">
   <div class="container">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:24px">
@@ -376,16 +333,10 @@ footer strong{color:var(--navy)}
       <button class="btn btn-s btn-sm" onclick="resetForm()"><span class="material-symbols-outlined" style="font-size:18px">refresh</span> New Assessment</button>
     </div>
     <div class="sum-cards" id="sum-cards"></div>
-    <div class="rt-wrap">
-      <table class="rt" id="res-table">
-        <thead><tr><th>Patient ID</th><th>Drug</th><th>Risk Score</th><th>Category</th><th>Days Overdue</th><th>Intervention</th><th></th></tr></thead>
-        <tbody id="res-body"></tbody>
-      </table>
-    </div>
+    <div class="rt-wrap"><table class="rt" id="res-table"><thead><tr><th>Patient ID</th><th>Drug</th><th>Risk Score</th><th>Category</th><th>Days Overdue</th><th>Intervention</th><th></th></tr></thead><tbody id="res-body"></tbody></table></div>
   </div>
 </section>
 
-<!-- ═══ DETAIL PANEL ═══════════════════════════════════════ -->
 <div class="overlay" id="overlay">
   <div class="panel" id="panel">
     <div class="panel-hdr">
@@ -398,7 +349,6 @@ footer strong{color:var(--navy)}
   </div>
 </div>
 
-<!-- ═══ FOOTER ═════════════════════════════════════════════ -->
 <footer>
   <div class="container">
     <p><strong>Pharmacy2U</strong> Adherence Risk Intelligence — Data &amp; AI Hackathon 2026</p>
@@ -407,511 +357,266 @@ footer strong{color:var(--navy)}
 </footer>
 
 <script>
-// ── Helpers ──────────────────────────────────────────────
-function esc(s) {
-  if (s == null) return '';
-  var d = document.createElement('div');
-  d.appendChild(document.createTextNode(String(s)));
-  return d.innerHTML;
+function esc(s){if(s==null)return'';var d=document.createElement('div');d.appendChild(document.createTextNode(String(s)));return d.innerHTML}
+function $(id){return document.getElementById(id)}
+function el(tag,attrs,children){var e=document.createElement(tag);if(attrs)Object.keys(attrs).forEach(function(k){if(k==='className')e.className=attrs[k];else if(k==='textContent')e.textContent=attrs[k];else if(k.startsWith('on'))e.addEventListener(k.slice(2),attrs[k]);else e.setAttribute(k,attrs[k])});if(children)children.forEach(function(c){if(typeof c==='string')e.appendChild(document.createTextNode(c));else if(c)e.appendChild(c)});return e}
+
+var batchPatients=[], sortedResults=[];
+
+function switchTab(t){$('tab-btn-single').classList.toggle('active',t==='single');$('tab-btn-batch').classList.toggle('active',t==='batch');$('tab-single').classList.toggle('hidden',t!=='single');$('tab-batch').classList.toggle('hidden',t!=='batch')}
+
+/* ── NDC Search ──────────────────────────────────── */
+var ndcTimer=null;
+$('f-drug').addEventListener('input',function(){
+  clearTimeout(ndcTimer);
+  var q=this.value.trim();
+  if(q.length<2){$('ndc-results').classList.remove('show');return}
+  ndcTimer=setTimeout(function(){searchNdc(q)},350);
+});
+$('f-drug').addEventListener('blur',function(){setTimeout(function(){$('ndc-results').classList.remove('show')},200)});
+
+function searchNdc(q){
+  fetch('/api/ndc-search?q='+encodeURIComponent(q))
+    .then(function(r){return r.json()})
+    .then(function(data){
+      var box=$('ndc-results');
+      box.textContent='';
+      if(!data.length){box.classList.remove('show');return}
+      data.forEach(function(d){
+        var item=el('div',{className:'ndc-item',onclick:function(){
+          $('f-drug').value=d.brand_name||d.generic_name;
+          $('f-ndc').value=d.ndc;
+          if(d.strength){
+            var m=d.strength.match(/([\d.]+)\s*(\w+)/);
+            if(m){$('f-dose').value=m[1];var opts=$('f-unit').options;for(var i=0;i<opts.length;i++)if(opts[i].value===m[2].toLowerCase()){$('f-unit').selectedIndex=i;break}}
+          }
+          box.classList.remove('show');
+        }},[
+          el('div',{className:'ndc-brand',textContent:(d.brand_name||d.generic_name)+' — '+d.dosage_form}),
+          el('div',{className:'ndc-generic',textContent:d.generic_name+(d.strength?' ('+d.strength+')':'')+(d.route?' — '+d.route:'')}),
+          el('div',{className:'ndc-code',textContent:'NDC: '+d.ndc}),
+        ]);
+        box.appendChild(item);
+      });
+      box.classList.add('show');
+    }).catch(function(){});
 }
-function $(id) { return document.getElementById(id); }
-function el(tag, attrs, children) {
-  var e = document.createElement(tag);
-  if (attrs) Object.keys(attrs).forEach(function(k) {
-    if (k === 'className') e.className = attrs[k];
-    else if (k === 'textContent') e.textContent = attrs[k];
-    else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]);
-    else e.setAttribute(k, attrs[k]);
+
+/* ── Demo Data ───────────────────────────────────── */
+function loadDemoSingle(){$('f-pid').value='P-10003';$('f-drug').value='Atorvastatin';$('f-ndc').value='00093-5057-01';$('f-dose').value='20';$('f-unit').value='mg';$('f-date').value='2026-02-05';$('f-supply').value='30';$('f-qty').value='30';$('f-pay').value='35.00';$('f-cost').value='55.00';$('f-refills').value='2';$('f-age').value='82';$('f-conds').value='Hyperlipidemia, CHF, Diabetes'}
+function loadDemoBatch(){fetch('/api/template').then(function(r){return r.text()}).then(parseCSV)}
+function downloadTemplate(){var a=document.createElement('a');a.href='/api/template';a.download='refill_risk_template.csv';a.click()}
+
+/* ── CSV ─────────────────────────────────────────── */
+function handleFile(ev){var f=ev.target.files[0];if(!f)return;$('upload-fn').textContent=f.name;$('upload-fn').classList.remove('hidden');var r=new FileReader();r.onload=function(e){parseCSV(e.target.result)};r.readAsText(f)}
+
+function parseCSV(text){
+  var lines=text.trim().split('\n');if(lines.length<2)return;
+  var headers=parseLine(lines[0]);var patients=[];
+  for(var i=1;i<lines.length;i++){var vals=parseLine(lines[i]);if(vals.length<2)continue;var obj={};headers.forEach(function(h,j){obj[h.trim()]=((vals[j]||'').trim())});patients.push(obj)}
+  batchPatients=patients;$('batch-preview').classList.remove('hidden');$('batch-count').textContent=patients.length;
+  var table=$('preview-table');table.textContent='';
+  // Detect format
+  var isPDE=headers.some(function(h){return h.trim()==='DESYNPUF_ID'});
+  var cols=isPDE?['DESYNPUF_ID','PROD_SRVC_ID','SRVC_DT','DAYS_SUPLY_NUM','PTNT_PAY_AMT']:['patient_id','drug_name','last_fill_date','days_supply','patient_pay_amt','refill_count'];
+  table.appendChild(el('thead',null,[el('tr',null,cols.map(function(c){return el('th',{textContent:c})}))]));
+  var tb=el('tbody');patients.forEach(function(p){tb.appendChild(el('tr',null,cols.map(function(c){return el('td',{textContent:p[c]||'—'})})))});
+  table.appendChild(tb);$('batch-btn').disabled=false;
+}
+
+function parseLine(line){var r=[],c='',q=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"')q=!q;else if(ch===','&&!q){r.push(c);c=''}else c+=ch}r.push(c);return r}
+
+/* ── Validation ──────────────────────────────────── */
+function validateSingle(){
+  var ok=true;
+  ['f-drug','f-date','f-supply'].forEach(function(id){
+    var inp=$(id);inp.classList.remove('invalid');
+    var err=inp.parentNode.querySelector('.err');if(err)err.remove();
   });
-  if (children) children.forEach(function(c) {
-    if (typeof c === 'string') e.appendChild(document.createTextNode(c));
-    else if (c) e.appendChild(c);
-  });
-  return e;
+  if(!$('f-drug').value.trim()){markInvalid('f-drug','Drug name is required');ok=false}
+  if(!$('f-date').value){markInvalid('f-date','Last fill date is required');ok=false}
+  var s=parseInt($('f-supply').value);
+  if(!s||s<1||s>365){markInvalid('f-supply','Must be 1-365');ok=false}
+  var pay=parseFloat($('f-pay').value);
+  if($('f-pay').value&&(isNaN(pay)||pay<0)){markInvalid('f-pay','Must be non-negative');ok=false}
+  var cost=parseFloat($('f-cost').value);
+  if($('f-cost').value&&(isNaN(cost)||cost<0)){markInvalid('f-cost','Must be non-negative');ok=false}
+  var age=parseInt($('f-age').value);
+  if($('f-age').value&&(isNaN(age)||age<18||age>120)){markInvalid('f-age','Must be 18-120');ok=false}
+  return ok;
 }
+function markInvalid(id,msg){var inp=$(id);inp.classList.add('invalid');var e=el('div',{className:'err',textContent:msg});inp.parentNode.appendChild(e)}
 
-var batchPatients = [];
-var sortedResults = [];
-
-// ── Tabs ─────────────────────────────────────────────────
-function switchTab(t) {
-  $('tab-btn-single').classList.toggle('active', t === 'single');
-  $('tab-btn-batch').classList.toggle('active', t === 'batch');
-  $('tab-single').classList.toggle('hidden', t !== 'single');
-  $('tab-batch').classList.toggle('hidden', t !== 'batch');
-}
-
-// ── Demo Data ────────────────────────────────────────────
-function loadDemoSingle() {
-  $('f-pid').value = 'P-10003';
-  $('f-drug').value = 'Atorvastatin 20mg';
-  $('f-ndc').value = '00093-5057-01';
-  $('f-date').value = '2026-02-05';
-  $('f-supply').value = '30';
-  $('f-qty').value = '30';
-  $('f-pay').value = '35.00';
-  $('f-cost').value = '55.00';
-  $('f-refills').value = '2';
-  $('f-age').value = '82';
-  $('f-conds').value = 'Hyperlipidemia, CHF, Diabetes';
-}
-
-function loadDemoBatch() {
-  fetch('/api/template').then(function(r){return r.text()}).then(parseCSV);
-}
-
-function downloadTemplate() {
-  var a = document.createElement('a');
-  a.href = '/api/template';
-  a.download = 'refill_risk_template.csv';
-  a.click();
-}
-
-// ── CSV ──────────────────────────────────────────────────
-function handleFile(ev) {
-  var f = ev.target.files[0];
-  if (!f) return;
-  $('upload-fn').textContent = f.name;
-  $('upload-fn').classList.remove('hidden');
-  var reader = new FileReader();
-  reader.onload = function(e) { parseCSV(e.target.result); };
-  reader.readAsText(f);
-}
-
-function parseCSV(text) {
-  var lines = text.trim().split('\n');
-  if (lines.length < 2) return;
-  var headers = parseLine(lines[0]);
-  var patients = [];
-  for (var i = 1; i < lines.length; i++) {
-    var vals = parseLine(lines[i]);
-    if (vals.length < 2) continue;
-    var obj = {};
-    headers.forEach(function(h, j) { obj[h.trim()] = (vals[j] || '').trim(); });
-    patients.push(obj);
-  }
-  batchPatients = patients;
-  $('batch-preview').classList.remove('hidden');
-  $('batch-count').textContent = patients.length;
-  // Build preview table using DOM
-  var table = $('preview-table');
-  table.textContent = '';
-  var cols = ['patient_id','drug_name','last_fill_date','days_supply','patient_pay_amt','refill_count'];
-  var thead = el('thead', null, [el('tr', null, cols.map(function(c){return el('th',{textContent:c})}))]);
-  var tbody = el('tbody');
-  patients.forEach(function(p) {
-    tbody.appendChild(el('tr', null, cols.map(function(c){return el('td',{textContent:p[c]||'—'})})));
-  });
-  table.appendChild(thead);
-  table.appendChild(tbody);
-  $('batch-btn').disabled = false;
-}
-
-function parseLine(line) {
-  var result = [], cur = '', inQ = false;
-  for (var i = 0; i < line.length; i++) {
-    var ch = line[i];
-    if (ch === '"') inQ = !inQ;
-    else if (ch === ',' && !inQ) { result.push(cur); cur = ''; }
-    else cur += ch;
-  }
-  result.push(cur);
-  return result;
-}
-
-// ── Submit ───────────────────────────────────────────────
-function submitSingle() {
-  var patient = {
-    patient_id: $('f-pid').value || 'P-UNKNOWN',
-    drug_name: $('f-drug').value,
-    drug_ndc: $('f-ndc').value,
-    last_fill_date: $('f-date').value,
-    days_supply: $('f-supply').value,
-    quantity_dispensed: $('f-qty').value,
-    patient_pay_amt: $('f-pay').value,
-    total_drug_cost: $('f-cost').value,
-    refill_count: $('f-refills').value,
-    age: $('f-age').value,
-    chronic_conditions: $('f-conds').value,
-  };
-  if (!patient.drug_name || !patient.last_fill_date) {
-    alert('Please fill in at least Drug Name and Last Fill Date.');
-    return;
-  }
+/* ── Submit ──────────────────────────────────────── */
+function submitSingle(){
+  if(!validateSingle())return;
+  var patient={patient_id:$('f-pid').value||'P-UNKNOWN',drug_name:$('f-drug').value,drug_ndc:$('f-ndc').value,drug_dose:$('f-dose').value,drug_unit:$('f-unit').value,last_fill_date:$('f-date').value,days_supply:$('f-supply').value,quantity_dispensed:$('f-qty').value,patient_pay_amt:$('f-pay').value,total_drug_cost:$('f-cost').value,refill_count:$('f-refills').value,age:$('f-age').value,chronic_conditions:$('f-conds').value};
   runPrediction([patient]);
 }
+function submitBatch(){if(batchPatients.length===0)return;runPrediction(batchPatients)}
 
-function submitBatch() {
-  if (batchPatients.length === 0) return;
-  runPrediction(batchPatients);
-}
+/* ── Progress ────────────────────────────────────── */
+var STEPS=['Validating input data...','Loading patient records...','Preprocessing temporal features...','Computing refill gap statistics...','Extracting cost & polypharmacy signals...','Running LightGBM prediction...','Calibrating probability scores (Platt scaling)...','Computing SHAP feature contributions...','Generating clinical recommendations...','Compiling report...'];
 
-// ── Progress Steps ───────────────────────────────────────
-var STEPS = [
-  'Validating input data...',
-  'Loading patient records...',
-  'Preprocessing temporal features...',
-  'Computing refill gap statistics...',
-  'Extracting cost & polypharmacy signals...',
-  'Running LightGBM prediction...',
-  'Calibrating probability scores (Platt scaling)...',
-  'Computing SHAP feature contributions...',
-  'Generating clinical recommendations...',
-  'Compiling report...',
-];
+async function runPrediction(patients){
+  var proc=$('proc-section'),res=$('results-section');
+  proc.classList.add('active');res.classList.remove('active');
+  proc.scrollIntoView({behavior:'smooth',block:'start'});
+  var stepsEl=$('prog-steps');stepsEl.textContent='';
+  STEPS.forEach(function(s,i){stepsEl.appendChild(el('div',{className:'prog-step',id:'step-'+i},[el('span',{className:'material-symbols-outlined',textContent:'radio_button_unchecked',style:'font-size:18px'}),document.createTextNode(' '+s)]))});
+  var bar=$('prog-bar');bar.style.width='0%';
 
-async function runPrediction(patients) {
-  var proc = $('proc-section');
-  var res = $('results-section');
-  proc.classList.add('active');
-  res.classList.remove('active');
-  proc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  var response=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({patients:patients})});
+  if(!response.ok){var errData=await response.json().catch(function(){return{error:'Unknown error'}});alert('Error: '+errData.error);proc.classList.remove('active');return}
 
-  // Build step list using DOM
-  var stepsEl = $('prog-steps');
-  stepsEl.textContent = '';
-  STEPS.forEach(function(s, i) {
-    var icon = el('span', { className: 'material-symbols-outlined', textContent: 'radio_button_unchecked', style: 'font-size:18px' });
-    var step = el('div', { className: 'prog-step', id: 'step-' + i }, [icon, document.createTextNode(' ' + s)]);
-    stepsEl.appendChild(step);
-  });
-
-  var bar = $('prog-bar');
-  bar.style.width = '0%';
-
-  // Fetch with streaming
-  var response = await fetch('/api/predict', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ patients: patients }),
-  });
-
-  var reader = response.body.getReader();
-  var decoder = new TextDecoder();
-  var buffer = '';
-  var resultData = null;
-
-  while (true) {
-    var chunk = await reader.read();
-    if (chunk.done) break;
-    buffer += decoder.decode(chunk.value, { stream: true });
-    var parts = buffer.split('\n\n');
-    buffer = parts.pop();
-    for (var p = 0; p < parts.length; p++) {
-      var part = parts[p];
-      if (!part.startsWith('data: ')) continue;
-      try {
-        var data = JSON.parse(part.slice(6));
-        if (data.type === 'progress') {
-          bar.style.width = data.progress + '%';
-          // Update step indicators
-          for (var si = 0; si < STEPS.length; si++) {
-            var stepEl = $('step-' + si);
-            if (!stepEl) continue;
-            if (data.message === 'Complete' || STEPS.indexOf(data.message) > si) {
-              stepEl.className = 'prog-step done';
-              stepEl.textContent = '';
-              stepEl.appendChild(el('span', { className: 'material-symbols-outlined', textContent: 'check_circle', style: 'font-size:18px' }));
-              stepEl.appendChild(document.createTextNode(' ' + STEPS[si]));
-            } else if (data.message === STEPS[si]) {
-              stepEl.className = 'prog-step active';
-              stepEl.textContent = '';
-              stepEl.appendChild(el('div', { className: 'spinner' }));
-              stepEl.appendChild(document.createTextNode(' ' + STEPS[si]));
-            }
+  var reader=response.body.getReader(),decoder=new TextDecoder(),buffer='',resultData=null;
+  while(true){
+    var chunk=await reader.read();if(chunk.done)break;
+    buffer+=decoder.decode(chunk.value,{stream:true});
+    var parts=buffer.split('\n\n');buffer=parts.pop();
+    for(var p=0;p<parts.length;p++){
+      if(!parts[p].startsWith('data: '))continue;
+      try{
+        var data=JSON.parse(parts[p].slice(6));
+        if(data.type==='progress'){
+          bar.style.width=data.progress+'%';
+          for(var si=0;si<STEPS.length;si++){
+            var stepEl=$('step-'+si);if(!stepEl)continue;
+            if(data.message==='Complete'||STEPS.indexOf(data.message)>si){stepEl.className='prog-step done';stepEl.textContent='';stepEl.appendChild(el('span',{className:'material-symbols-outlined',textContent:'check_circle',style:'font-size:18px'}));stepEl.appendChild(document.createTextNode(' '+STEPS[si]))}
+            else if(data.message===STEPS[si]){stepEl.className='prog-step active';stepEl.textContent='';stepEl.appendChild(el('div',{className:'spinner'}));stepEl.appendChild(document.createTextNode(' '+STEPS[si]))}
           }
         }
-        if (data.type === 'result') resultData = data;
-      } catch(e) {}
+        if(data.type==='result')resultData=data;
+      }catch(e){}
     }
   }
-
-  // Mark all done
-  for (var si = 0; si < STEPS.length; si++) {
-    var stepEl = $('step-' + si);
-    if (!stepEl) continue;
-    stepEl.className = 'prog-step done';
-    stepEl.textContent = '';
-    stepEl.appendChild(el('span', { className: 'material-symbols-outlined', textContent: 'check_circle', style: 'font-size:18px' }));
-    stepEl.appendChild(document.createTextNode(' ' + STEPS[si]));
-  }
-  bar.style.width = '100%';
+  for(var si=0;si<STEPS.length;si++){var stepEl=$('step-'+si);if(!stepEl)continue;stepEl.className='prog-step done';stepEl.textContent='';stepEl.appendChild(el('span',{className:'material-symbols-outlined',textContent:'check_circle',style:'font-size:18px'}));stepEl.appendChild(document.createTextNode(' '+STEPS[si]))}
+  bar.style.width='100%';
   await new Promise(function(r){setTimeout(r,500)});
-
-  if (resultData) renderResults(resultData);
+  if(resultData)renderResults(resultData);
 }
 
-// ── Render Results ───────────────────────────────────────
-function renderResults(data) {
-  $('proc-section').classList.remove('active');
-  $('results-section').classList.add('active');
-  $('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+/* ── Results ─────────────────────────────────────── */
+function renderResults(data){
+  $('proc-section').classList.remove('active');$('results-section').classList.add('active');
+  $('results-section').scrollIntoView({behavior:'smooth',block:'start'});
+  $('res-model').textContent=data.model_version;$('res-time').textContent=data.processing_time_ms.toLocaleString();
+  var s=data.summary,cards=$('sum-cards');cards.textContent='';
+  [['total',s.total_patients,'Total Patients'],['high',s.high_risk,'High Risk'],['mod',s.moderate_risk,'Moderate Risk'],['low',s.low_risk,'Low Risk']].forEach(function(c){cards.appendChild(el('div',{className:'sum-card '+c[0]},[el('div',{className:'val',textContent:String(c[1])}),el('div',{className:'lbl',textContent:c[2]})]))});
+  cards.appendChild(el('div',{className:'sum-card avg'},[el('div',{className:'val',textContent:(s.avg_risk_score*100).toFixed(1)+'%'}),el('div',{className:'lbl',textContent:'Avg Risk Score'})]));
 
-  $('res-model').textContent = data.model_version;
-  $('res-time').textContent = data.processing_time_ms.toLocaleString();
-
-  // Summary cards using DOM
-  var s = data.summary;
-  var cards = $('sum-cards');
-  cards.textContent = '';
-  [
-    ['total', s.total_patients, 'Total Patients'],
-    ['high', s.high_risk, 'High Risk'],
-    ['mod', s.moderate_risk, 'Moderate Risk'],
-    ['low', s.low_risk, 'Low Risk'],
-  ].forEach(function(c) {
-    var card = el('div', { className: 'sum-card ' + c[0] }, [
-      el('div', { className: 'val', textContent: String(c[1]) }),
-      el('div', { className: 'lbl', textContent: c[2] }),
-    ]);
-    cards.appendChild(card);
-  });
-  var avgCard = el('div', { className: 'sum-card avg' }, [
-    el('div', { className: 'val', textContent: (s.avg_risk_score * 100).toFixed(1) + '%' }),
-    el('div', { className: 'lbl', textContent: 'Avg Risk Score' }),
-  ]);
-  cards.appendChild(avgCard);
-
-  // Sort: HIGH first
-  var order = { HIGH: 0, MODERATE: 1, LOW: 2 };
-  sortedResults = data.predictions.slice().sort(function(a, b) {
-    return (order[a.risk_category] - order[b.risk_category]) || (b.risk_score - a.risk_score);
-  });
-
-  // Table using DOM
-  var tbody = $('res-body');
-  tbody.textContent = '';
-  sortedResults.forEach(function(p, idx) {
-    var cat = p.risk_category === 'MODERATE' ? 'mod' : p.risk_category.toLowerCase();
-    var pct = (p.risk_score * 100).toFixed(1);
-
-    var tr = el('tr', { onclick: function() { openDetail(idx); } });
-
-    tr.appendChild(el('td', null, [el('strong', { textContent: esc(p.patient_id) })]));
-    tr.appendChild(el('td', { textContent: esc(p.drug_name) }));
-
-    // Score cell
-    var scoreCell = el('td');
-    var indicator = el('div', { style: 'display:flex;align-items:center;gap:8px' }, [
-      el('span', { className: 'risk-dot ' + cat }),
-      el('span', { style: 'font-size:13px;font-weight:700', textContent: pct + '%' }),
-    ]);
-    var track = el('div', { className: 'score-track' });
-    var fill = el('div', { className: 'score-fill ' + cat, style: 'width:' + pct + '%' });
-    track.appendChild(fill);
-    scoreCell.appendChild(indicator);
-    scoreCell.appendChild(track);
-    tr.appendChild(scoreCell);
-
-    tr.appendChild(el('td', null, [el('span', { className: 'risk-badge ' + cat, textContent: p.risk_category })]));
-    tr.appendChild(el('td', { textContent: p.days_overdue > 0 ? p.days_overdue + ' days' : '—' }));
-    tr.appendChild(el('td', { textContent: p.intervention_window, style: 'font-size:13px' }));
-
-    var viewBtn = el('button', {
-      className: 'view-btn',
-      onclick: function(e) { e.stopPropagation(); openDetail(idx); }
-    }, [
-      el('span', { className: 'material-symbols-outlined', textContent: 'chevron_right', style: 'font-size:16px' }),
-      document.createTextNode('View'),
-    ]);
-    tr.appendChild(el('td', null, [viewBtn]));
-
+  var order={HIGH:0,MODERATE:1,LOW:2};
+  sortedResults=data.predictions.slice().sort(function(a,b){return(order[a.risk_category]-order[b.risk_category])||(b.risk_score-a.risk_score)});
+  var tbody=$('res-body');tbody.textContent='';
+  sortedResults.forEach(function(p,idx){
+    var cat=p.risk_category==='MODERATE'?'mod':p.risk_category.toLowerCase();
+    var pct=(p.risk_score*100).toFixed(1);
+    var tr=el('tr',{onclick:function(){openDetail(idx)}});
+    tr.appendChild(el('td',null,[el('strong',{textContent:p.patient_id})]));
+    tr.appendChild(el('td',{textContent:p.drug_name}));
+    var sc=el('td');var ind=el('div',{style:'display:flex;align-items:center;gap:8px'},[el('span',{className:'risk-dot '+cat}),el('span',{style:'font-size:13px;font-weight:700',textContent:pct+'%'})]);var tk=el('div',{className:'score-track'});tk.appendChild(el('div',{className:'score-fill '+cat,style:'width:'+pct+'%'}));sc.appendChild(ind);sc.appendChild(tk);tr.appendChild(sc);
+    tr.appendChild(el('td',null,[el('span',{className:'risk-badge '+cat,textContent:p.risk_category})]));
+    tr.appendChild(el('td',{textContent:p.days_overdue>0?p.days_overdue+' days':'—'}));
+    tr.appendChild(el('td',{textContent:p.intervention_window,style:'font-size:13px'}));
+    tr.appendChild(el('td',null,[el('button',{className:'view-btn',onclick:function(e){e.stopPropagation();openDetail(idx)}},[el('span',{className:'material-symbols-outlined',textContent:'chevron_right',style:'font-size:16px'}),document.createTextNode('View')])]));
     tbody.appendChild(tr);
   });
 }
 
-// ── Detail Panel ─────────────────────────────────────────
-function openDetail(idx) {
-  var p = sortedResults[idx];
-  if (!p) return;
-  var cat = p.risk_category === 'MODERATE' ? 'mod' : p.risk_category.toLowerCase();
-  var pct = (p.risk_score * 100).toFixed(1);
+/* ── Detail Panel ────────────────────────────────── */
+function openDetail(idx){
+  var p=sortedResults[idx];if(!p)return;
+  var cat=p.risk_category==='MODERATE'?'mod':p.risk_category.toLowerCase();
+  var pct=(p.risk_score*100).toFixed(1);
+  $('d-pid').textContent=p.patient_id;$('d-drug').textContent=p.drug_name;
+  var body=$('panel-body');body.textContent='';
 
-  $('d-pid').textContent = p.patient_id;
-  $('d-drug').textContent = p.drug_name;
+  // SVG Gauge
+  var gs=el('div',{className:'gauge-sec'});
+  var arcLen=157.08;var offset=arcLen*(1-p.risk_score);
+  var colors={high:'#e8423a',mod:'#e89c0d',low:'#10b981'};
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 120 75');svg.setAttribute('width','220');svg.setAttribute('class','gauge-svg');
+  var bgArc=document.createElementNS('http://www.w3.org/2000/svg','path');
+  bgArc.setAttribute('d','M 10 65 A 50 50 0 0 1 110 65');bgArc.setAttribute('fill','none');bgArc.setAttribute('stroke','#f0f0f0');bgArc.setAttribute('stroke-width','12');bgArc.setAttribute('stroke-linecap','round');
+  var fillArc=document.createElementNS('http://www.w3.org/2000/svg','path');
+  fillArc.setAttribute('d','M 10 65 A 50 50 0 0 1 110 65');fillArc.setAttribute('fill','none');fillArc.setAttribute('stroke',colors[cat]);fillArc.setAttribute('stroke-width','12');fillArc.setAttribute('stroke-linecap','round');fillArc.setAttribute('stroke-dasharray',String(arcLen));fillArc.setAttribute('stroke-dashoffset',String(arcLen));
+  var valText=document.createElementNS('http://www.w3.org/2000/svg','text');
+  valText.setAttribute('x','60');valText.setAttribute('y','60');valText.setAttribute('text-anchor','middle');valText.setAttribute('font-size','28');valText.setAttribute('font-weight','800');valText.setAttribute('font-family','Nunito,sans-serif');valText.setAttribute('fill',colors[cat]);valText.textContent=pct+'%';
+  svg.appendChild(bgArc);svg.appendChild(fillArc);svg.appendChild(valText);gs.appendChild(svg);
+  gs.appendChild(el('div',null,[el('span',{className:'risk-badge '+cat,textContent:p.risk_category+' RISK',style:'font-size:13px;padding:6px 18px'})]));
+  gs.appendChild(el('div',{className:'gauge-lbl',textContent:'Late Refill Risk Score'}));
+  gs.appendChild(el('div',{className:'conf-badge',textContent:'Model confidence: '+(p.confidence*100).toFixed(1)+'%'}));
+  body.appendChild(gs);
+  setTimeout(function(){fillArc.setAttribute('stroke-dashoffset',String(offset))},50);
+  fillArc.style.transition='stroke-dashoffset 800ms ease-out';
 
-  // Build panel body using DOM
-  var body = $('panel-body');
-  body.textContent = '';
+  // Patient Summary
+  var infoSec=el('div',{className:'d-sec'});infoSec.appendChild(el('h3',null,[el('span',{className:'material-symbols-outlined',textContent:'info',style:'font-size:20px'}),document.createTextNode(' Patient Summary')]));
+  var grid=el('div',{className:'info-grid'});
+  var items=[['Last Fill',p.last_fill_date||'—'],['Days Supply',p.days_supply+' days'],['Next Expected Refill',p.next_expected_refill],['Days Overdue',p.days_overdue>0?p.days_overdue+' days':'On track'],['Patient Copay','$'+p.patient_pay_amt.toFixed(2)],['Total Drug Cost','$'+p.total_drug_cost.toFixed(2)]];
+  if(p.age)items.push(['Age',p.age+'y']);if(p.chronic_conditions.length)items.push(['Conditions',p.chronic_conditions.join(', ')]);
+  items.forEach(function(it){var d=el('div',{className:'info-item'},[el('div',{className:'info-lbl',textContent:it[0]}),el('div',{className:'info-val',textContent:it[1]})]);if(it[0]==='Days Overdue')d.querySelector('.info-val').style.color=p.days_overdue>0?'var(--coral)':'#059669';grid.appendChild(d)});
+  infoSec.appendChild(grid);body.appendChild(infoSec);
 
-  // ── Gauge Section ──
-  var gaugeSec = el('div', { className: 'gauge-sec' });
-  var gaugeWrap = el('div', { className: 'gauge-wrap' });
-  gaugeWrap.appendChild(el('div', { className: 'gauge-bg' }));
-  var gFill = el('div', { className: 'gauge-fill ' + cat, id: 'd-gauge' });
-  gaugeWrap.appendChild(gFill);
-  gaugeWrap.appendChild(el('div', { className: 'gauge-center' }));
-  var gVal = el('div', { className: 'gauge-val', textContent: pct + '%' });
-  gVal.style.color = cat === 'high' ? 'var(--coral)' : cat === 'mod' ? '#b45309' : '#059669';
-  gaugeWrap.appendChild(gVal);
-  gaugeSec.appendChild(gaugeWrap);
-  gaugeSec.appendChild(el('div', null, [el('span', { className: 'risk-badge ' + cat, textContent: p.risk_category + ' RISK', style: 'font-size:13px;padding:6px 18px' })]));
-  gaugeSec.appendChild(el('div', { className: 'gauge-lbl', textContent: 'Late Refill Risk Score' }));
-  gaugeSec.appendChild(el('div', { className: 'conf-badge', textContent: 'Model confidence: ' + (p.confidence * 100).toFixed(1) + '%' }));
-  body.appendChild(gaugeSec);
-
-  // Animate gauge after append
-  setTimeout(function() { gFill.style.transform = 'rotate(' + (p.risk_score * 180) + 'deg)'; }, 50);
-
-  // ── Patient Summary ──
-  var infoSec = el('div', { className: 'd-sec' });
-  infoSec.appendChild(el('h3', null, [el('span', { className: 'material-symbols-outlined', textContent: 'info', style: 'font-size:20px' }), document.createTextNode(' Patient Summary')]));
-  var grid = el('div', { className: 'info-grid' });
-
-  var infoItems = [
-    ['Last Fill', p.last_fill_date || '—'],
-    ['Days Supply', p.days_supply + ' days'],
-    ['Next Expected Refill', p.next_expected_refill],
-    ['Days Overdue', p.days_overdue > 0 ? p.days_overdue + ' days' : 'On track'],
-    ['Patient Copay', '$' + p.patient_pay_amt.toFixed(2)],
-    ['Total Drug Cost', '$' + p.total_drug_cost.toFixed(2)],
-  ];
-  if (p.age) infoItems.push(['Age', p.age + 'y']);
-  if (p.chronic_conditions.length) infoItems.push(['Conditions', p.chronic_conditions.join(', ')]);
-
-  infoItems.forEach(function(item) {
-    var div = el('div', { className: 'info-item' }, [
-      el('div', { className: 'info-lbl', textContent: item[0] }),
-      el('div', { className: 'info-val', textContent: item[1] }),
-    ]);
-    if (item[0] === 'Days Overdue') {
-      div.querySelector('.info-val').style.color = p.days_overdue > 0 ? 'var(--coral)' : '#059669';
-    }
-    grid.appendChild(div);
-  });
-  infoSec.appendChild(grid);
-  body.appendChild(infoSec);
-
-  // ── Timeline ──
-  if (p.timeline && p.timeline.length > 0) {
-    var tlSec = el('div', { className: 'd-sec' });
-    tlSec.appendChild(el('h3', null, [el('span', { className: 'material-symbols-outlined', textContent: 'timeline', style: 'font-size:20px' }), document.createTextNode(' Prescription Timeline')]));
-    var tl = el('div', { className: 'timeline' });
-
-    p.timeline.forEach(function(ev) {
-      var event = el('div', { className: 'tl-event' });
-      event.appendChild(el('div', { className: 'tl-dot ' + ev.status }));
-
-      var card = el('div', { className: 'tl-card' });
-      var header = el('div', { className: 'tl-header' });
-      header.appendChild(el('span', { className: 'tl-fill-label', textContent: 'Fill #' + ev.fill_number + ' — ' + ev.fill_date }));
-
-      var statusLabels = { on_time: 'On Time', early: 'Early', slightly_late: 'Slight Delay', late: 'Late', current: 'Current' };
-      header.appendChild(el('span', { className: 'tl-status ' + ev.status, textContent: statusLabels[ev.status] || ev.status }));
-      card.appendChild(header);
-
-      var details = el('div', { className: 'tl-details' });
-      details.appendChild(el('span', { textContent: 'Supply: ' + p.days_supply + ' days' }));
-      details.appendChild(el('span', { textContent: 'Run-out: ' + ev.run_out_date }));
-
-      if (ev.next_fill_date) {
-        details.appendChild(el('span', { textContent: 'Next fill: ' + ev.next_fill_date }));
-      } else {
-        var awaiting = el('span', { textContent: p.days_overdue > 0 ? 'Overdue — awaiting refill' : 'Awaiting next fill' });
-        awaiting.style.color = p.days_overdue > 0 ? 'var(--coral)' : 'var(--navy)';
-        awaiting.style.fontWeight = '600';
-        details.appendChild(awaiting);
-      }
-      card.appendChild(details);
-
-      if (ev.gap_days !== null) {
-        var gapClass = ev.gap_days > 7 ? 'positive' : ev.gap_days > 0 ? 'positive' : ev.gap_days < 0 ? 'negative' : 'zero';
-        var gapText = ev.gap_days > 0 ? '+' + ev.gap_days + ' day' + (ev.gap_days !== 1 ? 's' : '') + ' gap after run-out'
-          : ev.gap_days < 0 ? Math.abs(ev.gap_days) + ' day' + (Math.abs(ev.gap_days) !== 1 ? 's' : '') + ' early refill'
-          : 'Refilled on run-out date';
-        card.appendChild(el('div', { className: 'tl-gap ' + gapClass, textContent: gapText }));
-      }
-
-      event.appendChild(card);
-      tl.appendChild(event);
+  // Timeline
+  if(p.timeline&&p.timeline.length){
+    var tlSec=el('div',{className:'d-sec'});tlSec.appendChild(el('h3',null,[el('span',{className:'material-symbols-outlined',textContent:'timeline',style:'font-size:20px'}),document.createTextNode(' Prescription Timeline')]));
+    var tl=el('div',{className:'timeline'});
+    var statusLabels={on_time:'On Time',early:'Early',slightly_late:'Slight Delay',late:'Late',current:'Current'};
+    p.timeline.forEach(function(ev){
+      var event=el('div',{className:'tl-event'});event.appendChild(el('div',{className:'tl-dot '+ev.status}));
+      var card=el('div',{className:'tl-card'});
+      var hdr=el('div',{className:'tl-header'});hdr.appendChild(el('span',{className:'tl-fill-label',textContent:'Fill #'+ev.fill_number+' — '+ev.fill_date}));hdr.appendChild(el('span',{className:'tl-status '+ev.status,textContent:statusLabels[ev.status]||ev.status}));card.appendChild(hdr);
+      var det=el('div',{className:'tl-details'});det.appendChild(el('span',{textContent:'Supply: '+p.days_supply+' days'}));det.appendChild(el('span',{textContent:'Run-out: '+ev.run_out_date}));
+      if(ev.next_fill_date){det.appendChild(el('span',{textContent:'Next fill: '+ev.next_fill_date}))}else{var aw=el('span',{textContent:p.days_overdue>0?'Overdue — awaiting refill':'Awaiting next fill'});aw.style.color=p.days_overdue>0?'var(--coral)':'var(--navy)';aw.style.fontWeight='600';det.appendChild(aw)}
+      card.appendChild(det);
+      if(ev.gap_days!==null){var gc=ev.gap_days>0?'positive':ev.gap_days<0?'negative':'zero';var gt=ev.gap_days>0?'+'+ev.gap_days+' day'+(ev.gap_days!==1?'s':'')+' gap after run-out':ev.gap_days<0?Math.abs(ev.gap_days)+' day'+(Math.abs(ev.gap_days)!==1?'s':'')+' early refill':'Refilled on run-out date';card.appendChild(el('div',{className:'tl-gap '+gc,textContent:gt}))}
+      event.appendChild(card);tl.appendChild(event);
     });
-    tlSec.appendChild(tl);
-    body.appendChild(tlSec);
+    tlSec.appendChild(tl);body.appendChild(tlSec);
   }
 
-  // ── Drivers (SHAP) ──
-  var drvSec = el('div', { className: 'd-sec' });
-  drvSec.appendChild(el('h3', null, [el('span', { className: 'material-symbols-outlined', textContent: 'analytics', style: 'font-size:20px' }), document.createTextNode(' Risk Drivers (SHAP)')]));
-  var drvList = el('div');
-  var maxImp = Math.max.apply(null, p.drivers.map(function(d) { return Math.abs(d.impact); }).concat([0.01]));
-
-  p.drivers.forEach(function(d) {
-    var barWidth = (Math.abs(d.impact) / maxImp) * 45;
-    var row = el('div', { className: 'driver-row' });
-    row.appendChild(el('div', { className: 'driver-label', textContent: d.feature }));
-    var wrap = el('div', { className: 'driver-bar-wrap' });
-    wrap.appendChild(el('div', { className: 'driver-center' }));
-    var bar = el('div', { className: 'driver-bar ' + d.direction });
-    bar.style.width = barWidth + '%';
-    wrap.appendChild(bar);
-    row.appendChild(wrap);
-    var sign = d.direction === 'risk' ? '+' : '';
-    row.appendChild(el('div', { className: 'driver-val ' + d.direction, textContent: sign + (d.impact * 100).toFixed(1) + '%' }));
-    drvList.appendChild(row);
+  // Drivers
+  var drvSec=el('div',{className:'d-sec'});drvSec.appendChild(el('h3',null,[el('span',{className:'material-symbols-outlined',textContent:'analytics',style:'font-size:20px'}),document.createTextNode(' Risk Drivers (SHAP)')]));
+  var maxImp=Math.max.apply(null,p.drivers.map(function(d){return Math.abs(d.impact)}).concat([0.01]));
+  p.drivers.forEach(function(d){
+    var bw=(Math.abs(d.impact)/maxImp)*45;var row=el('div',{className:'driver-row'});row.appendChild(el('div',{className:'driver-label',textContent:d.feature}));
+    var wrap=el('div',{className:'driver-bar-wrap'});wrap.appendChild(el('div',{className:'driver-center'}));var b=el('div',{className:'driver-bar '+d.direction});b.style.width=bw+'%';wrap.appendChild(b);row.appendChild(wrap);
+    row.appendChild(el('div',{className:'driver-val '+d.direction,textContent:(d.direction==='risk'?'+':'')+(d.impact*100).toFixed(1)+'%'}));
+    drvSec.appendChild(row);
   });
-  drvSec.appendChild(drvList);
   body.appendChild(drvSec);
 
-  // ── Recommendations ──
-  var recSec = el('div', { className: 'd-sec' });
-  recSec.appendChild(el('h3', null, [el('span', { className: 'material-symbols-outlined', textContent: 'checklist', style: 'font-size:20px' }), document.createTextNode(' Recommended Actions')]));
-  var recIcons = { urgent: 'error', high: 'warning', medium: 'info', low: 'check_circle' };
-  p.recommendations.forEach(function(r) {
-    var item = el('div', { className: 'rec-item ' + r.priority }, [
-      el('span', { className: 'material-symbols-outlined rec-icon', textContent: recIcons[r.priority], style: 'font-size:20px' }),
-      el('span', { textContent: r.text }),
-    ]);
-    recSec.appendChild(item);
+  // Recommendations with reasoning
+  var recSec=el('div',{className:'d-sec'});recSec.appendChild(el('h3',null,[el('span',{className:'material-symbols-outlined',textContent:'checklist',style:'font-size:20px'}),document.createTextNode(' Recommended Actions')]));
+  var recIcons={urgent:'error',high:'warning',medium:'info',low:'check_circle'};
+  p.recommendations.forEach(function(r){
+    var content=[el('span',{className:'material-symbols-outlined rec-icon',textContent:recIcons[r.priority],style:'font-size:20px'})];
+    var textWrap=el('div');
+    textWrap.appendChild(el('div',{className:'rec-text',textContent:r.text}));
+    if(r.reason)textWrap.appendChild(el('div',{className:'rec-reason',textContent:r.reason}));
+    content.push(textWrap);
+    recSec.appendChild(el('div',{className:'rec-item '+r.priority},content));
   });
   body.appendChild(recSec);
 
-  // ── Disclaimer ──
-  var disc = el('div', { style: 'background:#fffbeb;border-radius:var(--sm);padding:12px 16px;font-size:12px;color:#92400e;margin-top:8px' }, [
-    el('strong', { textContent: 'Disclaimer: ' }),
-    document.createTextNode('Risk scores generated from synthetic CMS DE-SynPUF data. Not clinical advice. For demonstration purposes only.'),
-  ]);
-  body.appendChild(disc);
+  body.appendChild(el('div',{style:'background:#fffbeb;border-radius:var(--sm);padding:12px 16px;font-size:12px;color:#92400e;margin-top:8px'},[el('strong',{textContent:'Disclaimer: '}),document.createTextNode('Risk scores generated from synthetic CMS DE-SynPUF data. Not clinical advice. For demonstration purposes only.')]));
 
-  $('overlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
+  $('overlay').classList.add('active');document.body.style.overflow='hidden';
 }
 
-function closePanel() {
-  $('overlay').classList.remove('active');
-  document.body.style.overflow = '';
-}
+function closePanel(){$('overlay').classList.remove('active');document.body.style.overflow=''}
+$('overlay').addEventListener('click',function(e){if(e.target===$('overlay'))closePanel()});
+$('close-btn').addEventListener('click',closePanel);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanel()});
 
-$('overlay').addEventListener('click', function(e) { if (e.target === $('overlay')) closePanel(); });
-$('close-btn').addEventListener('click', closePanel);
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePanel(); });
+function resetForm(){$('results-section').classList.remove('active');$('proc-section').classList.remove('active');$('input-section').scrollIntoView({behavior:'smooth'});sortedResults=[]}
 
-// ── Reset ────────────────────────────────────────────────
-function resetForm() {
-  $('results-section').classList.remove('active');
-  $('proc-section').classList.remove('active');
-  $('input-section').scrollIntoView({ behavior: 'smooth' });
-  sortedResults = [];
-}
-
-// ── Drag & Drop ──────────────────────────────────────────
-var zone = $('upload-zone');
-['dragenter','dragover'].forEach(function(e) {
-  zone.addEventListener(e, function(ev) { ev.preventDefault(); zone.classList.add('dragover'); });
-});
-['dragleave','drop'].forEach(function(e) {
-  zone.addEventListener(e, function(ev) { ev.preventDefault(); zone.classList.remove('dragover'); });
-});
-zone.addEventListener('drop', function(ev) {
-  var file = ev.dataTransfer.files[0];
-  if (file && file.name.endsWith('.csv')) {
-    $('csv-input').files = ev.dataTransfer.files;
-    $('upload-fn').textContent = file.name;
-    $('upload-fn').classList.remove('hidden');
-    var reader = new FileReader();
-    reader.onload = function(e) { parseCSV(e.target.result); };
-    reader.readAsText(file);
-  }
-});
+var zone=$('upload-zone');
+['dragenter','dragover'].forEach(function(e){zone.addEventListener(e,function(ev){ev.preventDefault();zone.classList.add('dragover')})});
+['dragleave','drop'].forEach(function(e){zone.addEventListener(e,function(ev){ev.preventDefault();zone.classList.remove('dragover')})});
+zone.addEventListener('drop',function(ev){var file=ev.dataTransfer.files[0];if(file&&file.name.endsWith('.csv')){$('csv-input').files=ev.dataTransfer.files;$('upload-fn').textContent=file.name;$('upload-fn').classList.remove('hidden');var r=new FileReader();r.onload=function(e){parseCSV(e.target.result)};r.readAsText(file)}});
 </script>
 </body>
 </html>
