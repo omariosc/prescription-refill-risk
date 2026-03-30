@@ -13,7 +13,7 @@
     "setup": "npm run db:migrate && npm run db:seed",
     "build:frontend": "cd frontend && npm run build",
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:local": "concurrently --names \"worker,react\" --prefix-colors \"cyan,magenta\" \"wrangler dev\" \"cd frontend && npm run dev\""
+    "dev:local": "concurrently --names \"worker,react\" --prefix-colors \"cyan,magenta\" \"wrangler dev\" \"npm --prefix frontend run dev\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
