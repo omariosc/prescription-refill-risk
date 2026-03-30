@@ -121,8 +121,9 @@ async function handlePredict(request) {
         ['Preprocessing temporal features...', 22, 500],
         ['Computing refill gap statistics...', 35, 600],
         ['Extracting cost & polypharmacy signals...', 48, 400],
-        ['Running LightGBM prediction...', 62, 800],
-        ['Calibrating probability scores (Platt scaling)...', 75, 500],
+        ['Running LightGBM prediction...', 58, 800],
+        ['Computing MAPIE conformal prediction intervals...', 68, 500],
+        ['Calibrating probability scores (Platt scaling)...', 76, 500],
         ['Computing SHAP feature contributions...', 85, 600],
         ['Generating clinical recommendations...', 92, 300],
         ['Compiling report...', 97, 200],
@@ -283,6 +284,14 @@ function generatePrediction(patient) {
     risk_score: r3(score),
     risk_category: cat,
     confidence: r3(conf),
+    prediction_interval: { lower: piLower, upper: piUpper, confidence_level: 0.90 },
+    uncertain,
+    tier_info: {
+      actual_late_rate: tierInfo.actual_late_rate,
+      description: tierInfo.description,
+      action: tierInfo.action,
+      population_share: tierInfo.population_share,
+    },
     drivers,
     recommendations: buildRecs(cat, pay, refills, overdue, drivers, score),
     last_fill_date: patient.last_fill_date || '',
@@ -308,7 +317,7 @@ function buildRecs(cat, pay, refills, overdue, drivers, score) {
   if (cat === 'HIGH') {
     r.push({
       priority: 'urgent', text: 'Immediate pharmacist outreach recommended',
-      reason: 'Risk score of ' + (score * 100).toFixed(1) + '% exceeds high-risk threshold (65%). Top driver: ' + topDriverDesc + '.',
+      reason: 'Risk score of ' + (score * 100).toFixed(1) + '% places this patient in the HIGH tier (≥55%). In our validation data, 76% of patients at this level actually refilled late. Top driver: ' + topDriverDesc + '.',
     });
     if (overdue > 7) r.push({
       priority: 'urgent', text: 'Patient likely has medication gap — assess clinical impact',
@@ -329,7 +338,7 @@ function buildRecs(cat, pay, refills, overdue, drivers, score) {
   } else if (cat === 'MODERATE') {
     r.push({
       priority: 'medium', text: 'Schedule proactive reminder 5 days before next run-out',
-      reason: 'Risk score of ' + (score * 100).toFixed(1) + '% indicates moderate non-adherence risk. Early outreach shifts behaviour before the gap occurs.',
+      reason: 'Risk score of ' + (score * 100).toFixed(1) + '% places this patient in the MODERATE tier (30–55%). In our validation data, 61% of patients at this level actually refilled late — close to the population average. An automated reminder is cost-effective.',
     });
     if (pay > 15) r.push({
       priority: 'medium', text: 'Discuss cost management options at next contact',
@@ -342,7 +351,7 @@ function buildRecs(cat, pay, refills, overdue, drivers, score) {
   } else {
     r.push({
       priority: 'low', text: 'Continue standard refill reminders',
-      reason: 'Risk score of ' + (score * 100).toFixed(1) + '% is below the intervention threshold. Standard protocols are sufficient.',
+      reason: 'Risk score of ' + (score * 100).toFixed(1) + '% places this patient in the LOW tier (<30%). In our validation data, only 40% of patients at this level actually refilled late — well below the population average (59%). Standard monitoring is sufficient.',
     });
     r.push({
       priority: 'low', text: 'Low-touch monitoring sufficient',
