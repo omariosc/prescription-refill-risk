@@ -723,3 +723,506 @@ White background cards with:
 7. **Teal as hero accent** — `#00e0bc` is the single most distinctive brand colour
 8. **Material Symbols for all icons** — no custom SVG icons in UI chrome
 9. **Dashboard uses sidebar layout** — authenticated pages shift to 2-col layout
+
+---
+
+## Mobile App Theme
+
+> Documented from the Pharmacy2U iOS/Android app (screenshots: NHS Prescriptions page + Order Tracking page). Uses the same brand tokens — colours, icons, fonts — as the web, adapted for a native-feeling mobile UI.
+
+### App Page Structure
+
+```
+┌──────────────────────────────────┐
+│  HEADER (fixed)                  │
+│  [home]  [P2U Logo]  [🛒][👤]   │
+├──────────────────────────────────┤
+│  PAGE CONTENT (scrollable)       │
+│  ┌──────────────────────────────┐│
+│  │  Patient selector card       ││
+│  └──────────────────────────────┘│
+│  ┌──────────────────────────────┐│
+│  │  Content card                ││
+│  └──────────────────────────────┘│
+│  ...                             │
+├──────────────────────────────────┤
+│  BOTTOM NAV BAR (fixed)          │
+│  [Rx]  [Shop]  [Doctor]  [More]  │
+└──────────────────────────────────┘
+```
+
+### App Colour Additions
+
+These supplement the core palette for app-specific components:
+
+| Token | Hex | Usage |
+|---|---|---|
+| `--app-bg` | `#f0f2f5` | Page background (light blue-grey) |
+| `--app-card-bg` | `#ffffff` | All content cards |
+| `--app-pill-bg` | `#c5ffec` | Category badge background (mint) |
+| `--app-pill-text` | `#005c8f` | Category badge text (dark teal) |
+| `--app-btn-find` | `#84daff` | "Find medication" CTA (light blue) |
+| `--app-btn-text` | `#003052` | Button label on light-blue buttons |
+| `--app-progress-done` | `#00e0bc` | Completed step: circle fill + line |
+| `--app-progress-todo` | `#d1d5db` | Pending step: circle + line (grey) |
+| `--app-border-accent` | `#00e0bc` | Notification card left border |
+| `--app-icon-accent` | `#00e0bc` | Icon colour on teal notification cards |
+| `--app-icon-muted` | `#6b7280` | Inactive tab icon colour |
+| `--app-tab-active` | `#005c8f` | Active tab icon + label colour |
+| `--app-tab-indicator` | `#00e0bc` | Active tab underline bar |
+
+---
+
+### App Header
+
+```
+┌──────────────────────────────────┐
+│ [home_outlined]  [P2U Logo]  [shopping_basket] [person] │
+└──────────────────────────────────┘
+```
+
+```css
+.app-header {
+  background-color: #ffffff;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid #e5e7eb;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.app-header .logo {
+  /* Centred P2U SVG logo — same as web */
+  height: 24px;
+}
+
+.app-header .icon-btn {
+  color: #001b1c;
+  font-size: 24px;   /* Material Symbol size */
+  background: none;
+  border: none;
+  padding: 8px;
+}
+```
+
+**Icons used:** `home` (left), `shopping_basket` + `person` (right)
+Font: Material Symbols Outlined
+
+---
+
+### Bottom Navigation Bar
+
+4 fixed tabs: **Prescriptions** (active), Shop, Online Doctor, More.
+
+```
+┌────────────────────────────────────────┐
+│ ── active indicator (teal 2px bar)     │
+│  [Rx icon]    [shop]  [doctor]  [more] │
+│ Prescriptions  Shop  Online Dr   More  │
+└────────────────────────────────────────┘
+```
+
+```css
+.app-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: stretch;
+}
+
+.app-nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: Inter;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;           /* inactive */
+  text-decoration: none;
+  position: relative;
+  padding-top: 4px;
+}
+
+.app-nav-tab.active {
+  color: #005c8f;           /* active tab label + icon */
+}
+
+/* Active indicator bar at top of tab */
+.app-nav-tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background-color: #00e0bc;
+  border-radius: 0 0 2px 2px;
+}
+
+.app-nav-tab .material-symbols-outlined {
+  font-size: 24px;
+}
+```
+
+**Tab labels & icons:**
+
+| Tab | Icon | Notes |
+|---|---|---|
+| Prescriptions | `medication` | Active — real page |
+| Shop | `storefront` | Dummy button |
+| Online Doctor | `medical_services` | Dummy button |
+| More | `more_horiz` | Dummy button |
+
+---
+
+### Patient Selector Card
+
+Dropdown card shown at top of NHS Prescriptions screen, allowing switch between linked patients.
+
+```
+┌──────────────────────────────────────┐
+│  [person icon]  John Smith           │
+│                 NHS No: 123 456 7890 │
+│                                 [v]  │
+└──────────────────────────────────────┘
+```
+
+```css
+.patient-selector {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.patient-selector .patient-icon {
+  color: #005c8f;
+  font-size: 28px;
+}
+
+.patient-selector .patient-name {
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 600;
+  color: #001b1c;
+}
+
+.patient-selector .patient-nhs {
+  font-family: Inter;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.patient-selector .chevron {
+  margin-left: auto;
+  color: #6b7280;
+  font-size: 20px;
+}
+```
+
+**Icons:** `person` (left), `expand_more` (right chevron) — Material Symbols Outlined
+
+---
+
+### Category / Status Pill Badge
+
+Used on order cards and headers to identify service category. Based on `#c5ffec` (mint) background with `#005c8f` text. Can be colour-coded per service.
+
+```
+[ NHS PRESCRIPTIONS ]   ← mint bg, teal text
+[ ONLINE DOCTOR     ]   ← pink/rose variant
+[ SHOP              ]   ← amber variant
+```
+
+```css
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 99px;        /* fully pill-shaped */
+  font-family: Inter;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* NHS Prescriptions — mint */
+.category-pill.prescriptions {
+  background-color: #c5ffec;
+  color: #005c8f;
+}
+
+/* Online Doctor — rose/pink (estimated) */
+.category-pill.online-doctor {
+  background-color: #fce7f3;
+  color: #9d174d;
+}
+
+/* Shop — amber (estimated) */
+.category-pill.shop {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+```
+
+---
+
+### Content Card (app generic)
+
+White rounded card on grey page background. Used for prescription items, order summaries, CTA rows.
+
+```css
+.app-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 0 16px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.app-card .card-title {
+  font-family: Nunito, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #001b1c;
+  margin-bottom: 4px;
+}
+
+.app-card .card-subtitle {
+  font-family: Inter;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+```
+
+---
+
+### "Find Medication" CTA Button
+
+Full-width, light blue, pill-shaped button with a leading `add_box` icon. Used as the primary action on the NHS Prescriptions page.
+
+```css
+.btn-find-medication {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background-color: #84daff;
+  color: #003052;
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 99px;
+  padding: 14px 20px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.btn-find-medication .material-symbols-outlined {
+  font-size: 22px;
+}
+```
+
+**Icon:** `add_box` — Material Symbols Outlined
+
+---
+
+### Order Tracking Progress Tracker
+
+Horizontal step-tracker showing prescription order milestones. Completed steps use teal; pending steps use grey.
+
+```
+●────●────●────○────○
+Rx   ✓   ✓   Dispensing  Delivery
+```
+
+```css
+.progress-tracker {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  gap: 0;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+}
+
+/* Connecting line before each step (except first) */
+.progress-step + .progress-step::before {
+  content: '';
+  position: absolute;
+  left: -50%;
+  right: 50%;
+  top: 10px;
+  height: 2px;
+  background-color: #d1d5db;  /* grey default */
+}
+
+.progress-step.done + .progress-step::before {
+  background-color: #00e0bc;   /* teal when prev step done */
+}
+
+/* Step circle */
+.progress-step .dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background-color: #ffffff;
+  z-index: 1;
+}
+
+.progress-step.done .dot {
+  background-color: #00e0bc;
+  border-color: #00e0bc;
+  /* Optionally: white check icon inside */
+}
+
+.progress-step .step-label {
+  font-family: Inter;
+  font-size: 10px;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.progress-step.done .step-label {
+  color: #005c8f;
+  font-weight: 600;
+}
+```
+
+**Typical steps:** Prescription received → Ordered → Dispensing → Out for delivery → Delivered
+
+---
+
+### Status Notification Card
+
+Teal left-accent card for important order status messages (e.g. "Your prescription is being processed"). Also used for alerts and action-required notices.
+
+```
+┌──────────────────────────────────────────┐
+│ ║  [teal box icon]  Title here           │
+│ ║  Supporting body text in grey          │
+└──────────────────────────────────────────┘
+  ↑ 3px teal left border
+```
+
+```css
+.status-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border-left: 3px solid #00e0bc;
+  padding: 14px 16px;
+  margin: 0 16px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.status-card .status-icon {
+  color: #00e0bc;
+  font-size: 24px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.status-card .status-title {
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 700;
+  color: #001b1c;
+  margin-bottom: 4px;
+}
+
+.status-card .status-body {
+  font-family: Inter;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+```
+
+**Icon used:** `inventory_2` or `inbox` — Material Symbols Outlined, teal coloured
+
+---
+
+### App Icon Usage Summary
+
+All icons use **Material Symbols Outlined** at 24px, same as web:
+
+| Context | Icon name |
+|---|---|
+| Home (header left) | `home` |
+| Basket (header right) | `shopping_basket` |
+| Account (header right) | `person` |
+| Prescriptions tab | `medication` |
+| Shop tab | `storefront` |
+| Online Doctor tab | `medical_services` |
+| More tab | `more_horiz` |
+| Patient selector left | `person` |
+| Chevron/dropdown | `expand_more` |
+| Find medication CTA | `add_box` |
+| Status notification | `inventory_2` |
+| Prescription icon on card | `description` or `assignment` |
+
+---
+
+### App Typography Scale
+
+Inherits web fonts. Mobile-specific sizes:
+
+| Element | Size | Weight | Font |
+|---|---|---|---|
+| Page heading (H1) | 20–22px | 700 | Nunito |
+| Card title | 15–16px | 700 | Nunito |
+| Body / description | 13–14px | 400 | Inter |
+| Tab label | 11px | 500 | Inter |
+| Category pill | 11px | 700 | Inter |
+| Step label | 10px | 500 | Inter |
+| NHS / account sub-text | 12px | 400 | Inter |
+
+---
+
+### App Spacing
+
+| Context | Value |
+|---|---|
+| Page horizontal padding | 16px |
+| Card border-radius | 12–16px |
+| Card margin-bottom | 12px |
+| Header height | 56px |
+| Bottom nav height | 64px |
+| Card internal padding | 14–16px |
+| Button vertical padding | 14px |
+| Icon size | 24px |
+| Progress dot size | 20px |
