@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refill Risk API — Docs</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 239 239'%3E%3Crect fill='%2300e0bc' y='139' width='100' height='100' rx='5'/%3E%3Cpath fill='%2300e0bc' d='M48,0h46c3,0,6,2,6,5v89c0,3-2,5-6,5H5c-3,0-5-2-5-5V48C0,21,21,0,48,0Z'/%3E%3Crect fill='%2300e0bc' x='139' width='100' height='100' rx='5'/%3E%3Cpath fill='%2300e0bc' d='M145,139h89c3,0,5,2,5,5v47c0,26-21,48-48,48h-46c-3,0-6-2-6-6V145c0-3,3-6,6-6Z'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6;-webkit-font-smoothing:antialiased}
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--accent:#00e0bc;--accent-dim:#003d33;--text:#c9d1d9;--text-muted:#8b949e;--heading:#f0f6fc;--green:#3fb950;--red:#f85149;--yellow:#d29922;--blue:#58a6ff;--purple:#bc8cff;--mono:'JetBrains Mono',monospace;--max-w:920px}
+code,pre,.mono{font-family:var(--mono)}
+h1,h2,h3{font-family:'Nunito',sans-serif;color:var(--heading)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:50}
+.topbar-inner{max-width:var(--max-w);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar h1{font-size:18px;display:flex;align-items:center;gap:10px}
+.topbar h1 span{color:var(--accent);font-family:var(--mono);font-size:14px;background:var(--accent-dim);padding:2px 8px;border-radius:4px}
+.topbar-links{display:flex;gap:16px;font-size:13px}
+.topbar-links a{color:var(--text-muted)}
+.topbar-links a:hover{color:var(--accent)}
+.wrap{max-width:var(--max-w);margin:0 auto;padding:32px 24px 80px}
+.nav{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-bottom:32px}
+.nav h2{font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;font-size:14px;font-weight:500;transition:background 150ms}
+.nav-item:hover{background:rgba(0,224,188,.08);text-decoration:none}
+.nav-item .method{font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 6px;border-radius:3px;min-width:40px;text-align:center}
+.method.post{background:#1f3d2e;color:var(--green)}
+.method.get{background:#1f2d3d;color:var(--blue)}
+.endpoint{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:24px;overflow:hidden}
+.ep-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ep-header .method{font-family:var(--mono);font-size:13px;font-weight:700;padding:4px 10px;border-radius:4px}
+.ep-header .path{font-family:var(--mono);font-size:15px;color:var(--heading);font-weight:500}
+.ep-header .desc{font-size:13px;color:var(--text-muted);flex-basis:100%;margin-top:4px}
+.ep-body{padding:20px 24px}
+.ep-body h3{font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;font-family:'Inter',sans-serif}
+.ep-body h3:first-child{margin-top:0}
+.terminal{background:#010409;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:8px 0 16px}
+.term-bar{background:#161b22;padding:6px 12px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.term-bar .dots{display:flex;gap:5px}
+.term-bar .dot{width:10px;height:10px;border-radius:50%}
+.term-bar .dot.r{background:#f85149}.dot.y{background:#d29922}.dot.g{background:#3fb950}
+.term-body{padding:16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--text);max-height:500px;overflow-y:auto}
+.run-btn{background:var(--accent);color:#0d1117;border:none;padding:8px 18px;border-radius:6px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:8px 0;transition:opacity 150ms}
+.run-btn:hover{opacity:.85}
+.run-btn:disabled{opacity:.5;cursor:not-allowed}
+.run-btn .material-symbols-outlined{font-size:16px}
+.fields{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:13px}
+.fields th{text-align:left;padding:8px 12px;color:var(--text-muted);font-weight:600;border-bottom:1px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
+.fields td{padding:8px 12px;border-bottom:1px solid rgba(48,54,61,.5);vertical-align:top}
+.fields .fname{font-family:var(--mono);color:var(--blue);font-size:12px}
+.fields .ftype{font-family:var(--mono);color:var(--purple);font-size:11px}
+.fields .freq{color:var(--red);font-size:11px;font-weight:600}
+.fields .fopt{color:var(--text-muted);font-size:11px}
+.tier-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 16px}
+.tier-card{padding:14px 16px;border-radius:6px;border:1px solid var(--border)}
+.tier-card.high{border-color:#f8514950;background:#f8514910}
+.tier-card.mod{border-color:#d2992250;background:#d2992210}
+.tier-card.low{border-color:#3fb95050;background:#3fb95010}
+.tier-card h4{font-family:var(--mono);font-size:14px;margin-bottom:6px}
+.tier-card.high h4{color:var(--red)}.tier-card.mod h4{color:var(--yellow)}.tier-card.low h4{color:var(--green)}
+.tier-card p{font-size:12px;color:var(--text-muted);line-height:1.5}
+.tier-card .rate{font-family:var(--mono);font-size:18px;font-weight:700;margin:4px 0}
+.tier-card.high .rate{color:var(--red)}.tier-card.mod .rate{color:var(--yellow)}.tier-card.low .rate{color:var(--green)}
+.info-box{background:rgba(0,224,188,.06);border:1px solid rgba(0,224,188,.2);border-radius:6px;padding:14px 18px;margin:12px 0;font-size:13px;line-height:1.6;color:var(--text)}
+.info-box strong{color:var(--accent)}
+.foot{text-align:center;padding:32px 0;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:48px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <h1>Refill Risk API <span>v1.2.0</span></h1>
+    <div class="topbar-links">
+      <a href="/">Demo UI</a>
+      <a href="https://github.com/omariosc/prescription-refill-risk" target="_blank">GitHub</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="nav">
+  <h2>Endpoints</h2>
+  <div class="nav-grid">
+    <a href="#predict" class="nav-item"><span class="method post">POST</span> /api/predict</a>
+    <a href="#template" class="nav-item"><span class="method get">GET</span> /api/template</a>
+    <a href="#ndc-search" class="nav-item"><span class="method get">GET</span> /api/ndc-search</a>
+  </div>
+</div>
+
+<!-- Risk Tiers -->
+<div class="endpoint" style="border-color:var(--accent)">
+  <div class="ep-header" style="border-bottom-color:var(--accent)">
+    <span class="path" style="color:var(--accent)">Risk Tier Reference</span>
+    <span class="desc">Calibrated from 180,158 test fills. Boundaries: LOW &lt;0.30 | MODERATE 0.30&ndash;0.55 | HIGH &ge;0.55</span>
+  </div>
+  <div class="ep-body">
+    <div class="tier-cards">
+      <div class="tier-card high">
+        <h4>HIGH &ge; 0.55</h4>
+        <div class="rate">76% actual late rate</div>
+        <p>Proactive pharmacist outreach before expected run-out. 33.8% of patients fall here.</p>
+      </div>
+      <div class="tier-card mod">
+        <h4>MODERATE 0.30&ndash;0.55</h4>
+        <div class="rate">61% actual late rate</div>
+        <p>Automated reminder (SMS/email/app) at expected run-out. 33.8% of patients.</p>
+      </div>
+      <div class="tier-card low">
+        <h4>LOW &lt; 0.30</h4>
+        <div class="rate">40% actual late rate</div>
+        <p>Standard monitoring. Below population average (59%). 32.4% of patients.</p>
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>Prediction intervals</strong> (90% conformal, MAPIE-inspired) are returned for each prediction. When the interval spans multiple tiers, the <code>uncertain</code> flag is set &mdash; the tier assignment should be reviewed by a clinician rather than acted on automatically.
+    </div>
+  </div>
+</div>
+
+<!-- POST /api/predict -->
+<div class="endpoint" id="predict">
+  <div class="ep-header">
+    <span class="method post">POST</span>
+    <span class="path">/api/predict</span>
+    <span class="desc">Submit patient data and receive risk predictions via Server-Sent Events (SSE)</span>
+  </div>
+  <div class="ep-body">
+    <h3>Request Body</h3>
+    <table class="fields">
+      <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fname">patients</td><td class="ftype">array</td><td class="freq">required</td><td>Array of patient objects (max 500)</td></tr>
+        <tr><td class="fname">patients[].patient_id</td><td class="ftype">string</td><td class="fopt">optional</td><td>Patient identifier</td></tr>
+        <tr><td class="fname">patients[].drug_name</td><td class="ftype">string</td><td class="fopt">optional</td><td>Drug name (brand or generic)</td></tr>
+        <tr><td class="fname">patients[].drug_ndc</td><td class="ftype">string</td><td class="fopt">optional</td><td>NDC-11 code (or PROD_SRVC_ID)</td></tr>
+        <tr><td class="fname">patients[].last_fill_date</td><td class="ftype">string</td><td class="freq">required</td><td>YYYY-MM-DD or YYYYMMDD</td></tr>
+        <tr><td class="fname">patients[].days_supply</td><td class="ftype">integer</td><td class="freq">required</td><td>1&ndash;365</td></tr>
+        <tr><td class="fname">patients[].quantity_dispensed</td><td class="ftype">number</td><td class="fopt">optional</td><td>Units dispensed</td></tr>
+        <tr><td class="fname">patients[].patient_pay_amt</td><td class="ftype">number</td><td class="fopt">optional</td><td>Patient copay ($)</td></tr>
+        <tr><td class="fname">patients[].total_drug_cost</td><td class="ftype">number</td><td class="fopt">optional</td><td>Total drug cost ($)</td></tr>
+        <tr><td class="fname">patients[].refill_count</td><td class="ftype">integer</td><td class="fopt">optional</td><td>Prior refill count</td></tr>
+        <tr><td class="fname">patients[].age</td><td class="ftype">integer</td><td class="fopt">optional</td><td>Patient age (18&ndash;120)</td></tr>
+        <tr><td class="fname">patients[].chronic_conditions</td><td class="ftype">string</td><td class="fopt">optional</td><td>Comma-separated conditions</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Also accepts CMS PDE column names: DESYNPUF_ID, PROD_SRVC_ID, SRVC_DT, DAYS_SUPLY_NUM, QTY_DSPNSD_NUM, PTNT_PAY_AMT, TOT_RX_CST_AMT</p>
+
+    <h3>Try it</h3>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> request</div>
+      <div class="term-body" id="req-display"></div>
+    </div>
+    <button class="run-btn" id="run-predict" onclick="runPredict()">
+      <span class="material-symbols-outlined">play_arrow</span> Run request
+    </button>
+    <button class="run-btn" style="background:var(--border);color:var(--text)" onclick="loadBatchDemo()">
+      <span class="material-symbols-outlined">group</span> Load 3-patient batch
+    </button>
+
+    <h3>Response (SSE stream)</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Events: <code>progress</code> (11 steps) then <code>result</code> with full predictions</p>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-predict"></div>
+    </div>
+
+    <h3>Response Fields (per prediction)</h3>
+    <table class="fields">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fname">risk_score</td><td class="ftype">number</td><td>0&ndash;1 probability of late refill</td></tr>
+        <tr><td class="fname">risk_category</td><td class="ftype">string</td><td>HIGH | MODERATE | LOW</td></tr>
+        <tr><td class="fname">prediction_interval</td><td class="ftype">object</td><td>{ lower, upper, confidence_level: 0.90 }</td></tr>
+        <tr><td class="fname">uncertain</td><td class="ftype">boolean</td><td>true if interval spans multiple tiers</td></tr>
+        <tr><td class="fname">tier_info</td><td class="ftype">object</td><td>{ actual_late_rate, description, action, population_share }</td></tr>
+        <tr><td class="fname">confidence</td><td class="ftype">number</td><td>Model confidence (0.65&ndash;0.97, penalised for missing fields)</td></tr>
+        <tr><td class="fname">drivers</td><td class="ftype">array</td><td>SHAP-inspired feature impacts: { feature, impact, direction }</td></tr>
+        <tr><td class="fname">recommendations</td><td class="ftype">array</td><td>Clinical actions: { priority, text, reason }</td></tr>
+        <tr><td class="fname">timeline</td><td class="ftype">array</td><td>Fill history: { fill_date, run_out_date, gap_days, status }</td></tr>
+        <tr><td class="fname">next_expected_refill</td><td class="ftype">string</td><td>YYYY-MM-DD</td></tr>
+        <tr><td class="fname">days_overdue</td><td class="ftype">integer</td><td>Days past expected run-out (0 if on track)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- GET /api/template -->
+<div class="endpoint" id="template">
+  <div class="ep-header">
+    <span class="method get">GET</span>
+    <span class="path">/api/template</span>
+    <span class="desc">Download a CSV template with 3 example patients for batch upload</span>
+  </div>
+  <div class="ep-body">
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> request</div>
+      <div class="term-body">$ curl -O /api/template</div>
+    </div>
+    <button class="run-btn" onclick="runTemplate()">
+      <span class="material-symbols-outlined">download</span> Download CSV
+    </button>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-template"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GET /api/ndc-search -->
+<div class="endpoint" id="ndc-search">
+  <div class="ep-header">
+    <span class="method get">GET</span>
+    <span class="path">/api/ndc-search?q={query}</span>
+    <span class="desc">Search drugs by name via openFDA &mdash; returns NDC codes, brand/generic names, dosage info</span>
+  </div>
+  <div class="ep-body">
+    <h3>Parameters</h3>
+    <table class="fields">
+      <thead><tr><th>Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fname">q</td><td class="ftype">string</td><td class="freq">required</td><td>Drug name to search (min 2 chars). Proxied to openFDA.</td></tr>
+      </tbody>
+    </table>
+    <h3>Try it</h3>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <input type="text" id="ndc-q" value="metformin" placeholder="Drug name..." style="font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;width:240px">
+      <button class="run-btn" onclick="runNdc()" style="margin:0">
+        <span class="material-symbols-outlined">search</span> Search
+      </button>
+    </div>
+    <div class="terminal">
+      <div class="term-bar"><div class="dots"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div></div> response</div>
+      <div class="term-body" id="resp-ndc"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Model Info -->
+<div class="endpoint">
+  <div class="ep-header">
+    <span class="path">Model Information</span>
+    <span class="desc">LightGBM binary classifier trained on CMS DE-SynPUF synthetic Medicare data (2008&ndash;2010)</span>
+  </div>
+  <div class="ep-body">
+    <table class="fields">
+      <thead><tr><th>Property</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td class="fname">model</td><td>LightGBM (141 trees, max_depth=7, 63 leaves)</td></tr>
+        <tr><td class="fname">features</td><td>67 features across 5 groups (PDE, beneficiary, inpatient, outpatient, carrier)</td></tr>
+        <tr><td class="fname">training_data</td><td>1,045,574 labelled fills (2008 to mid-2009)</td></tr>
+        <tr><td class="fname">validation_pr_auc</td><td>0.856 (baseline: 0.722)</td></tr>
+        <tr><td class="fname">test_pr_auc</td><td>0.737 (baseline: 0.590)</td></tr>
+        <tr><td class="fname">test_roc_auc</td><td>0.688</td></tr>
+        <tr><td class="fname">uncertainty</td><td>MAPIE conformal prediction intervals (90% coverage)</td></tr>
+        <tr><td class="fname">explainability</td><td>SHAP TreeExplainer feature contributions</td></tr>
+        <tr><td class="fname">calibration</td><td>Over-confident by ~20% mid-range; tiers defined by actual late rates</td></tr>
+        <tr><td class="fname">top_features</td><td>std_gap_same_drug (35%), current_days_supply (21%), mean_gap_same_drug (16%)</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box" style="margin-top:16px">
+      <strong>Disclaimer:</strong> This API uses synthetic CMS DE-SynPUF data. Outputs are for modelling and product-thinking purposes only. Not clinical advice. All thresholds require re-derivation on real dispensing data.
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  Prescription Refill Risk API &mdash; Data &amp; AI Hackathon, University of Leeds 2026 &mdash; Pharmacy2U
+</div>
+</div>
+
+<script>
+// Safe text rendering - all output uses textContent or createTextNode, not innerHTML
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.appendChild(document.createTextNode(String(s)));
+  return d.textContent;
+}
+
+function formatJson(obj, indent) {
+  return JSON.stringify(obj, null, 2);
+}
+
+var DEMO_SINGLE = {
+  patients: [{
+    patient_id: "P-10003", drug_name: "Atorvastatin", drug_ndc: "00093-5057-01",
+    last_fill_date: "2026-02-05", days_supply: 30, patient_pay_amt: 35.00,
+    total_drug_cost: 55.00, refill_count: 2, age: 82,
+    chronic_conditions: "Hyperlipidemia, CHF, Diabetes"
+  }]
+};
+var DEMO_BATCH = {
+  patients: [
+    { patient_id: "P-10001", drug_name: "Levothyroxine", drug_ndc: "00093-4382-01", last_fill_date: "2026-03-20", days_supply: 90, quantity_dispensed: 90, drug_dose: "50", drug_unit: "mcg", patient_pay_amt: 4.00, total_drug_cost: 18.00, refill_count: 24, age: 68, chronic_conditions: "Hypothyroidism" },
+    { patient_id: "P-10002", drug_name: "Metformin", drug_ndc: "00093-7212-01", last_fill_date: "2026-02-18", days_supply: 30, quantity_dispensed: 60, drug_dose: "500", drug_unit: "mg", patient_pay_amt: 30.00, total_drug_cost: 85.00, refill_count: 3, age: 76, chronic_conditions: "Diabetes, Hypertension" },
+    { patient_id: "P-10003", drug_name: "Atorvastatin", drug_ndc: "00093-5057-01", last_fill_date: "2026-02-05", days_supply: 30, quantity_dispensed: 30, drug_dose: "20", drug_unit: "mg", patient_pay_amt: 35.00, total_drug_cost: 55.00, refill_count: 2, age: 82, chronic_conditions: "Hyperlipidemia, CHF, Diabetes" }
+  ]
+};
+
+var currentPayload = DEMO_SINGLE;
+
+function setTermText(id, text) {
+  document.getElementById(id).textContent = text;
+}
+
+function appendTermText(id, text) {
+  document.getElementById(id).textContent += text;
+}
+
+function renderRequest() {
+  var curl = '$ curl -X POST /api/predict \\\n  -H "Content-Type: application/json" \\\n  -d \'' + JSON.stringify(currentPayload, null, 2) + '\'';
+  setTermText('req-display', curl);
+}
+
+function loadBatchDemo() {
+  currentPayload = DEMO_BATCH;
+  renderRequest();
+}
+
+// Init
+setTermText('resp-predict', '// Click "Run request" to see the response');
+setTermText('resp-template', '// Click "Download CSV" to see the template');
+setTermText('resp-ndc', '// Click "Search" to see results');
+renderRequest();
+
+async function runPredict() {
+  var btn = document.getElementById('run-predict');
+  var out = document.getElementById('resp-predict');
+  btn.disabled = true;
+  setTermText('resp-predict', '// Connecting...\n');
+
+  try {
+    var resp = await fetch('/api/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(currentPayload)
+    });
+    var reader = resp.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+    setTermText('resp-predict', '');
+
+    while (true) {
+      var chunk = await reader.read();
+      if (chunk.done) break;
+      buffer += decoder.decode(chunk.value, { stream: true });
+      var parts = buffer.split('\n\n');
+      buffer = parts.pop();
+      for (var i = 0; i < parts.length; i++) {
+        if (!parts[i].startsWith('data: ')) continue;
+        try {
+          var data = JSON.parse(parts[i].slice(6));
+          if (data.type === 'progress') {
+            appendTermText('resp-predict', 'event: progress\ndata: ' + JSON.stringify(data, null, 2) + '\n\n');
+          } else if (data.type === 'result') {
+            appendTermText('resp-predict', '--- RESULT ---\ndata: ' + JSON.stringify(data, null, 2) + '\n');
+          }
+        } catch(e) {}
+      }
+      out.scrollTop = out.scrollHeight;
+    }
+  } catch(e) {
+    setTermText('resp-predict', 'Error: ' + e.message);
+  }
+  btn.disabled = false;
+}
+
+async function runTemplate() {
+  try {
+    var resp = await fetch('/api/template');
+    var text = await resp.text();
+    setTermText('resp-template', text);
+  } catch(e) {
+    setTermText('resp-template', 'Error: ' + e.message);
+  }
+}
+
+async function runNdc() {
+  var q = document.getElementById('ndc-q').value.trim();
+  if (!q) return;
+  setTermText('resp-ndc', '// Searching...');
+  try {
+    var resp = await fetch('/api/ndc-search?q=' + encodeURIComponent(q));
+    var data = await resp.json();
+    setTermText('resp-ndc', '$ GET /api/ndc-search?q=' + q + '\n\n' + JSON.stringify(data, null, 2));
+  } catch(e) {
+    setTermText('resp-ndc', 'Error: ' + e.message);
+  }
+}
+</script>
+</body>
+</html>
