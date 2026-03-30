@@ -48,3 +48,9 @@ models/
 # Secrets
 .env
 *.env
+
+# Demo (Cloudflare Worker)
+demo/node_modules/
+demo/.wrangler/
+
+.playwright-mcp/
