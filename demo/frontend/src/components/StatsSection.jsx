@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* ─── Data ──────────────────────────────────────────────────────── */
 
@@ -9,14 +9,16 @@ const MARKET_STATS = [
     label: "Medicare Part D beneficiaries",
     iconColor: "#005c8f",
     iconBg: "#dbeafe",
+    refNum: 3,
   },
   {
     icon: "payments",
-    value: "$141B",
+    value: "$128B",
     label: "Annual Part D drug spending",
     iconColor: "#003052",
     iconBg: "#e0e7ef",
     valueColor: "#003052",
+    refNum: 4,
   },
   {
     icon: "receipt_long",
@@ -25,14 +27,16 @@ const MARKET_STATS = [
     iconColor: "#0d9488",
     iconBg: "#ccfbf1",
     valueColor: "#0d9488",
+    refNum: 5,
   },
   {
     icon: "trending_up",
     value: "$184.6B",
-    label: "Predictive analytics market by 2032",
+    label: "Healthcare predictive analytics market by 2032",
     iconColor: "#059669",
     iconBg: "#d1fae5",
     valueColor: "#059669",
+    refNum: 6,
   },
 ];
 
@@ -43,6 +47,7 @@ const P2U_STATS = [
     label: "Items processed per month",
     iconColor: "#005c8f",
     iconBg: "#c5ffec",
+    refNum: 7,
   },
   {
     icon: "groups",
@@ -50,15 +55,17 @@ const P2U_STATS = [
     label: "Active patients across the UK",
     iconColor: "#005c8f",
     iconBg: "#c5ffec",
+    refNum: 7,
   },
   {
     icon: "show_chart",
-    value: "$334M",
+    value: "£334M",
     label: "Revenue last year",
     badge: "↑ 68%",
     iconColor: "#059669",
     iconBg: "#d1fae5",
     valueColor: "#059669",
+    refNum: 8,
   },
   {
     icon: "person_add",
@@ -67,6 +74,7 @@ const P2U_STATS = [
     badge: "/mo",
     iconColor: "#005c8f",
     iconBg: "#c5ffec",
+    refNum: 7,
   },
 ];
 
@@ -153,11 +161,8 @@ function FlywheelViz() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function jumpTo(i) {
-    setStep((s) => {
-      if (s === i) return s;
-      setPrev(s);
-      return i;
-    });
+    setStep((s) => (s === i ? s : i));
+    setPrev(-1);
     resetTimer();
   }
 
@@ -406,14 +411,14 @@ export default function StatsSection() {
           </div>
           <div className="challenge-grid">
             <div className="challenge-stat">
-              <span className="challenge-value">$290–528B</span>
+              <span className="challenge-value">$290–528B<a href="#ref-2" className="ref-sup-link"><sup className="ref-sup">[2]</sup></a></span>
               <span className="challenge-desc">
                 Annual US cost of medication non-adherence
               </span>
             </div>
             <div className="challenge-divider" />
             <div className="challenge-stat">
-              <span className="challenge-value">50%</span>
+              <span className="challenge-value">50%<a href="#ref-1" className="ref-sup-link"><sup className="ref-sup">[1]</sup></a></span>
               <span className="challenge-desc">
                 Of patients don't take medications as prescribed
               </span>
@@ -447,7 +452,7 @@ export default function StatsSection() {
                   className="stat-value"
                   style={{ color: s.valueColor || "var(--heading)" }}
                 >
-                  {s.value}
+                  {s.value}{s.refNum && <a href={`#ref-${s.refNum}`} className="ref-sup-link"><sup className="ref-sup">[{s.refNum}]</sup></a>}
                 </div>
                 <div className="stat-label">{s.label}</div>
               </div>
@@ -481,7 +486,7 @@ export default function StatsSection() {
                     className="stat-value"
                     style={{ color: s.valueColor || "var(--heading)" }}
                   >
-                    {s.value}
+                    {s.value}{s.refNum && <a href={`#ref-${s.refNum}`} className="ref-sup-link"><sup className="ref-sup">[{s.refNum}]</sup></a>}
                   </span>
                   {s.badge && (
                     <span

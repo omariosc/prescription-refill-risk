@@ -22,7 +22,7 @@ function catClass(category) {
   return category === 'MODERATE' ? 'mod' : category.toLowerCase();
 }
 
-export default function DetailPanel({ patient: p, onClose }) {
+export default function DetailPanel({ patient: p, onClose, onConfirmIntervention }) {
   const fillArcRef = useRef(null);
   const cat = catClass(p.risk_category);
   const pct = (p.risk_score * 100).toFixed(1);
@@ -107,7 +107,7 @@ export default function DetailPanel({ patient: p, onClose }) {
                 strokeDashoffset={String(arcLen)}
                 style={{ transition: 'stroke-dashoffset 800ms ease-out' }}
               />
-              <text x="60" y="60" textAnchor="middle" fontSize="28" fontWeight="800" fontFamily="Nunito,sans-serif" fill={COLORS[cat]}>
+              <text x="60" y="58" textAnchor="middle" fontSize="20" fontWeight="800" fontFamily="Nunito,sans-serif" fill={COLORS[cat]}>
                 {pct}%
               </text>
             </svg>
@@ -251,7 +251,9 @@ export default function DetailPanel({ patient: p, onClose }) {
           </div>
 
           {/* Clinician Intervention */}
-          <InterventionPanel patient={p} />
+          <InterventionPanel patient={p} onConfirm={(interventionId, patientId) => {
+            if (onConfirmIntervention) onConfirmIntervention(interventionId, patientId);
+          }} />
 
           {/* Disclaimer */}
           <div style={{ background: '#fffbeb', borderRadius: 'var(--sm)', padding: '12px 16px', fontSize: 12, color: '#92400e', marginTop: 8 }}>

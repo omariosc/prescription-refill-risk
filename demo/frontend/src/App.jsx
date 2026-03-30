@@ -26,6 +26,7 @@ export default function App() {
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [analyticsView, setAnalyticsView] = useState(false);
   const [supplyChainView, setSupplyChainView] = useState(false);
+  const [showLanding, setShowLanding] = useState(false);
 
   if (loading) {
     return (
@@ -55,6 +56,7 @@ export default function App() {
     setShowAdmin(false);
     setAnalyticsView(false);
     setSupplyChainView(false);
+    setShowLanding(false);
   };
 
   const goToLanding = () => {
@@ -106,8 +108,9 @@ export default function App() {
       <Header
         user={user}
         onLogout={handleLogout}
-        onHomeClick={() => { setAnalyticsView(false); setSupplyChainView(false); handleReset(); }}
+        onHomeClick={() => { setShowLanding(true); setAnalyticsView(false); setSupplyChainView(false); handleReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         onToolClick={() => {
+          setShowLanding(false);
           setAnalyticsView(false);
           setSupplyChainView(false);
           setTimeout(() => {
@@ -116,13 +119,17 @@ export default function App() {
           }, 50);
         }}
         onAdminClick={() => setShowAdmin(true)}
-        onAnalyticsClick={() => { setAnalyticsView(true); setSupplyChainView(false); setResults(null); setProcessing(false); }}
-        onSupplyChainClick={() => { setSupplyChainView(true); setAnalyticsView(false); setResults(null); setProcessing(false); }}
-        onLogoClick={() => { setAnalyticsView(false); setSupplyChainView(false); handleReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        onAnalyticsClick={() => { setShowLanding(false); setAnalyticsView(true); setSupplyChainView(false); setResults(null); setProcessing(false); }}
+        onSupplyChainClick={() => { setShowLanding(false); setSupplyChainView(true); setAnalyticsView(false); setResults(null); setProcessing(false); }}
+        onLogoClick={() => { setShowLanding(true); setAnalyticsView(false); setSupplyChainView(false); handleReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
       />
       <div className="disc-bar">
         <strong>Synthetic Data Demo</strong> — Modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.
       </div>
+
+      {showLanding && !analyticsView && !supplyChainView && (
+        <LandingPage onGetStarted={() => { setShowLanding(false); }} />
+      )}
 
       {analyticsView && (user.role === 'admin' || user.role === 'test') && (
         <AnalyticsDashboard onBack={() => setAnalyticsView(false)} />
@@ -132,7 +139,7 @@ export default function App() {
         <SupplyChainDashboard onBack={() => setSupplyChainView(false)} />
       )}
 
-      {!analyticsView && !supplyChainView && !processing && !results && (
+      {!showLanding && !analyticsView && !supplyChainView && !processing && !results && (
         <RiskAssessment
           onStartProcessing={(stream) => {
             setProcessing(true);
