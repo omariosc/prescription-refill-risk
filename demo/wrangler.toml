@@ -2,6 +2,16 @@ name = "refill-risk-demo"
 main = "src/index.js"
 compatibility_date = "2024-09-23"
 
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "refill-risk-auth"
+database_id = "d501e78a-e336-41f9-906d-215c796acd51"
+
 [[rules]]
 type = "Text"
 globs = ["**/*.html"]
+fallthrough = true

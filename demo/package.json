@@ -1,10 +1,18 @@
 {
   "name": "refill-risk-demo",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create refill-risk-auth",
+    "db:migrate": "wrangler d1 execute refill-risk-auth --local --file=schema.sql",
+    "db:seed": "wrangler d1 execute refill-risk-auth --local --file=seed.sql",
+    "db:migrate:remote": "wrangler d1 execute refill-risk-auth --remote --file=schema.sql",
+    "db:seed:remote": "wrangler d1 execute refill-risk-auth --remote --file=seed.sql",
+    "setup": "npm run db:migrate && npm run db:seed",
+    "build:frontend": "cd frontend && npm run build",
+    "dev:frontend": "cd frontend && npm run dev"
   },
   "devDependencies": {
     "wrangler": "^3.99.0"
