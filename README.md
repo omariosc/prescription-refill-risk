@@ -13,11 +13,16 @@
   <a href="https://scikit-learn.org/"><img src="https://img.shields.io/badge/sklearn-1.3+-F7931E?logo=scikit-learn&logoColor=white" alt="scikit-learn"></a>
   <a href="https://pandas.pydata.org/"><img src="https://img.shields.io/badge/pandas-2.0+-150458?logo=pandas&logoColor=white" alt="Pandas"></a>
   <a href="https://matplotlib.org/"><img src="https://img.shields.io/badge/matplotlib-3.7+-11557C" alt="Matplotlib"></a>
+  <a href="https://refill-risk-demo.omariosc101.workers.dev"><img src="https://img.shields.io/badge/demo-live-00e0bc?logo=cloudflare&logoColor=white" alt="Live Demo"></a>
 </p>
 
 <p align="center">
   <strong>Challenge A</strong> &mdash; Data & AI Hackathon, University of Leeds, 30&ndash;31 March 2026<br>
   Sponsored by <a href="https://www.pharmacy2u.co.uk/">Pharmacy2U</a>
+</p>
+
+<p align="center">
+  <a href="https://refill-risk-demo.omariosc101.workers.dev">🔗 Live Demo — refill-risk-demo.omariosc101.workers.dev</a>
 </p>
 
 ---
