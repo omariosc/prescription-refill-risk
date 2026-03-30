@@ -1,5 +1,18 @@
 import { useState, useMemo } from "react";
 
+/* Wilson score confidence interval for a proportion (95%) */
+function wilsonCI(pctVal, n) {
+  if (!n || n === 0) return "";
+  const z = 1.96;
+  const p = pctVal / 100;
+  const d = 1 + (z * z) / n;
+  const c = (p + (z * z) / (2 * n)) / d;
+  const s = z * Math.sqrt((p * (1 - p) + (z * z) / (4 * n)) / n) / d;
+  const lo = Math.max(0, c - s) * 100;
+  const hi = Math.min(1, c + s) * 100;
+  return `[${lo.toFixed(1)}–${hi.toFixed(1)}%]`;
+}
+
 /* ──────────────────────────────────────────────────────────────────
    Supply Chain Dashboard — Geographic Risk View
    Data sourced from outputs/population/supply_chain.json
@@ -485,12 +498,15 @@ export default function SupplyChainDashboard({ onBack }) {
                         {s.patients.toLocaleString()}
                       </td>
 
-                      {/* Late % */}
+                      {/* Late % with CI */}
                       <td style={{
                         textAlign: "right", fontWeight: 700,
                         color: s.pctLate >= 76.5 ? "var(--coral)" : s.pctLate >= 76.0 ? "#d97706" : "#059669",
                       }}>
                         {s.pctLate}%
+                        <span style={{ fontSize: 10, fontWeight: 400, color: "#9ca3af", marginLeft: 4, fontFamily: "'JetBrains Mono',monospace" }}>
+                          {wilsonCI(s.pctLate, s.fills)}
+                        </span>
                       </td>
 
                       {/* High-Risk % */}
