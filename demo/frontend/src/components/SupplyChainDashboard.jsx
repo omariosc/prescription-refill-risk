@@ -46,36 +46,60 @@ const ABBR_TO_NAME = {
 
 /* Top 30 states by volume — exact numbers from supply_chain.json */
 const STATE_DATA = [
-  { ssa: 5,  abbr: "CA", fills: 162_129, patients: 7_321, pctLate: 76.1, pctHigh: 54.8 },
-  { ssa: 10, abbr: "FL", fills: 104_216, patients: 4_760, pctLate: 76.4, pctHigh: 55.1 },
-  { ssa: 33, abbr: "NY", fills: 92_334,  patients: 4_095, pctLate: 75.9, pctHigh: 54.7 },
-  { ssa: 45, abbr: "TX", fills: 90_949,  patients: 4_072, pctLate: 76.2, pctHigh: 55.0 },
-  { ssa: 39, abbr: "PA", fills: 77_543,  patients: 3_489, pctLate: 76.3, pctHigh: 55.0 },
-  { ssa: 14, abbr: "IL", fills: 56_099,  patients: 2_535, pctLate: 76.1, pctHigh: 54.8 },
-  { ssa: 36, abbr: "OH", fills: 53_564,  patients: 2_474, pctLate: 76.1, pctHigh: 55.1 },
-  { ssa: 34, abbr: "NC", fills: 49_501,  patients: 2_162, pctLate: 76.2, pctHigh: 54.9 },
-  { ssa: 23, abbr: "MI", fills: 46_427,  patients: 2_208, pctLate: 76.3, pctHigh: 55.2 },
-  { ssa: 31, abbr: "NJ", fills: 40_221,  patients: 1_781, pctLate: 76.0, pctHigh: 54.4 },
-  { ssa: 11, abbr: "GA", fills: 40_110,  patients: 1_720, pctLate: 75.9, pctHigh: 54.9 },
-  { ssa: 44, abbr: "TN", fills: 38_557,  patients: 1_624, pctLate: 76.3, pctHigh: 54.9 },
-  { ssa: 26, abbr: "MO", fills: 34_210,  patients: 1_483, pctLate: 76.0, pctHigh: 54.3 },
-  { ssa: 49, abbr: "VA", fills: 33_995,  patients: 1_515, pctLate: 76.1, pctHigh: 54.8 },
-  { ssa: 15, abbr: "IN", fills: 31_942,  patients: 1_399, pctLate: 75.6, pctHigh: 54.5 },
-  { ssa: 22, abbr: "MA", fills: 30_607,  patients: 1_463, pctLate: 76.7, pctHigh: 55.6 },
-  { ssa: 50, abbr: "WA", fills: 27_634,  patients: 1_264, pctLate: 76.2, pctHigh: 55.0 },
-  { ssa: 1,  abbr: "AL", fills: 26_924,  patients: 1_224, pctLate: 76.5, pctHigh: 55.3 },
-  { ssa: 3,  abbr: "AZ", fills: 26_729,  patients: 1_294, pctLate: 76.0, pctHigh: 54.9 },
-  { ssa: 24, abbr: "MN", fills: 25_917,  patients: 1_249, pctLate: 76.9, pctHigh: 55.2 },
-  { ssa: 18, abbr: "KY", fills: 25_880,  patients: 1_087, pctLate: 76.2, pctHigh: 55.2 },
-  { ssa: 52, abbr: "WI", fills: 24_704,  patients: 1_158, pctLate: 76.1, pctHigh: 55.1 },
-  { ssa: 54, abbr: "Other", fills: 24_139, patients: 1_045, pctLate: 76.1, pctHigh: 55.5 },
-  { ssa: 19, abbr: "LA", fills: 23_018,  patients: 1_025, pctLate: 76.2, pctHigh: 55.5 },
-  { ssa: 42, abbr: "SC", fills: 21_734,  patients: 980,   pctLate: 76.3, pctHigh: 54.7 },
-  { ssa: 21, abbr: "MD", fills: 18_830,  patients: 877,   pctLate: 76.8, pctHigh: 55.8 },
-  { ssa: 37, abbr: "OK", fills: 18_396,  patients: 837,   pctLate: 76.2, pctHigh: 55.2 },
-  { ssa: 25, abbr: "MS", fills: 18_246,  patients: 746,   pctLate: 75.9, pctHigh: 55.0 },
-  { ssa: 38, abbr: "OR", fills: 17_770,  patients: 873,   pctLate: 76.0, pctHigh: 54.2 },
-  { ssa: 16, abbr: "IA", fills: 17_593,  patients: 808,   pctLate: 76.5, pctHigh: 54.8 },
+  { ssa: 5,  abbr: "CA", fills: 162_129, patients: 7_321, pctLate: 76.1, pctHigh: 54.8, drugs: 3494, providers: 10_665 },
+  { ssa: 10, abbr: "FL", fills: 104_216, patients: 4_760, pctLate: 76.4, pctHigh: 55.1, drugs: 3352, providers: 9_632 },
+  { ssa: 33, abbr: "NY", fills: 92_334,  patients: 4_095, pctLate: 75.9, pctHigh: 54.7, drugs: 3330, providers: 8_679 },
+  { ssa: 45, abbr: "TX", fills: 90_949,  patients: 4_072, pctLate: 76.2, pctHigh: 55.0, drugs: 3299, providers: 8_095 },
+  { ssa: 39, abbr: "PA", fills: 77_543,  patients: 3_489, pctLate: 76.3, pctHigh: 55.0, drugs: 3253, providers: 6_678 },
+  { ssa: 14, abbr: "IL", fills: 56_099,  patients: 2_535, pctLate: 76.1, pctHigh: 54.8, drugs: 3103, providers: 6_010 },
+  { ssa: 36, abbr: "OH", fills: 53_564,  patients: 2_474, pctLate: 76.1, pctHigh: 55.1, drugs: 3041, providers: 5_754 },
+  { ssa: 34, abbr: "NC", fills: 49_501,  patients: 2_162, pctLate: 76.2, pctHigh: 54.9, drugs: 3005, providers: 4_875 },
+  { ssa: 23, abbr: "MI", fills: 46_427,  patients: 2_208, pctLate: 76.3, pctHigh: 55.2, drugs: 3023, providers: 5_452 },
+  { ssa: 31, abbr: "NJ", fills: 40_221,  patients: 1_781, pctLate: 76.0, pctHigh: 54.4, drugs: 2938, providers: 4_763 },
+  { ssa: 11, abbr: "GA", fills: 40_110,  patients: 1_720, pctLate: 75.9, pctHigh: 54.9, drugs: 2907, providers: 3_888 },
+  { ssa: 44, abbr: "TN", fills: 38_557,  patients: 1_624, pctLate: 76.3, pctHigh: 54.9, drugs: 2887, providers: 3_346 },
+  { ssa: 26, abbr: "MO", fills: 34_210,  patients: 1_483, pctLate: 76.0, pctHigh: 54.3, drugs: 2824, providers: 3_232 },
+  { ssa: 49, abbr: "VA", fills: 33_995,  patients: 1_515, pctLate: 76.1, pctHigh: 54.8, drugs: 2819, providers: 4_273 },
+  { ssa: 15, abbr: "IN", fills: 31_942,  patients: 1_399, pctLate: 75.6, pctHigh: 54.5, drugs: 2791, providers: 3_798 },
+  { ssa: 22, abbr: "MA", fills: 30_607,  patients: 1_463, pctLate: 76.7, pctHigh: 55.6, drugs: 2748, providers: 3_881 },
+  { ssa: 50, abbr: "WA", fills: 27_634,  patients: 1_264, pctLate: 76.2, pctHigh: 55.0, drugs: 2679, providers: 3_038 },
+  { ssa: 1,  abbr: "AL", fills: 26_924,  patients: 1_224, pctLate: 76.5, pctHigh: 55.3, drugs: 2653, providers: 2_927 },
+  { ssa: 3,  abbr: "AZ", fills: 26_729,  patients: 1_294, pctLate: 76.0, pctHigh: 54.9, drugs: 2660, providers: 2_567 },
+  { ssa: 24, abbr: "MN", fills: 25_917,  patients: 1_249, pctLate: 76.9, pctHigh: 55.2, drugs: 2667, providers: 2_519 },
+  { ssa: 18, abbr: "KY", fills: 25_880,  patients: 1_087, pctLate: 76.2, pctHigh: 55.2, drugs: 2610, providers: 2_610 },
+  { ssa: 52, abbr: "WI", fills: 24_704,  patients: 1_158, pctLate: 76.1, pctHigh: 55.1, drugs: 2610, providers: 3_270 },
+  { ssa: 54, abbr: "Other", fills: 24_139, patients: 1_045, pctLate: 76.1, pctHigh: 55.5, drugs: 2570, providers: 1_431 },
+  { ssa: 19, abbr: "LA", fills: 23_018,  patients: 1_025, pctLate: 76.2, pctHigh: 55.5, drugs: 2578, providers: 2_272 },
+  { ssa: 42, abbr: "SC", fills: 21_734,  patients: 980,   pctLate: 76.3, pctHigh: 54.7, drugs: 2544, providers: 2_745 },
+  { ssa: 21, abbr: "MD", fills: 18_830,  patients: 877,   pctLate: 76.8, pctHigh: 55.8, drugs: 2423, providers: 3_080 },
+  { ssa: 37, abbr: "OK", fills: 18_396,  patients: 837,   pctLate: 76.2, pctHigh: 55.2, drugs: 2420, providers: 2_103 },
+  { ssa: 25, abbr: "MS", fills: 18_246,  patients: 746,   pctLate: 75.9, pctHigh: 55.0, drugs: 2410, providers: 1_820 },
+  { ssa: 38, abbr: "OR", fills: 17_770,  patients: 873,   pctLate: 76.0, pctHigh: 54.2, drugs: 2413, providers: 1_876 },
+  { ssa: 16, abbr: "IA", fills: 17_593,  patients: 808,   pctLate: 76.5, pctHigh: 54.8, drugs: 2376, providers: 2_117 },
+  { ssa: 6,  abbr: "CO", fills: 16_637,  patients: 730,   pctLate: 76.4, pctHigh: 55.0, drugs: 2381, providers: 2_039 },
+  { ssa: 9,  abbr: "DC", fills: 14_832,  patients: 599,   pctLate: 75.9, pctHigh: 54.2, drugs: 1056, providers: 416 },
+  { ssa: 4,  abbr: "AR", fills: 14_399,  patients: 697,   pctLate: 76.2, pctHigh: 54.8, drugs: 2350, providers: 1_754 },
+  { ssa: 17, abbr: "KS", fills: 14_069,  patients: 653,   pctLate: 76.2, pctHigh: 55.4, drugs: 2309, providers: 1_840 },
+  { ssa: 29, abbr: "NV", fills: 13_445,  patients: 572,   pctLate: 76.2, pctHigh: 55.0, drugs: 1913, providers: 1_125 },
+  { ssa: 7,  abbr: "CT", fills: 13_252,  patients: 580,   pctLate: 76.4, pctHigh: 55.2, drugs: 2316, providers: 2_054 },
+  { ssa: 20, abbr: "ME", fills: 11_684,  patients: 504,   pctLate: 75.8, pctHigh: 54.0, drugs: 1901, providers: 1_204 },
+  { ssa: 28, abbr: "NE", fills: 10_720,  patients: 515,   pctLate: 76.3, pctHigh: 55.5, drugs: 1953, providers: 1_211 },
+  { ssa: 46, abbr: "UT", fills: 10_350,  patients: 442,   pctLate: 76.4, pctHigh: 54.5, drugs: 1810, providers: 1_004 },
+  { ssa: 30, abbr: "NH", fills: 8_474,   patients: 372,   pctLate: 76.2, pctHigh: 54.2, drugs: 1638, providers: 1_028 },
+  { ssa: 41, abbr: "RI", fills: 7_932,   patients: 338,   pctLate: 76.3, pctHigh: 55.0, drugs: 1653, providers: 646 },
+  { ssa: 51, abbr: "WV", fills: 7_917,   patients: 357,   pctLate: 76.7, pctHigh: 56.4, drugs: 2185, providers: 1_325 },
+  { ssa: 43, abbr: "SD", fills: 7_093,   patients: 308,   pctLate: 76.2, pctHigh: 55.2, drugs: 1479, providers: 628 },
+  { ssa: 8,  abbr: "DE", fills: 6_895,   patients: 304,   pctLate: 76.5, pctHigh: 55.1, drugs: 1449, providers: 747 },
+  { ssa: 2,  abbr: "AK", fills: 6_820,   patients: 320,   pctLate: 75.3, pctHigh: 53.5, drugs: 872, providers: 317 },
+  { ssa: 32, abbr: "NM", fills: 6_605,   patients: 315,   pctLate: 76.2, pctHigh: 54.6, drugs: 1845, providers: 1_071 },
+  { ssa: 47, abbr: "VT", fills: 6_113,   patients: 260,   pctLate: 76.3, pctHigh: 55.4, drugs: 1297, providers: 558 },
+  { ssa: 13, abbr: "ID", fills: 5_822,   patients: 269,   pctLate: 75.6, pctHigh: 54.1, drugs: 1692, providers: 864 },
+  { ssa: 35, abbr: "ND", fills: 5_626,   patients: 261,   pctLate: 75.7, pctHigh: 54.4, drugs: 1355, providers: 515 },
+  { ssa: 53, abbr: "WY", fills: 5_358,   patients: 234,   pctLate: 76.3, pctHigh: 55.2, drugs: 1100, providers: 410 },
+  { ssa: 27, abbr: "MT", fills: 5_253,   patients: 237,   pctLate: 76.1, pctHigh: 55.1, drugs: 1461, providers: 648 },
+  { ssa: 40, abbr: "PR", fills: 5_060,   patients: 236,   pctLate: 76.0, pctHigh: 54.6, drugs: 0, providers: 0 },
+  { ssa: 12, abbr: "HI", fills: 4_697,   patients: 211,   pctLate: 75.3, pctHigh: 53.7, drugs: 1624, providers: 513 },
+  { ssa: 48, abbr: "VI", fills: 1_173,   patients: 54,    pctLate: 75.9, pctHigh: 55.8, drugs: 0, providers: 0 },
 ];
 
 const TOTALS = { states: 52, counties: 2_978, fills: 1_473_595, patients: 67_085 };
@@ -259,8 +283,8 @@ export default function SupplyChainDashboard({ onBack }) {
           sub={`Cell colour = high-risk patient % (${minHigh}%\u2013${maxHigh}%). Click a state for details.`}
         >
           {/* Legend */}
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, flexWrap: "wrap" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#6b7280" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20, flexWrap: "wrap", justifyContent: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#6b7280" }}>
               <span className="material-symbols-outlined" style={{ fontSize: 16 }}>palette</span>
               <span style={{ fontWeight: 600 }}>High-Risk %:</span>
             </div>
@@ -271,15 +295,15 @@ export default function SupplyChainDashboard({ onBack }) {
               ["#ea580c", "55\u201355.5%"],
               ["#dc2626", "\u226555.5%"],
             ].map(([c, l]) => (
-              <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <div style={{ width: 14, height: 14, borderRadius: 3, background: c }} />
-                <span style={{ fontSize: 10, color: "#6b7280" }}>{l}</span>
+              <div key={l} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <div style={{ width: 16, height: 16, borderRadius: 3, background: c }} />
+                <span style={{ fontSize: 11, color: "#4b5563" }}>{l}</span>
               </div>
             ))}
           </div>
 
           {/* Grid */}
-          <div style={{ display: "flex", justifyContent: "center", overflowX: "auto", paddingBottom: 8 }}>
+          <div style={{ overflowX: "auto", paddingBottom: 8 }}>
             <div style={{ display: "inline-grid", gridTemplateColumns: "repeat(12, 50px)", gap: 3 }}>
               {CARTO_GRID.flat().map((abbr, i) => {
                 if (!abbr) return <div key={i} style={{ width: 50, height: 44 }} />;
@@ -584,7 +608,7 @@ export default function SupplyChainDashboard({ onBack }) {
 
         {/* ── Key insights ── */}
         <SectionCard icon="lightbulb" title="Key Insights" sub="What the geographic data reveals about refill risk distribution">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div className="an-cohort-pair">
             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: 16 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#1d4ed8", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>explore</span> Geographic uniformity

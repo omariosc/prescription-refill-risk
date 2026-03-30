@@ -55,16 +55,16 @@ const DATA = {
     { name: "Thyroid hormones", n_fills: 1_337, pct_late: 89.9, pct_high: 84.2, n_patients: 1_209 },
   ],
   by_drug: [
-    { name: "Cozaar (losartan)", n_fills: 22_119, pct_late: 87.0 },
-    { name: "Gemfibrozil 600mg", n_fills: 30_035, pct_late: 88.0 },
-    { name: "Simvastatin 20mg", n_fills: 17_192, pct_late: 88.1 },
-    { name: "Avapro (irbesartan)", n_fills: 25_161, pct_late: 88.3 },
-    { name: "Lipitor (atorvastatin)", n_fills: 14_147, pct_late: 88.1 },
+    { name: "Pravastatin 40mg", n_fills: 5_067, pct_late: 89.8 },
+    { name: "Atacand (candesartan)", n_fills: 9_535, pct_late: 89.6 },
+    { name: "Sulfasalazine 500mg", n_fills: 4_618, pct_late: 89.6 },
     { name: "Diovan (valsartan)", n_fills: 15_192, pct_late: 89.4 },
     { name: "Lovastatin 10mg", n_fills: 21_761, pct_late: 88.4 },
-    { name: "Atacand (candesartan)", n_fills: 9_535, pct_late: 89.6 },
-    { name: "Pravastatin 40mg", n_fills: 5_067, pct_late: 89.8 },
-    { name: "Sulfasalazine 500mg", n_fills: 4_618, pct_late: 89.6 },
+    { name: "Avapro (irbesartan)", n_fills: 25_161, pct_late: 88.3 },
+    { name: "Simvastatin 20mg", n_fills: 17_192, pct_late: 88.1 },
+    { name: "Lipitor (atorvastatin)", n_fills: 14_147, pct_late: 88.1 },
+    { name: "Gemfibrozil 600mg", n_fills: 30_035, pct_late: 88.0 },
+    { name: "Cozaar (losartan)", n_fills: 22_119, pct_late: 87.0 },
   ],
   by_age: [
     { group: "<55", n_patients: 6_931, n_fills: 164_040, pct_late: 76.0, pct_high: 55.2 },
@@ -229,7 +229,7 @@ export default function AnalyticsDashboard({ onBack }) {
                 <HBar key={dc.name} label={dc.name} value={`${dc.pct_late}%`} pct={dc.pct_late} color={dc.pct_late >= 90 ? "var(--coral)" : dc.pct_late >= 88 ? "#e89c0d" : "var(--accent)"} ci={wilsonCI(dc.pct_late, dc.n_fills)} />
               ))}
               <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 12, fontStyle: "italic" }}>
-                Bile acid sequestrants show highest late rate (91.3%). All resolved classes are cardiovascular medications — consistent with a Medicare population.
+                Bile acid sequestrants show highest late rate (91.3%). All resolved classes are cardiovascular medications, consistent with a Medicare population.
               </div>
             </SectionCard>
             <SectionCard icon="medication" title="Top Named Drugs" sub="Individual drugs resolved to brand/generic names">
@@ -251,12 +251,12 @@ export default function AnalyticsDashboard({ onBack }) {
 
         {tab === "cohorts" && (
           <>
-            <SectionCard icon="cake" title="Risk by Age Group" sub="Late rates are remarkably consistent across ages — behaviour dominates demographics">
+            <SectionCard icon="cake" title="Risk by Age Group" sub="Late rates are remarkably consistent across ages: behaviour dominates demographics">
               {d.by_age.map((a) => (
                 <HBar key={a.group} label={`${a.group} yr`} value={`${a.pct_late}%`} pct={a.pct_late} maxPct={80} color="var(--navy)" ci={wilsonCI(a.pct_late, a.n_fills)} />
               ))}
             </SectionCard>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="an-cohort-pair">
               <SectionCard icon="wc" title="Risk by Sex" sub="No meaningful difference">
                 {d.by_sex.map((s) => (
                   <HBar key={s.label} label={s.label} value={`${s.pct_late}%`} pct={s.pct_late} maxPct={80} color={s.label === "Female" ? "#8b5cf6" : "#0088b3"} ci={wilsonCI(s.pct_late, s.n_fills)} />
@@ -322,11 +322,11 @@ export default function AnalyticsDashboard({ onBack }) {
                 </table>
               </div>
               <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 12, fontStyle: "italic" }}>
-                The declining trend reflects 2010 data truncation (fewer observable next-fills), not genuine improvement. Within 2008–2009, Q1 shows highest late rates — consistent with post-holiday medication lapses.
+                The declining trend reflects 2010 data truncation (fewer observable next fills), not genuine improvement. Within 2008 to 2009, Q1 shows highest late rates, consistent with post-holiday medication lapses.
               </div>
             </SectionCard>
-            <SectionCard icon="lightbulb" title="Key Insight" sub="What drives the risk — and what doesn't">
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <SectionCard icon="lightbulb" title="Key Insight" sub="What drives the risk, and what doesn't">
+              <div className="an-cohort-pair">
                 <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8, padding: 16 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--coral)", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>priority_high</span> What drives late refills
@@ -343,9 +343,9 @@ export default function AnalyticsDashboard({ onBack }) {
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>check_circle</span> What doesn't matter (much)
                   </div>
                   <ul style={{ fontSize: 13, color: "#4b5563", lineHeight: 1.7, paddingLeft: 18, margin: 0 }}>
-                    <li>Age — nearly identical rates across all groups</li>
-                    <li>Sex — 76.1% vs 76.3% (no difference)</li>
-                    <li>Ethnicity — 75.8%–76.3% (flat)</li>
+                    <li>Age: nearly identical rates across all groups</li>
+                    <li>Sex: 76.1% vs 76.3% (no difference)</li>
+                    <li>Ethnicity: 75.8% to 76.3% (flat)</li>
                     <li>Number of chronic conditions (weak U-curve)</li>
                   </ul>
                 </div>
@@ -357,7 +357,7 @@ export default function AnalyticsDashboard({ onBack }) {
         <div style={{ background: "#fff", borderRadius: "var(--card)", boxShadow: "var(--shadow)", padding: "16px 20px", display: "flex", alignItems: "flex-start", gap: 12, marginTop: 24 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--accent)", flexShrink: 0, marginTop: 2 }}>info</span>
           <div style={{ fontSize: 12, color: "#6b7280", lineHeight: 1.6 }}>
-            <strong style={{ color: "var(--navy)" }}>Synthetic data.</strong> All figures are from CMS DE-SynPUF (2008–2010) — a fully synthetic dataset with deliberately altered correlations. Demographics appear flat because the synthesis process coarsened multivariate relationships. Real dispensing data would likely show meaningful variation by geography, socioeconomic status, and condition type.
+            <strong style={{ color: "var(--navy)" }}>Synthetic data.</strong> All figures are from CMS DE-SynPUF (2008 to 2010), a fully synthetic dataset with deliberately altered correlations. Demographics appear flat because the synthesis process coarsened multivariate relationships. Real dispensing data would likely show meaningful variation by geography, socioeconomic status, and condition type.
           </div>
         </div>
       </div>
