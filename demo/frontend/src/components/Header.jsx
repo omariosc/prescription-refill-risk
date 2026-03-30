@@ -19,7 +19,7 @@ function getInitials(name) {
   return parts[0][0].toUpperCase();
 }
 
-export default function Header({ user, onLoginClick, onLogout, onHomeClick, onToolClick, onAdminClick, onAnalyticsClick }) {
+export default function Header({ user, onLoginClick, onLogout, onHomeClick, onToolClick, onAdminClick, onAnalyticsClick, onSupplyChainClick, onLogoClick }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropRef = useRef(null);
 
@@ -53,7 +53,7 @@ export default function Header({ user, onLoginClick, onLogout, onHomeClick, onTo
   return (
     <header>
       <div className="hdr">
-        <button className="logo-btn" onClick={() => { setDropdownOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Scroll to top">
+        <button className="logo-btn" onClick={() => { setDropdownOpen(false); if (onLogoClick) onLogoClick(); }} aria-label="Go to home">
           <P2ULogo />
         </button>
         <div style={{ flex: 1 }} />
@@ -76,9 +76,16 @@ export default function Header({ user, onLoginClick, onLogout, onHomeClick, onTo
               <button className="dropdown-item" onClick={() => { setDropdownOpen(false); onToolClick && onToolClick(); }}>
                 <span className="material-symbols-outlined">speed</span> Refill Risk Tool
               </button>
-              <button className="dropdown-item" onClick={() => { setDropdownOpen(false); onAnalyticsClick && onAnalyticsClick(); }}>
-                <span className="material-symbols-outlined">analytics</span> Analytics Dashboard
-              </button>
+              {(user.role === 'admin' || user.role === 'test') && (
+                <button className="dropdown-item" onClick={() => { setDropdownOpen(false); onAnalyticsClick && onAnalyticsClick(); }}>
+                  <span className="material-symbols-outlined">analytics</span> Analytics
+                </button>
+              )}
+              {(user.role === 'admin' || user.role === 'test') && (
+                <button className="dropdown-item" onClick={() => { setDropdownOpen(false); onSupplyChainClick && onSupplyChainClick(); }}>
+                  <span className="material-symbols-outlined">local_shipping</span> Supply Chain
+                </button>
+              )}
               {user.role === 'admin' && (
                 <button className="dropdown-item" onClick={() => { setDropdownOpen(false); onAdminClick && onAdminClick(); }}>
                   <span className="material-symbols-outlined">group</span> Manage Users

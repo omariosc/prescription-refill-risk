@@ -10,7 +10,10 @@ import ResultsTable from './components/ResultsTable';
 import DetailPanel from './components/DetailPanel';
 import AdminPanel from './components/AdminPanel';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import SupplyChainDashboard from './components/SupplyChainDashboard';
 import UnsupportedOverlay from './components/UnsupportedOverlay';
+import NotificationManager, { notify } from './components/NotificationManager';
+import { getInterventionLabel, getInterventionColor } from './components/InterventionPanel';
 
 export default function App() {
   const { user, loading, logout } = useAuth();
@@ -22,6 +25,7 @@ export default function App() {
   const [results, setResults] = useState(null);
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [analyticsView, setAnalyticsView] = useState(false);
+  const [supplyChainView, setSupplyChainView] = useState(false);
 
   if (loading) {
     return (
@@ -50,6 +54,7 @@ export default function App() {
     setProcessing(false);
     setShowAdmin(false);
     setAnalyticsView(false);
+    setSupplyChainView(false);
   };
 
   const goToLanding = () => {
@@ -101,23 +106,33 @@ export default function App() {
       <Header
         user={user}
         onLogout={handleLogout}
-        onHomeClick={() => { setAnalyticsView(false); handleReset(); }}
+        onHomeClick={() => { setAnalyticsView(false); setSupplyChainView(false); handleReset(); }}
         onToolClick={() => {
-          const el = document.getElementById('input-section');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          setAnalyticsView(false);
+          setSupplyChainView(false);
+          setTimeout(() => {
+            const el = document.getElementById('input-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 50);
         }}
         onAdminClick={() => setShowAdmin(true)}
-        onAnalyticsClick={() => { setAnalyticsView(true); setResults(null); setProcessing(false); }}
+        onAnalyticsClick={() => { setAnalyticsView(true); setSupplyChainView(false); setResults(null); setProcessing(false); }}
+        onSupplyChainClick={() => { setSupplyChainView(true); setAnalyticsView(false); setResults(null); setProcessing(false); }}
+        onLogoClick={() => { setAnalyticsView(false); setSupplyChainView(false); handleReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
       />
       <div className="disc-bar">
         <strong>Synthetic Data Demo</strong> — Modelling &amp; product-thinking exercise using CMS DE-SynPUF synthetic claims data. Outputs are <strong>not clinical advice</strong>.
       </div>
 
-      {analyticsView && (
+      {analyticsView && (user.role === 'admin' || user.role === 'test') && (
         <AnalyticsDashboard onBack={() => setAnalyticsView(false)} />
       )}
 
-      {!analyticsView && !processing && !results && (
+      {supplyChainView && (user.role === 'admin' || user.role === 'test') && (
+        <SupplyChainDashboard onBack={() => setSupplyChainView(false)} />
+      )}
+
+      {!analyticsView && !supplyChainView && !processing && !results && (
         <RiskAssessment
           onStartProcessing={(stream) => {
             setProcessing(true);
@@ -149,6 +164,14 @@ export default function App() {
         <DetailPanel
           patient={results.sorted[selectedIdx]}
           onClose={() => setSelectedIdx(null)}
+          onConfirmIntervention={(interventionId, patientId) => {
+            setSelectedIdx(null);
+            notify(
+              `Intervention scheduled: ${getInterventionLabel(interventionId)} for ${patientId}`,
+              getInterventionColor(interventionId),
+              'task_alt'
+            );
+          }}
         />
       )}
 
@@ -165,6 +188,7 @@ export default function App() {
           <p style={{ marginTop: 6, fontSize: 11 }}>Model trained on CMS DE-SynPUF synthetic data. Not clinical advice. For demonstration purposes only.</p>
         </div>
       </footer>
+      <NotificationManager />
     </>
   );
 }
