@@ -188,7 +188,7 @@ export default {
     if (pathname === '/api/patient/notifications' && method === 'GET') {
       if (!sessionUser) return jsonError('Authentication required', 401);
       const { results } = await env.DB.prepare(
-        'SELECT id, patient_email, type, message, from_name, created_at, read FROM notifications WHERE LOWER(patient_email) = ? ORDER BY created_at DESC',
+        'SELECT id, patient_email, type, message, from_name, created_at, read FROM notifications WHERE LOWER(patient_email) = ? AND read = 0 ORDER BY created_at DESC',
       ).bind(sessionUser.email.toLowerCase()).all();
       return json(results || []);
     }
@@ -228,25 +228,30 @@ export default {
       ).bind(normalizedEmail, type, message, sessionUser.name).run();
 
       // If in-app survey: also create a pending questionnaire for the patient
+      let questionnaireId = null;
       if (type === 'in_app_survey') {
         const drugName = body.drug_name || 'Medication';
         const drugNdc = body.drug_ndc || '';
         const today = new Date().toISOString().split('T')[0];
         const dueDate = today; // Due immediately
-        await env.DB.prepare(
+        const qResult = await env.DB.prepare(
           'INSERT INTO questionnaires (patient_email, patient_id, drug_name, drug_ndc, fill_date, due_at, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
         ).bind(normalizedEmail, body.patient_id || '', drugName, drugNdc, today, dueDate, 'pending').run();
+        questionnaireId = qResult.meta?.last_row_id;
       }
+
+      const now = new Date().toISOString();
+      const notifId = result.meta?.last_row_id;
 
       // Broadcast to patient's WebSocket clients instantly
       await broadcastToUser(env, normalizedEmail, {
         type: 'notification',
-        data: { id: result.meta?.last_row_id, patient_email: normalizedEmail, type, message, from_name: sessionUser.name, created_at: new Date().toISOString() },
+        data: { id: notifId, patient_email: normalizedEmail, type, message, from_name: sessionUser.name, created_at: now, read: 0 },
       });
-      if (type === 'in_app_survey') {
+      if (type === 'in_app_survey' && questionnaireId) {
         await broadcastToUser(env, normalizedEmail, {
           type: 'questionnaire',
-          data: { patient_email: normalizedEmail, drug_name: body.drug_name || 'Medication', status: 'pending', due_at: new Date().toISOString().split('T')[0] },
+          data: { id: questionnaireId, patient_email: normalizedEmail, patient_id: body.patient_id || '', drug_name: body.drug_name || 'Medication', drug_ndc: body.drug_ndc || '', status: 'pending', due_at: now.split('T')[0], fill_date: now.split('T')[0] },
         });
       }
 
@@ -413,8 +418,9 @@ export default {
 
       // Always check for patient-facing notifications and questionnaires for this user
       // (a user can be a clinician AND have notifications sent to them for demo purposes)
+      // Only return unread notifications (read=0) — dismissed ones stay hidden
       const nr = await env.DB.prepare(
-        'SELECT * FROM notifications WHERE LOWER(patient_email) = ? AND created_at > ? ORDER BY created_at DESC LIMIT 20',
+        'SELECT * FROM notifications WHERE LOWER(patient_email) = ? AND read = 0 AND created_at > ? ORDER BY created_at DESC LIMIT 20',
       ).bind(normalizedEmail, since).all();
       notifications = nr.results || [];
 
