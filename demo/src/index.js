@@ -319,14 +319,49 @@ export default {
         sessionUser.name
       ).run();
 
-      // Broadcast clinician alert via WebSocket to all connected clinicians
-      // (clinicians connect to their own email's EventHub)
-      await broadcastToUser(env, '__clinician_alerts__', {
+      // Broadcast clinician alert via WebSocket to all active clinicians/admins
+      // Look up all non-patient users and push to each one's EventHub
+      const alertMsg = {
         type: 'clinician_alert',
         data: { message: `Patient ${sessionUser.name} completed a check-in for ${drugLabel}. Side effects: ${severity}. Risk: ${(adherenceRisk * 100).toFixed(0)}%.`, from_name: sessionUser.name },
-      });
+      };
+      try {
+        const clinicians = await env.DB.prepare(
+          "SELECT email FROM users WHERE role IN ('admin', 'clinician') LIMIT 50"
+        ).all();
+        for (const c of (clinicians.results || [])) {
+          broadcastToUser(env, c.email, alertMsg).catch(() => {});
+        }
+      } catch { /* ignore if users table not available */ }
 
       return json({ success: true, adherence_risk: adherenceRisk, intervention });
+    }
+
+    // Clinician: get notification & survey counts for a specific patient
+    if (pathname === '/api/clinician/patient-status' && method === 'GET') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      if (sessionUser.role !== 'admin' && sessionUser.role !== 'clinician') {
+        return jsonError('Clinician access required', 403);
+      }
+      const patientEmail = url.searchParams.get('email');
+      if (!patientEmail) return jsonError('email query param required', 400);
+      const normalizedEmail = patientEmail.toLowerCase();
+
+      const nRes = await env.DB.prepare(
+        'SELECT COUNT(*) as cnt FROM notifications WHERE LOWER(patient_email) = ? AND read = 0',
+      ).bind(normalizedEmail).first();
+      const qRes = await env.DB.prepare(
+        "SELECT COUNT(*) as cnt FROM questionnaires WHERE LOWER(patient_email) = ? AND status = 'pending'",
+      ).bind(normalizedEmail).first();
+      const completedRes = await env.DB.prepare(
+        "SELECT id, drug_name, adherence_risk_score, recommended_intervention, side_effects_score, completed_at FROM questionnaires WHERE LOWER(patient_email) = ? AND status = 'completed' ORDER BY completed_at DESC LIMIT 5",
+      ).bind(normalizedEmail).all();
+
+      return json({
+        unread_notifications: nRes?.cnt || 0,
+        pending_surveys: qRes?.cnt || 0,
+        completed_surveys: (completedRes.results || []),
+      });
     }
 
     // Clinician: get questionnaire results for a patient

@@ -1,5 +1,38 @@
+import { useState, useEffect } from 'react';
+import { pollEvents } from '../utils/api';
+
 function catClass(category) {
   return category === 'MODERATE' ? 'mod' : category.toLowerCase();
+}
+
+// Track patient notification/survey counts and completed survey results
+function usePatientCounts(patientEmails) {
+  const [counts, setCounts] = useState({});
+  useEffect(() => {
+    if (!patientEmails || patientEmails.length === 0) return;
+    async function load() {
+      const result = {};
+      for (const email of patientEmails) {
+        if (!email) continue;
+        try {
+          const res = await fetch('/api/clinician/patient-status?email=' + encodeURIComponent(email));
+          if (res.ok) {
+            const data = await res.json();
+            result[email] = {
+              unreadNotifs: data.unread_notifications || 0,
+              pendingSurveys: data.pending_surveys || 0,
+              completedSurveys: data.completed_surveys || [],
+            };
+          }
+        } catch { /* ignore */ }
+      }
+      setCounts(result);
+    }
+    load();
+    const interval = setInterval(load, 3000);
+    return () => clearInterval(interval);
+  }, [patientEmails.join(',')]);
+  return counts;
 }
 
 function CompositeSection({ composites }) {
@@ -92,6 +125,10 @@ export default function ResultsTable({ data, onViewDetail, onReset }) {
   const { summary, model_version, processing_time_ms, sorted, patient_composites } = data;
   const s = summary;
 
+  // Get unique patient emails for notification/survey counts
+  const patientEmails = [...new Set(sorted.filter(p => p.patient_email).map(p => p.patient_email))];
+  const patientCounts = usePatientCounts(patientEmails);
+
   const summaryCards = [
     { cls: 'total', val: s.total_patients, label: 'Total Patients' },
     { cls: 'high', val: s.high_risk, label: 'High Risk' },
@@ -149,7 +186,31 @@ export default function ResultsTable({ data, onViewDetail, onReset }) {
                 const pct = (p.risk_score * 100).toFixed(1);
                 return (
                   <tr key={idx} onClick={() => onViewDetail(idx)}>
-                    <td><strong>{p.patient_id}</strong></td>
+                    <td>
+                      <strong>{p.patient_id}</strong>
+                      {p.patient_email && patientCounts[p.patient_email] && (
+                        <div style={{ display: 'flex', gap: 4, marginTop: 4, flexWrap: 'wrap' }}>
+                          {patientCounts[p.patient_email].unreadNotifs > 0 && (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 600, color: '#f59e0b', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10, padding: '1px 6px' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 12 }}>notifications</span>
+                              {patientCounts[p.patient_email].unreadNotifs} unread
+                            </span>
+                          )}
+                          {patientCounts[p.patient_email].pendingSurveys > 0 && (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 600, color: '#3b82f6', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 10, padding: '1px 6px' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 12 }}>fact_check</span>
+                              {patientCounts[p.patient_email].pendingSurveys} pending
+                            </span>
+                          )}
+                          {patientCounts[p.patient_email].completedSurveys && patientCounts[p.patient_email].completedSurveys.length > 0 && (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 600, color: '#059669', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '1px 6px' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 12 }}>check_circle</span>
+                              {patientCounts[p.patient_email].completedSurveys.length} completed
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </td>
                     <td>{p.drug_name}</td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
