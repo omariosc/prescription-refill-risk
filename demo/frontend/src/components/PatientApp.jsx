@@ -111,7 +111,7 @@ function NewNotifBanner({ notif, onDismiss }) {
       <div style={{
         margin: '8px 12px', background: '#fff', borderRadius: 16,
         padding: '14px 16px', boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
-        borderBottom: '5px solid #f59e0b',
+        borderBottom: '15px solid #f59e0b',
         display: 'flex', alignItems: 'flex-start', gap: 12,
       }}>
         <span className="material-symbols-outlined" style={{ fontSize: 24, color: '#f59e0b', flexShrink: 0, marginTop: 1 }}>{config.icon}</span>
@@ -301,7 +301,7 @@ export default function PatientApp({ user, onLogout }) {
 
         {/* Notifications Banner */}
         {unreadCount > 0 && (
-          <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 16, padding: '12px 16px', margin: '0 16px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ background: '#fffbeb', borderBottom: '1px solid #fde68a', borderRadius: 16, padding: '12px 16px', margin: '0 16px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#f59e0b' }}>notifications_active</span>
             <span style={{ fontSize: 14, fontWeight: 600, color: '#92400e' }}>You have {unreadCount} new notification{unreadCount !== 1 ? 's' : ''}</span>
           </div>
