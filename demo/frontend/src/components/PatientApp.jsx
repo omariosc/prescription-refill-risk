@@ -141,7 +141,9 @@ export default function PatientApp({ user, onLogout }) {
   const [expandedDrug, setExpandedDrug] = useState(0);
   const profileRef = useRef(null);
   const knownNotifIds = useRef(new Set());
+  const dismissedIds = useRef(new Set());
   const eventCursor = useRef('2026-01-01');
+  const initialLoadDone = useRef(false);
 
   const emailKey = user.email.toLowerCase();
   const patientData = PATIENT_DATA[emailKey] || { patient_id: 'P-00000', name: user.name, nhs_number: '', age: null, conditions: [], prescriptions: [] };
@@ -159,19 +161,21 @@ export default function PatientApp({ user, onLogout }) {
         // Update cursor to server time
         if (data.server_time) eventCursor.current = data.server_time;
 
-        // Merge notifications (detect new ones for banner)
+        // Merge notifications
         if (data.notifications && data.notifications.length > 0) {
           setNotifications(prev => {
             const merged = [...prev];
             for (const n of data.notifications) {
+              // Skip dismissed notifications
+              if (dismissedIds.current.has(n.id)) continue;
               if (!merged.find(x => x.id === n.id)) {
                 merged.unshift(n);
-                // Show banner for genuinely new notifications
-                if (!knownNotifIds.current.has(n.id)) {
-                  knownNotifIds.current.add(n.id);
+                // Only show banner for notifications arriving AFTER initial load
+                if (initialLoadDone.current && !knownNotifIds.current.has(n.id)) {
                   setNewBanner(n);
                   setTimeout(() => setNewBanner(null), 8000);
                 }
+                knownNotifIds.current.add(n.id);
               }
             }
             return merged;
@@ -191,13 +195,72 @@ export default function PatientApp({ user, onLogout }) {
           });
         }
       } catch { /* ignore network errors */ }
+
+      // After first poll, mark initial load as done so subsequent new items trigger banners
+      if (!initialLoadDone.current) initialLoadDone.current = true;
     };
 
-    // Initial load
+    // Initial load (silent — no banners)
     poll();
-    // 500ms poll for near-instant updates during demo
-    const interval = setInterval(poll, 500);
+    // Slow fallback poll (WebSocket handles real-time; this catches anything missed)
+    const interval = setInterval(poll, 5000);
     return () => { active = false; clearInterval(interval); };
+  }, []);
+
+  // WebSocket for instant push notifications (Durable Objects)
+  useEffect(() => {
+    let ws = null;
+    let reconnectTimer = null;
+
+    const connect = () => {
+      const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${proto}//${window.location.host}/api/ws`);
+
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+
+          if (msg.type === 'notification' && msg.data) {
+            const n = msg.data;
+            setNotifications(prev => {
+              if (prev.find(x => x.id === n.id)) return prev;
+              if (dismissedIds.current && dismissedIds.current.has(n.id)) return prev;
+              if (initialLoadDone.current && !knownNotifIds.current.has(n.id)) {
+                setNewBanner(n);
+                setTimeout(() => setNewBanner(null), 8000);
+              }
+              knownNotifIds.current.add(n.id);
+              return [n, ...prev];
+            });
+          }
+
+          if (msg.type === 'questionnaire' && msg.data) {
+            const q = msg.data;
+            setQuestionnaires(prev => {
+              const idx = prev.findIndex(x => x.id === q.id);
+              if (idx >= 0) { const updated = [...prev]; updated[idx] = q; return updated; }
+              return [q, ...prev];
+            });
+          }
+        } catch { /* ignore malformed */ }
+      };
+
+      ws.onclose = () => {
+        // Reconnect after 2 seconds
+        reconnectTimer = setTimeout(connect, 2000);
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
+    };
+
+    connect();
+
+    return () => {
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      if (ws) { ws.onclose = null; ws.close(); }
+    };
   }, []);
 
   useEffect(() => {
@@ -207,7 +270,7 @@ export default function PatientApp({ user, onLogout }) {
   }, []);
 
   const showToast = (msg) => { setToastMsg(msg); setToastVisible(true); setTimeout(() => setToastVisible(false), 2500); };
-  const handleDismiss = async (id) => { try { await markNotificationRead(id); setNotifications(prev => prev.filter(n => n.id !== id)); } catch {} };
+  const handleDismiss = async (id) => { dismissedIds.current.add(id); setNotifications(prev => prev.filter(n => n.id !== id)); try { await markNotificationRead(id); } catch {} };
   const unreadCount = notifications.filter(n => !n.read).length;
   const pendingQuestionnaires = questionnaires.filter(q => q.status === 'pending');
   const startCheckin = (q) => setActiveCheckin(q);

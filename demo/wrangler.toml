@@ -12,6 +12,15 @@ binding = "DB"
 database_name = "refill-risk-auth"
 database_id = "d501e78a-e336-41f9-906d-215c796acd51"
 
+[durable_objects]
+bindings = [
+  { name = "EVENT_HUB", class_name = "EventHub" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["EventHub"]
+
 [[rules]]
 type = "Text"
 globs = ["**/*.html"]

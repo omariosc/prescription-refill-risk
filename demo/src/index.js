@@ -18,6 +18,28 @@ import {
 
 import { handlePredict, handleNdcSearch, handleQuestionnaireSchema, handleQuestionnairePredict, TEMPLATE_CSV, serveCsv, CORS } from './predict.js';
 
+// Re-export Durable Object class for wrangler
+export { EventHub } from './event-hub.js';
+
+// Helper: get a user's EventHub Durable Object stub
+function getEventHub(env, email) {
+  const id = env.EVENT_HUB.idFromName(email.toLowerCase());
+  return env.EVENT_HUB.get(id);
+}
+
+// Helper: broadcast to a user's connected WebSocket clients
+async function broadcastToUser(env, email, message) {
+  try {
+    const hub = getEventHub(env, email);
+    await hub.fetch(new Request('https://internal/broadcast', {
+      method: 'POST',
+      body: JSON.stringify(message),
+    }));
+  } catch {
+    // Silently fail if no DO or no connections — polling is the fallback
+  }
+}
+
 import DOCS_HTML from './docs.html';
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -216,6 +238,18 @@ export default {
         ).bind(normalizedEmail, body.patient_id || '', drugName, drugNdc, today, dueDate, 'pending').run();
       }
 
+      // Broadcast to patient's WebSocket clients instantly
+      await broadcastToUser(env, normalizedEmail, {
+        type: 'notification',
+        data: { id: result.meta?.last_row_id, patient_email: normalizedEmail, type, message, from_name: sessionUser.name, created_at: new Date().toISOString() },
+      });
+      if (type === 'in_app_survey') {
+        await broadcastToUser(env, normalizedEmail, {
+          type: 'questionnaire',
+          data: { patient_email: normalizedEmail, drug_name: body.drug_name || 'Medication', status: 'pending', due_at: new Date().toISOString().split('T')[0] },
+        });
+      }
+
       return json({ success: true, id: result.meta?.last_row_id }, 201);
     }
 
@@ -285,6 +319,13 @@ export default {
         sessionUser.name
       ).run();
 
+      // Broadcast clinician alert via WebSocket to all connected clinicians
+      // (clinicians connect to their own email's EventHub)
+      await broadcastToUser(env, '__clinician_alerts__', {
+        type: 'clinician_alert',
+        data: { message: `Patient ${sessionUser.name} completed a check-in for ${drugLabel}. Side effects: ${severity}. Risk: ${(adherenceRisk * 100).toFixed(0)}%.`, from_name: sessionUser.name },
+      });
+
       return json({ success: true, adherence_risk: adherenceRisk, intervention });
     }
 
@@ -310,8 +351,18 @@ export default {
       return json(results || []);
     }
 
+    // ── WebSocket endpoint (Durable Objects) ─────────────────────────
+    if (pathname === '/api/ws') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      const hub = getEventHub(env, sessionUser.email);
+      // Forward the WebSocket upgrade to the Durable Object
+      return hub.fetch(new Request('https://internal/ws', {
+        headers: request.headers,
+      }));
+    }
+
     // Unified live events endpoint — returns all new events since a cursor
-    // Used by both patient app and clinician dashboard for real-time updates
+    // Used as fallback when WebSocket is not available
     if (pathname === '/api/events' && method === 'GET') {
       if (!sessionUser) return jsonError('Authentication required', 401);
       const since = url.searchParams.get('since') || '2026-01-01';
