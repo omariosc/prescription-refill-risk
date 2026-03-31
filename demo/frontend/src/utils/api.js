@@ -116,10 +116,14 @@ export async function markNotificationRead(id) {
 export async function sendNotification(patientEmail, type, message, extra = {}) {
   const res = await fetch('/api/notifications/send', {
     method: 'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ patient_email: patientEmail, type, message, ...extra }),
   });
-  if (!res.ok) throw new Error('Failed to send notification');
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `Failed to send notification (${res.status})`);
+  }
   return res.json();
 }
 

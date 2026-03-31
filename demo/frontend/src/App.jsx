@@ -280,7 +280,9 @@ export default function App() {
                 drug_ndc: patient?.drug_ndc || '',
                 patient_id: patientId,
               } : {};
-              sendNotification(patientEmail, interventionId, msg, extra).catch(() => {});
+              sendNotification(patientEmail, interventionId, msg, extra)
+                .then(() => { notify('Notification sent to ' + patientEmail, '#059669', 'check_circle'); })
+                .catch((err) => { notify('Failed to send: ' + (err.message || 'unknown error'), '#dc2626', 'error'); });
             }
             notify(
               `Intervention scheduled: ${getInterventionLabel(interventionId)} for ${patientId}`,
