@@ -29,17 +29,77 @@
 
 ## What this project does
 
-Uses Medicare claims data (CMS DE-SynPUF, 2008–2010) to predict which prescription refills will arrive late. A LightGBM model is trained on 60+ features from fill history, patient demographics, and healthcare utilisation. Risk scores are classified into LOW / MEDIUM / HIGH tiers with SHAP explanations and MAPIE conformal prediction intervals.
+Uses Medicare claims data (CMS DE-SynPUF, 2008–2010) to predict which prescription refills will arrive late. A LightGBM model is trained on features from fill history, patient demographics, and healthcare utilisation. Risk scores are explained with SHAP.
 
 ---
 
 ## Quick start
 
-> You only need Python to run the ML pipeline. The demo web app runs independently with Node.js.
+> The ML pipeline runs in Google Colab (no local Python needed). The demo web app runs locally with Node.js.
 
 ---
 
-## Part 1 — ML Pipeline
+## Part 1 — Analysis Notebooks (Google Colab)
+
+All notebooks live in the [`notebooks/`](notebooks/) folder. Run them **in order** — each builds on the output of the previous.
+
+| # | Notebook | What it does |
+|---|----------|-------------|
+| 1 | [`data_cleaning_clean.ipynb`](notebooks/data_cleaning_clean.ipynb) | Loads raw CMS data, cleans, engineers features, calculates PDC scores → exports `full_df_with_msr.parquet` |
+| 2 | [`eda_with_late_refillers.ipynb`](notebooks/eda_with_late_refillers.ipynb) | Exploratory data analysis — distributions, late rates, and feature signals |
+| 3 | [`challenge_a_model.ipynb`](notebooks/challenge_a_model.ipynb) | Trains LightGBM, evaluates (PR-AUC, calibration), explains with SHAP |
+
+### Prerequisites
+
+- Google account with Google Drive
+- [Google Colab](https://colab.research.google.com/) (free tier is sufficient)
+- The CMS DE-SynPUF data files (see below)
+
+### Step 1 — Download the data
+
+Download [CMS DE-SynPUF Sample 1](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf) — a fully synthetic Medicare dataset (no real patient data).
+
+The notebooks use two files from the dataset:
+
+| File | Used in |
+|------|---------|
+| `DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv` | Notebook 1 |
+| `DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 |
+
+### Step 2 — Upload to Google Drive
+
+Upload the files to a folder in your Drive. The notebooks default to:
+
+```
+MyDrive/
+└── pharma2u/
+    └── datasets/
+        ├── DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv
+        ├── DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv
+        └── full_df_with_msr.parquet        ← produced by notebook 1
+```
+
+**If you use a different folder path**, update the path variable in the Setup cell of each notebook before running:
+
+| Notebook | Variable | Default value |
+|----------|----------|---------------|
+| `data_cleaning_clean.ipynb` | `PDE_PATH`, `BENE_PATH` | `…/pharma2u/datasets/DE1_…csv` |
+| `eda_with_late_refillers.ipynb` | `link` | `…/pharma2u/datasets/full_df_with_msr.parquet` |
+| `challenge_a_model.ipynb` | `link` | `…/pharma2u/datasets/full_df_with_msr.parquet` |
+
+### Step 3 — Run in order
+
+1. Open `notebooks/data_cleaning_clean.ipynb` in Colab → **Runtime → Run all** → download `full_df_with_msr.parquet` when prompted
+2. Upload `full_df_with_msr.parquet` to your Drive (path above)
+3. Open `notebooks/eda_with_late_refillers.ipynb` → **Run all**
+4. Open `notebooks/challenge_a_model.ipynb` → **Run all**
+
+Notebook 1 takes around 5–10 minutes. Notebooks 2 and 3 each take 2–5 minutes.
+
+---
+
+<!--
+## Part 1 — ML Pipeline (local Python scripts — superseded by Colab notebooks above)
 
 ### Prerequisites
 
@@ -69,8 +129,6 @@ pip install -r requirements.txt
 
 ### Step 4 — Download the data
 
-The pipeline uses [CMS DE-SynPUF Sample 1](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf) — a fully synthetic Medicare dataset (no real patient data).
-
 Download the following 8 files and place them in `data/raw/`:
 
 | File | What it contains |
@@ -84,57 +142,19 @@ Download the following 8 files and place them in `data/raw/`:
 | `DE1_0_2008_to_2010_Carrier_Claims_Sample_1A.csv` | Physician claims (part A) |
 | `DE1_0_2008_to_2010_Carrier_Claims_Sample_1B.csv` | Physician claims (part B) |
 
-Your `data/raw/` folder should look like this:
-
-```
-data/
-└── raw/
-    ├── DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv
-    ├── DE1_0_2008_Beneficiary_Summary_File_Sample_1.csv
-    ├── DE1_0_2009_Beneficiary_Summary_File_Sample_1.csv
-    ├── DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv
-    ├── DE1_0_2008_to_2010_Inpatient_Claims_Sample_1.csv
-    ├── DE1_0_2008_to_2010_Outpatient_Claims_Sample_1.csv
-    ├── DE1_0_2008_to_2010_Carrier_Claims_Sample_1A.csv
-    └── DE1_0_2008_to_2010_Carrier_Claims_Sample_1B.csv
-```
-
 ### Step 5 — Run the pipeline
 
 ```bash
 python scripts/run_pipeline.py
 ```
 
-This takes around 10–20 minutes on a standard laptop. You will see progress printed for each phase.
-
-When it finishes, results are saved to `outputs/`:
-
-| File | What it is |
-|------|-----------|
-| `metrics.json` | Model performance (PR-AUC, ROC-AUC) on validation and test sets |
-| `risk_tiers.json` | Risk tier definitions and actual late-refill rates per tier |
-| `ndc_lookup.csv` | Drug name enrichment table (NDC codes → drug names) |
-| `shap_importance.png` | Top features by SHAP gain |
-| `shap_summary.png` | SHAP beeswarm plot |
-| `calibration.png` | Predicted vs actual late rates |
-| `risk_distribution.png` | Risk score histogram by tier |
-| `uncertainty_analysis.png` | Prediction interval widths |
-| `patient_timeline_*.png` | Example patient refill history |
-
 ### Optional — Run population analytics
-
-This scores all 1.47M fills and produces JSON files for the analytics dashboard. Takes around 20–30 minutes.
 
 ```bash
 python scripts/run_population.py
 ```
 
-Outputs are saved to `outputs/population/`:
-
-| File | What it is |
-|------|-----------|
-| `dashboard_data.json` | Aggregated stats by time, drug, age, race, state — used by the frontend |
-| `population_stats.json` | Full detail version of the same stats |
+-->
 
 ---
 
