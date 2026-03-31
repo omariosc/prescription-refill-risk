@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { getNotifications, markNotificationRead, getQuestionnaires } from '../utils/api';
+import { markNotificationRead, pollEvents } from '../utils/api';
 import DrugCheckin from './DrugCheckin';
 
 // ── P-10003 full patient data (multiple drugs) ──────────────────────
@@ -140,39 +140,65 @@ export default function PatientApp({ user, onLogout }) {
   const [newBanner, setNewBanner] = useState(null);
   const [expandedDrug, setExpandedDrug] = useState(0);
   const profileRef = useRef(null);
-  const prevCountRef = useRef(0);
+  const knownNotifIds = useRef(new Set());
+  const eventCursor = useRef('2026-01-01');
 
   const emailKey = user.email.toLowerCase();
   const patientData = PATIENT_DATA[emailKey] || { patient_id: 'P-00000', name: user.name, nhs_number: '', age: null, conditions: [], prescriptions: [] };
 
-  const loadNotifications = useCallback(() => {
-    getNotifications().then(data => {
-      setNotifications(prev => {
-        // Detect new notifications
-        if (prev.length > 0 && data.length > prev.length) {
-          const newOnes = data.filter(n => !prev.find(p => p.id === n.id));
-          if (newOnes.length > 0) {
-            setNewBanner(newOnes[0]);
-            setTimeout(() => setNewBanner(null), 8000);
-          }
-        }
-        prevCountRef.current = data.length;
-        return data;
-      });
-    }).catch(() => {});
-  }, []);
-
-  const loadQuestionnaires = useCallback(() => {
-    getQuestionnaires().then(data => setQuestionnaires(data || [])).catch(() => {});
-  }, []);
-
+  // Unified 1-second polling via /api/events
   useEffect(() => {
-    loadNotifications();
-    loadQuestionnaires();
-    const pollNotifs = setInterval(loadNotifications, 3000);
-    const pollSurveys = setInterval(loadQuestionnaires, 3000);
-    return () => { clearInterval(pollNotifs); clearInterval(pollSurveys); };
-  }, [loadNotifications, loadQuestionnaires]);
+    let active = true;
+
+    const poll = async () => {
+      if (!active) return;
+      try {
+        const data = await pollEvents(eventCursor.current);
+        if (!data || !active) return;
+
+        // Update cursor to server time
+        if (data.server_time) eventCursor.current = data.server_time;
+
+        // Merge notifications (detect new ones for banner)
+        if (data.notifications && data.notifications.length > 0) {
+          setNotifications(prev => {
+            const merged = [...prev];
+            for (const n of data.notifications) {
+              if (!merged.find(x => x.id === n.id)) {
+                merged.unshift(n);
+                // Show banner for genuinely new notifications
+                if (!knownNotifIds.current.has(n.id)) {
+                  knownNotifIds.current.add(n.id);
+                  setNewBanner(n);
+                  setTimeout(() => setNewBanner(null), 8000);
+                }
+              }
+            }
+            return merged;
+          });
+        }
+
+        // Merge questionnaires
+        if (data.questionnaires && data.questionnaires.length > 0) {
+          setQuestionnaires(prev => {
+            const merged = [...prev];
+            for (const q of data.questionnaires) {
+              const idx = merged.findIndex(x => x.id === q.id);
+              if (idx >= 0) merged[idx] = q;
+              else merged.unshift(q);
+            }
+            return merged;
+          });
+        }
+      } catch { /* ignore network errors */ }
+    };
+
+    // Initial load
+    poll();
+    // Fast poll every 1 second for real-time feel
+    const interval = setInterval(poll, 1000);
+    return () => { active = false; clearInterval(interval); };
+  }, []);
 
   useEffect(() => {
     const h = (e) => { if (profileRef.current && !profileRef.current.contains(e.target)) setShowProfileMenu(false); };
@@ -244,9 +270,19 @@ export default function PatientApp({ user, onLogout }) {
           <div key={q.id} style={{ background: '#fff', borderRadius: 16, padding: 16, margin: '0 16px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', borderLeft: '4px solid #00e0bc' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 24, color: '#00e0bc' }}>fact_check</span>
-              <div style={{ fontFamily: "'Nunito'", fontWeight: 700, fontSize: 15, color: '#003052' }}>
-                7-Day Check-in
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: "'Nunito'", fontWeight: 700, fontSize: 15, color: '#003052' }}>
+                  7-Day Check-in
+                </div>
+                <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 600 }}>
+                  {q.drug_name}
+                </div>
               </div>
+              {q.due_at && (
+                <span style={{ fontSize: 11, color: '#9ca3af', whiteSpace: 'nowrap' }}>
+                  Due {formatDate(q.due_at)}
+                </span>
+              )}
             </div>
             <div style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.5, marginBottom: 12 }}>
               How is <strong>{q.drug_name}</strong> working for you? Your feedback helps your care team.
@@ -406,7 +442,7 @@ export default function PatientApp({ user, onLogout }) {
       {activeCheckin && (
         <DrugCheckin
           questionnaire={activeCheckin}
-          onComplete={() => { setActiveCheckin(null); loadQuestionnaires(); loadNotifications(); }}
+          onComplete={() => { setActiveCheckin(null); /* polling will auto-refresh questionnaires and notifications */ }}
           onClose={() => setActiveCheckin(null)}
         />
       )}

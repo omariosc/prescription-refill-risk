@@ -5,6 +5,7 @@
 import {
   verifyTOTP,
   generateSecret,
+  generateSessionToken,
   buildOtpauthURI,
   createSession,
   validateSession,
@@ -85,9 +86,33 @@ export default {
       return handleRegisterVerify(request, env);
     }
 
+    // Public: check if a pending_clinician has been approved (no auth needed)
+    if (pathname === '/api/auth/approval-status' && method === 'POST') {
+      let body;
+      try { body = await request.json(); } catch { return jsonError('Invalid JSON', 400); }
+      const email = (body.email || '').trim().toLowerCase();
+      if (!email) return jsonError('Email required', 400);
+      const user = await env.DB.prepare('SELECT role FROM users WHERE LOWER(email) = ?').bind(email).first();
+      if (!user) return json({ status: 'not_found' });
+      if (user.role === 'pending_clinician') return json({ status: 'pending' });
+      if (user.role === 'clinician' || user.role === 'admin') return json({ status: 'approved' });
+      return json({ status: 'other' });
+    }
+
     if (pathname === '/api/auth/me' && method === 'GET') {
       if (!sessionUser) return json({ user: null });
       return json({ user: { name: sessionUser.name, email: sessionUser.email, role: sessionUser.role, organization: sessionUser.organization } });
+    }
+
+    // Magic link: generate a short-lived token for QR code auto-login (requires existing session)
+    if (pathname === '/api/auth/magic-link' && method === 'POST') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      return handleMagicLinkCreate(request, env, sessionUser);
+    }
+
+    // Magic link: redeem token → create session (no prior auth required)
+    if (pathname === '/api/auth/magic-link/redeem' && method === 'GET') {
+      return handleMagicLinkRedeem(env, url);
     }
 
     // ── Admin Endpoints (require auth + admin role) ────────────────
@@ -141,8 +166,8 @@ export default {
     if (pathname === '/api/patient/notifications' && method === 'GET') {
       if (!sessionUser) return jsonError('Authentication required', 401);
       const { results } = await env.DB.prepare(
-        'SELECT id, patient_email, type, message, from_name, created_at, read FROM notifications WHERE patient_email = ? ORDER BY created_at DESC',
-      ).bind(sessionUser.email).all();
+        'SELECT id, patient_email, type, message, from_name, created_at, read FROM notifications WHERE LOWER(patient_email) = ? ORDER BY created_at DESC',
+      ).bind(sessionUser.email.toLowerCase()).all();
       return json(results || []);
     }
 
@@ -151,8 +176,8 @@ export default {
       if (!sessionUser) return jsonError('Authentication required', 401);
       const notifId = parseInt(notifReadMatch[1]);
       await env.DB.prepare(
-        'UPDATE notifications SET read = 1 WHERE id = ? AND patient_email = ?',
-      ).bind(notifId, sessionUser.email).run();
+        'UPDATE notifications SET read = 1 WHERE id = ? AND LOWER(patient_email) = ?',
+      ).bind(notifId, sessionUser.email.toLowerCase()).run();
       return json({ success: true });
     }
 
@@ -167,13 +192,30 @@ export default {
       if (!patient_email || !type || !message) {
         return jsonError('patient_email, type, and message are required', 400);
       }
-      const validTypes = ['app_push', 'sms', 'phone_call', 'letter', 'gp_consultation'];
+      const validTypes = ['app_push', 'in_app_survey', 'phone_call', 'letter', 'gp_consultation'];
       if (!validTypes.includes(type)) {
         return jsonError('Invalid notification type', 400);
       }
+
+      // Normalize email to lowercase to prevent case-mismatch bugs
+      const normalizedEmail = patient_email.toLowerCase();
+
+      // Create notification
       const result = await env.DB.prepare(
         'INSERT INTO notifications (patient_email, type, message, from_name) VALUES (?, ?, ?, ?)',
-      ).bind(patient_email, type, message, sessionUser.name).run();
+      ).bind(normalizedEmail, type, message, sessionUser.name).run();
+
+      // If in-app survey: also create a pending questionnaire for the patient
+      if (type === 'in_app_survey') {
+        const drugName = body.drug_name || 'Medication';
+        const drugNdc = body.drug_ndc || '';
+        const today = new Date().toISOString().split('T')[0];
+        const dueDate = today; // Due immediately
+        await env.DB.prepare(
+          'INSERT INTO questionnaires (patient_email, patient_id, drug_name, drug_ndc, fill_date, due_at, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        ).bind(normalizedEmail, body.patient_id || '', drugName, drugNdc, today, dueDate, 'pending').run();
+      }
+
       return json({ success: true, id: result.meta?.last_row_id }, 201);
     }
 
@@ -182,8 +224,8 @@ export default {
     if (pathname === '/api/patient/questionnaires' && method === 'GET') {
       if (!sessionUser) return jsonError('Authentication required', 401);
       const { results } = await env.DB.prepare(
-        'SELECT * FROM questionnaires WHERE patient_email = ? ORDER BY due_at DESC',
-      ).bind(sessionUser.email).all();
+        'SELECT * FROM questionnaires WHERE LOWER(patient_email) = ? ORDER BY due_at DESC',
+      ).bind(sessionUser.email.toLowerCase()).all();
       return json(results || []);
     }
 
@@ -211,15 +253,31 @@ export default {
       else if (adherenceRisk > 0.3) intervention = 'sms';
 
       await env.DB.prepare(
-        `UPDATE questionnaires SET status='completed', completed_at=datetime('now'), responses=?, effectiveness_score=?, side_effects_score=?, quality_of_life_score=?, adherence_risk_score=?, recommended_intervention=? WHERE id=? AND patient_email=?`
-      ).bind(JSON.stringify(responses), eff, se, qol, adherenceRisk, intervention, questionnaire_id, sessionUser.email).run();
+        `UPDATE questionnaires SET status='completed', completed_at=datetime('now'), responses=?, effectiveness_score=?, side_effects_score=?, quality_of_life_score=?, adherence_risk_score=?, recommended_intervention=? WHERE id=? AND LOWER(patient_email)=?`
+      ).bind(JSON.stringify(responses), eff, se, qol, adherenceRisk, intervention, questionnaire_id, sessionUser.email.toLowerCase()).run();
 
-      // Auto-send notification if severe side effects
+      // Auto-send notification to patient if severe side effects
       if (responses.side_effects >= 4) {
         await env.DB.prepare(
           'INSERT INTO notifications (patient_email, type, message, from_name) VALUES (?, ?, ?, ?)'
         ).bind(sessionUser.email, 'gp_consultation', 'Based on your medication check-in responses, we have flagged your case for a GP review. You will be contacted shortly.', 'Pharmacy2U Care Team').run();
       }
+
+      // Get the questionnaire details for the clinician notification
+      const q = await env.DB.prepare('SELECT drug_name FROM questionnaires WHERE id = ?').bind(questionnaire_id).first();
+      const drugLabel = q ? q.drug_name : 'their medication';
+      const severity = responses.side_effects >= 4 ? 'severe' : responses.side_effects >= 3 ? 'moderate' : 'mild';
+
+      // Notify all admins/clinicians that a questionnaire was completed (store as a system event)
+      // We use a special admin notification endpoint that clinicians can poll
+      await env.DB.prepare(
+        'INSERT INTO notifications (patient_email, type, message, from_name) VALUES (?, ?, ?, ?)'
+      ).bind(
+        '__clinician_alerts__',
+        'in_app_survey',
+        `Patient ${sessionUser.name} (${sessionUser.email}) completed a check-in for ${drugLabel}. Side effects: ${severity}. Adherence risk: ${(adherenceRisk * 100).toFixed(0)}%.`,
+        sessionUser.name
+      ).run();
 
       return json({ success: true, adherence_risk: adherenceRisk, intervention });
     }
@@ -230,9 +288,64 @@ export default {
       const patientEmail = url.searchParams.get('patient_email');
       if (!patientEmail) return jsonError('patient_email query param required', 400);
       const { results } = await env.DB.prepare(
-        'SELECT * FROM questionnaires WHERE patient_email = ? ORDER BY due_at DESC',
-      ).bind(patientEmail).all();
+        'SELECT * FROM questionnaires WHERE LOWER(patient_email) = ? ORDER BY due_at DESC',
+      ).bind(patientEmail.toLowerCase()).all();
       return json(results || []);
+    }
+
+    // Clinician: poll for alerts (questionnaire completions etc.)
+    if (pathname === '/api/clinician/alerts' && method === 'GET') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      if (sessionUser.role !== 'admin' && sessionUser.role !== 'clinician') return jsonError('Forbidden', 403);
+      const since = url.searchParams.get('since') || '2026-01-01';
+      const { results } = await env.DB.prepare(
+        "SELECT * FROM notifications WHERE patient_email = '__clinician_alerts__' AND created_at > ? ORDER BY created_at DESC LIMIT 20",
+      ).bind(since).all();
+      return json(results || []);
+    }
+
+    // Unified live events endpoint — returns all new events since a cursor
+    // Used by both patient app and clinician dashboard for real-time updates
+    if (pathname === '/api/events' && method === 'GET') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      const since = url.searchParams.get('since') || '2026-01-01';
+      const role = sessionUser.role;
+      const email = sessionUser.email;
+
+      let notifications = [];
+      let questionnaires = [];
+      let clinicianAlerts = [];
+
+      if (role === 'patient') {
+        // Patient: get new notifications + questionnaires
+        // Normalize email for case-insensitive matching
+        const normalizedEmail = email.toLowerCase();
+
+        const nr = await env.DB.prepare(
+          'SELECT * FROM notifications WHERE LOWER(patient_email) = ? AND created_at > ? ORDER BY created_at DESC LIMIT 20',
+        ).bind(normalizedEmail, since).all();
+        notifications = nr.results || [];
+
+        // Always include ALL pending questionnaires (regardless of cursor) so they appear immediately
+        // Also include recently completed ones for the result screen
+        const qr = await env.DB.prepare(
+          "SELECT * FROM questionnaires WHERE LOWER(patient_email) = ? AND (status = 'pending' OR completed_at > ?) ORDER BY due_at DESC LIMIT 10",
+        ).bind(normalizedEmail, since).all();
+        questionnaires = qr.results || [];
+      } else {
+        // Clinician/admin: get alerts
+        const ar = await env.DB.prepare(
+          "SELECT * FROM notifications WHERE patient_email = '__clinician_alerts__' AND created_at > ? ORDER BY created_at DESC LIMIT 20",
+        ).bind(since).all();
+        clinicianAlerts = ar.results || [];
+      }
+
+      return json({
+        notifications,
+        questionnaires,
+        clinician_alerts: clinicianAlerts,
+        server_time: new Date().toISOString(),
+      }, 200, { 'Cache-Control': 'no-cache, no-store' });
     }
 
     // ── Unknown API paths ──────────────────────────────────────────
@@ -352,12 +465,17 @@ async function handleUpdateUser(request, env, userId) {
   let body;
   try { body = await request.json(); } catch { return jsonError('Invalid JSON body', 400); }
 
-  const { name, email, organization } = body || {};
+  const { name, email, organization, role } = body || {};
   const fields = [];
   const values = [];
   if (name !== undefined) { fields.push('name = ?'); values.push(san(name)); }
   if (email !== undefined) { fields.push('email = ?'); values.push(san(email)); }
   if (organization !== undefined) { fields.push('organization = ?'); values.push(san(organization)); }
+  if (role !== undefined) {
+    const validRoles = ['admin', 'clinician', 'patient', 'pending_clinician'];
+    if (!validRoles.includes(role)) return jsonError('Invalid role', 400);
+    fields.push('role = ?'); values.push(role);
+  }
   if (fields.length === 0) return jsonError('No fields to update', 400);
 
   values.push(userId);
@@ -381,8 +499,12 @@ async function handleRegister(request, env) {
   let body;
   try { body = await request.json(); } catch { return jsonError('Invalid JSON body', 400); }
 
-  const { name, email, organization } = body || {};
+  const { name, email, organization, role } = body || {};
   if (!name || !email) return jsonError('Name and email are required', 400);
+
+  // Validate role — only 'patient' or 'clinician' allowed for self-registration (not 'admin')
+  const requestedRole = role || 'patient';
+  if (!['patient', 'clinician'].includes(requestedRole)) return jsonError('Invalid role', 400);
 
   const cleanName = san(name).slice(0, 100);
   const cleanEmail = san(email).toLowerCase().slice(0, 200);
@@ -399,10 +521,13 @@ async function handleRegister(request, env) {
   const secret = generateSecret();
   const otpauthUri = buildOtpauthURI(secret, cleanEmail);
 
+  // Determine the DB role: clinicians get 'pending_clinician' until admin-approved
+  const dbRole = requestedRole === 'clinician' ? 'pending_clinician' : 'patient';
+
   // Store as pending (we use a temporary secret prefix to mark unverified)
   await env.DB.prepare(
     'INSERT INTO users (name, email, organization, totp_secret, role) VALUES (?, ?, ?, ?, ?)',
-  ).bind(cleanName, cleanEmail, cleanOrg, 'PENDING:' + secret, 'clinician').run();
+  ).bind(cleanName, cleanEmail, cleanOrg, 'PENDING:' + secret, dbRole).run();
 
   return json({ email: cleanEmail, totp_secret: secret, otpauth_uri: otpauthUri }, 201);
 }
@@ -426,10 +551,61 @@ async function handleRegisterVerify(request, env) {
   // Activate the account
   await env.DB.prepare('UPDATE users SET totp_secret = ? WHERE id = ?').bind(actualSecret, user.id).run();
 
-  // Auto-login
+  // For pending clinicians: don't auto-login, return pending_approval flag
+  if (user.role === 'pending_clinician') {
+    return json({ success: true, pending_approval: true });
+  }
+
+  // Auto-login for patients
   const token = await createSession(env.DB, user.id);
   return json(
     { success: true, user: { name: user.name, email: user.email, role: user.role, organization: user.organization } },
+    200,
+    { 'Set-Cookie': setSessionCookie(token) },
+  );
+}
+
+async function handleMagicLinkCreate(request, env, sessionUser) {
+  let body;
+  try { body = await request.json(); } catch { body = {}; }
+
+  const rawBase = String(body.base_url || '').trim().slice(0, 256);
+  if (!rawBase) return jsonError('base_url is required', 400);
+
+  // Only allow http(s) URLs to prevent open-redirect abuse
+  if (!/^https?:\/\//i.test(rawBase)) return jsonError('Invalid base_url', 400);
+
+  const user = await env.DB.prepare('SELECT id FROM users WHERE LOWER(email) = ?')
+    .bind(sessionUser.email.toLowerCase()).first();
+  if (!user) return jsonError('User not found', 404);
+
+  // 5-minute single-use token stored with MAGIC: prefix to distinguish from sessions
+  const magicToken = generateSessionToken();
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+  await env.DB.prepare('INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)')
+    .bind('MAGIC:' + magicToken, user.id, expiresAt).run();
+
+  return json({ url: `${rawBase}?magic=${magicToken}` });
+}
+
+async function handleMagicLinkRedeem(env, url) {
+  const magicToken = url.searchParams.get('magic') || '';
+  // Validate token format (64 hex chars from generateSessionToken)
+  if (!/^[0-9a-f]{64}$/.test(magicToken)) return jsonError('Invalid magic token', 400);
+
+  const row = await env.DB.prepare(
+    `SELECT s.user_id, u.name, u.email, u.organization, u.role
+     FROM sessions s JOIN users u ON s.user_id = u.id
+     WHERE s.token = ? AND s.expires_at > datetime('now')`
+  ).bind('MAGIC:' + magicToken).first();
+  if (!row) return jsonError('Invalid or expired magic link', 401);
+
+  // Single-use: delete the magic token before creating the real session
+  await env.DB.prepare('DELETE FROM sessions WHERE token = ?').bind('MAGIC:' + magicToken).run();
+
+  const token = await createSession(env.DB, row.user_id);
+  return json(
+    { success: true, user: { name: row.name, email: row.email, role: row.role, organization: row.organization } },
     200,
     { 'Set-Cookie': setSessionCookie(token) },
   );
