@@ -352,9 +352,13 @@ export default {
       if (!patientEmail) return jsonError('email query param required', 400);
       const normalizedEmail = patientEmail.toLowerCase();
 
-      const nRes = await env.DB.prepare(
+      const nUnread = await env.DB.prepare(
         'SELECT COUNT(*) as cnt FROM notifications WHERE LOWER(patient_email) = ? AND read = 0',
       ).bind(normalizedEmail).first();
+      const nTotal = await env.DB.prepare(
+        'SELECT COUNT(*) as cnt FROM notifications WHERE LOWER(patient_email) = ?',
+      ).bind(normalizedEmail).first();
+      const nRead = (nTotal?.cnt || 0) - (nUnread?.cnt || 0);
       const qRes = await env.DB.prepare(
         "SELECT COUNT(*) as cnt FROM questionnaires WHERE LOWER(patient_email) = ? AND status = 'pending'",
       ).bind(normalizedEmail).first();
@@ -363,7 +367,9 @@ export default {
       ).bind(normalizedEmail).all();
 
       return json({
-        unread_notifications: nRes?.cnt || 0,
+        unread_notifications: nUnread?.cnt || 0,
+        read_notifications: nRead,
+        total_notifications: nTotal?.cnt || 0,
         pending_surveys: qRes?.cnt || 0,
         completed_surveys: (completedRes.results || []),
       });

@@ -20,6 +20,8 @@ function usePatientCounts(patientEmails) {
             const data = await res.json();
             result[email] = {
               unreadNotifs: data.unread_notifications || 0,
+              readNotifs: data.read_notifications || 0,
+              totalNotifs: data.total_notifications || 0,
               pendingSurveys: data.pending_surveys || 0,
               completedSurveys: data.completed_surveys || [],
             };
@@ -194,6 +196,12 @@ export default function ResultsTable({ data, onViewDetail, onReset }) {
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 600, color: '#f59e0b', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10, padding: '1px 6px' }}>
                               <span className="material-symbols-outlined" style={{ fontSize: 12 }}>notifications</span>
                               {patientCounts[p.patient_email].unreadNotifs} unread
+                            </span>
+                          )}
+                          {patientCounts[p.patient_email].readNotifs > 0 && (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 600, color: '#6b7280', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 10, padding: '1px 6px' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 12 }}>mark_email_read</span>
+                              {patientCounts[p.patient_email].readNotifs} seen
                             </span>
                           )}
                           {patientCounts[p.patient_email].pendingSurveys > 0 && (

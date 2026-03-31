@@ -81,11 +81,11 @@ export async function deleteUser(id) {
   return result;
 }
 
-export async function register(name, email, organization) {
+export async function register(name, email, organization, role = 'patient') {
   const res = await fetch('/api/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, organization }),
+    body: JSON.stringify({ name, email, organization, role }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Registration failed');
@@ -101,4 +101,61 @@ export async function verifyRegistration(email, code) {
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Verification failed');
   return data;
+}
+
+export async function getNotifications() {
+  const res = await fetch('/api/patient/notifications');
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function markNotificationRead(id) {
+  await fetch('/api/patient/notifications/read/' + id, { method: 'POST', credentials: 'include' });
+}
+
+export async function sendNotification(patientEmail, type, message, extra = {}) {
+  const res = await fetch('/api/notifications/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ patient_email: patientEmail, type, message, ...extra }),
+  });
+  if (!res.ok) throw new Error('Failed to send notification');
+  return res.json();
+}
+
+export async function getQuestionnaires() {
+  const res = await fetch('/api/patient/questionnaires');
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function submitQuestionnaire(questionnaireId, responses) {
+  const res = await fetch('/api/patient/questionnaires/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ questionnaire_id: questionnaireId, responses }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to submit');
+  return data;
+}
+
+export async function getPatientQuestionnaires(patientEmail) {
+  const res = await fetch('/api/questionnaires?patient_email=' + encodeURIComponent(patientEmail));
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function getClinicianAlerts(since) {
+  const res = await fetch('/api/clinician/alerts?since=' + encodeURIComponent(since));
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function pollEvents(since) {
+  const res = await fetch('/api/events?since=' + encodeURIComponent(since), {
+    cache: 'no-store',
+  });
+  if (!res.ok) return null;
+  return res.json();
 }
