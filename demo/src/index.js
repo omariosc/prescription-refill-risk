@@ -233,14 +233,15 @@ export default {
       if (!sessionUser) return jsonError('Authentication required', 401);
       let body;
       try { body = await request.json(); } catch { return jsonError('Invalid JSON body', 400); }
-      const { questionnaire_id, responses } = body || {};
-      if (!questionnaire_id || !responses) return jsonError('questionnaire_id and responses required', 400);
+      const { questionnaire_id: rawQId, responses } = body || {};
+      if (!rawQId || !responses) return jsonError('questionnaire_id and responses required', 400);
+      const questionnaire_id = parseInt(rawQId);
 
-      // Calculate scores from responses
-      const eff = (responses.effectiveness || 3) / 5;
-      const se = 1 - ((responses.side_effects || 3) / 5); // invert: high side effects = low score
-      const qol = (responses.qol_impact || 3) / 5;
-      const ease = (responses.ease_of_use || 3) / 5;
+      // Calculate scores from responses (ensure numeric)
+      const eff = (parseInt(responses.effectiveness) || 3) / 5;
+      const se = 1 - ((parseInt(responses.side_effects) || 3) / 5); // invert: high side effects = low score
+      const qol = (parseInt(responses.qol_impact) || 3) / 5;
+      const ease = (parseInt(responses.ease_of_use) || 3) / 5;
       const wouldContinue = responses.would_continue ? 0.0 : 0.3;
 
       // Adherence risk: lower scores = higher risk of not refilling
@@ -252,9 +253,14 @@ export default {
       else if (responses.side_effects >= 3 || adherenceRisk > 0.5) intervention = 'phone_call';
       else if (adherenceRisk > 0.3) intervention = 'sms';
 
+      const effRound = parseFloat(eff.toFixed(4));
+      const seRound = parseFloat(se.toFixed(4));
+      const qolRound = parseFloat(qol.toFixed(4));
+      const riskRound = parseFloat(adherenceRisk.toFixed(4));
+
       await env.DB.prepare(
         `UPDATE questionnaires SET status='completed', completed_at=datetime('now'), responses=?, effectiveness_score=?, side_effects_score=?, quality_of_life_score=?, adherence_risk_score=?, recommended_intervention=? WHERE id=? AND LOWER(patient_email)=?`
-      ).bind(JSON.stringify(responses), eff, se, qol, adherenceRisk, intervention, questionnaire_id, sessionUser.email.toLowerCase()).run();
+      ).bind(JSON.stringify(responses), effRound, seRound, qolRound, riskRound, intervention, questionnaire_id, sessionUser.email.toLowerCase()).run();
 
       // Auto-send notification to patient if severe side effects
       if (responses.side_effects >= 4) {
