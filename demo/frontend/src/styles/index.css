@@ -52,7 +52,7 @@ header {
   align-items: center;
   gap: 16px;
 }
-.logo-svg { height: 44px; width: auto; max-width: 180px; }
+.logo-svg { height: 36px; width: auto; }
 .logo-btn {
   background: none;
   border: none;
@@ -1291,7 +1291,7 @@ footer strong { color: var(--navy); }
   .section { padding: 32px 0; }
   .card { padding: 20px 16px; }
   .pipe-bar-label { width: 80px; font-size: 10px; }
-  .logo-svg { height: 32px !important; max-width: 130px !important; }
+  .logo-svg { height: 28px !important; }
 }
 
 .an-cohort-pair {
