@@ -122,7 +122,7 @@ function TimerBar({ running, resetKey, accent }) {
 }
 
 /* ── Individual notebook card ─────────────────────────────────────── */
-function NotebookCard({ nb, isActive, onComplete }) {
+function NotebookCard({ nb, isActive, isLast, onComplete }) {
   const [activeIndex, setActiveIndex]   = useState(0);
   const [animKey,     setAnimKey]       = useState(0);
   const [timerKey,    setTimerKey]      = useState(0);
@@ -268,7 +268,7 @@ function NotebookCard({ nb, isActive, onComplete }) {
           <div style={{ textAlign: 'center', padding: '8px 0' }}>
             <span className="material-symbols-outlined" style={{ fontSize: 36, color: '#10b981', display: 'block', marginBottom: 6 }}>check_circle</span>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#059669' }}>All steps complete</div>
-            <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>Advancing to next notebook…</div>
+            {!isLast && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>Advancing to next notebook…</div>}
           </div>
         ) : (
           <>
@@ -400,7 +400,7 @@ export default function NotebookPipeline() {
                 }}
                 title={pos !== 0 ? `Switch to ${nb.badge} — ${nb.title}` : undefined}
               >
-                <NotebookCard nb={nb} isActive={pos === 0} onComplete={handleComplete} />
+                <NotebookCard nb={nb} isActive={pos === 0} isLast={i === NOTEBOOKS.length - 1} onComplete={handleComplete} />
               </div>
             );
           })}
