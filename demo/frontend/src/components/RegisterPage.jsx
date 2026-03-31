@@ -2,9 +2,10 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { register, verifyRegistration } from '../utils/api';
 
-export default function RegisterPage({ onCancel, onLogin }) {
+export default function RegisterPage({ onCancel, onLogin, onPendingApproval }) {
   const { checkAuth } = useAuth();
   const [step, setStep] = useState(1);
+  const [role, setRole] = useState('patient');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [organization, setOrganization] = useState('');
@@ -22,7 +23,7 @@ export default function RegisterPage({ onCancel, onLogin }) {
         qrRef.current.removeChild(qrRef.current.firstChild);
       }
       window.QrCreator.render({
-        text: regResult.totp_uri,
+        text: regResult.otpauth_uri,
         radius: 0.4,
         ecLevel: 'M',
         fill: '#003052',
@@ -65,7 +66,7 @@ export default function RegisterPage({ onCancel, onLogin }) {
 
     setSubmitting(true);
     try {
-      const result = await register(name.trim(), email.trim(), organization.trim() || undefined);
+      const result = await register(name.trim(), email.trim(), organization.trim() || undefined, role);
       setRegResult(result);
       setStep(2);
     } catch (err) {
@@ -119,7 +120,12 @@ export default function RegisterPage({ onCancel, onLogin }) {
     setSubmitting(true);
     setError('');
     try {
-      await verifyRegistration(email.trim(), codeVal);
+      const result = await verifyRegistration(email.trim(), codeVal);
+      if (result.pending_approval) {
+        // Clinician account — redirect to pending approval page
+        if (onPendingApproval) onPendingApproval(email.trim());
+        return;
+      }
       await checkAuth();
     } catch (err) {
       setError(err.message || 'Verification failed');
@@ -165,7 +171,54 @@ export default function RegisterPage({ onCancel, onLogin }) {
         {step === 1 && (
           <>
             <h2 className="login-title">Create an account</h2>
-            <p className="login-subtitle">Set up your Refill Risk Tool access</p>
+            <p className="login-subtitle">Set up your Pharmacy2U access</p>
+
+            {/* Role selection pills */}
+            <div style={{ display: 'flex', gap: 0, marginBottom: 12, background: '#f5f7fa', borderRadius: 24, padding: 3 }}>
+              <button
+                type="button"
+                onClick={() => setRole('patient')}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  border: 'none',
+                  borderRadius: 22,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  fontFamily: "'Inter', sans-serif",
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: role === 'patient' ? '#00e0bc' : 'transparent',
+                  color: role === 'patient' ? '#003052' : '#9ca3af',
+                }}
+              >
+                Patient
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('clinician')}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  border: 'none',
+                  borderRadius: 22,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  fontFamily: "'Inter', sans-serif",
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: role === 'clinician' ? '#00e0bc' : 'transparent',
+                  color: role === 'clinician' ? '#003052' : '#9ca3af',
+                }}
+              >
+                Clinician
+              </button>
+            </div>
+            <p style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5, marginBottom: 16 }}>
+              {role === 'patient'
+                ? 'Register for the Pharmacy2U patient app to manage your prescriptions and receive notifications from your care team.'
+                : 'Register as a healthcare professional to access the Refill Risk prediction tool. Your account requires admin approval before access is granted.'}
+            </p>
 
             {error && (
               <div className="login-error">
@@ -193,20 +246,22 @@ export default function RegisterPage({ onCancel, onLogin }) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@pharmacy2u.co.uk"
+                  placeholder={role === 'patient' ? 'example@gmail.com' : 'you@pharmacy2u.co.uk'}
                   required
                 />
               </div>
 
-              <div className="fg" style={{ marginBottom: 24 }}>
-                <label>Organization <span className="opt">(optional)</span></label>
-                <input
-                  type="text"
-                  value={organization}
-                  onChange={(e) => setOrganization(e.target.value)}
-                  placeholder="e.g. Pharmacy2U"
-                />
-              </div>
+              {role === 'clinician' && (
+                <div className="fg" style={{ marginBottom: 24 }}>
+                  <label>Organization <span className="opt">(optional)</span></label>
+                  <input
+                    type="text"
+                    value={organization}
+                    onChange={(e) => setOrganization(e.target.value)}
+                    placeholder="e.g. Pharmacy2U"
+                  />
+                </div>
+              )}
 
               <button
                 type="submit"

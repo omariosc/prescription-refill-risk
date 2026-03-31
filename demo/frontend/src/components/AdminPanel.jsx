@@ -14,6 +14,7 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editOrg, setEditOrg] = useState('');
+  const [editRole, setEditRole] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
   const qrRef = useRef(null);
 
@@ -84,6 +85,7 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
     setEditName(user.name);
     setEditEmail(user.email);
     setEditOrg(user.organization || '');
+    setEditRole(user.role);
   };
 
   const handleCancelEdit = () => {
@@ -91,6 +93,7 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
     setEditName('');
     setEditEmail('');
     setEditOrg('');
+    setEditRole('');
   };
 
   const handleSaveEdit = async (id) => {
@@ -102,6 +105,7 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
         name: editName.trim(),
         email: editEmail.trim(),
         organization: editOrg.trim() || undefined,
+        role: editRole,
       });
       setEditingId(null);
       await loadUsers();
@@ -215,6 +219,98 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
             </form>
           </div>
 
+          {/* Pending Clinician Requests */}
+          {users.filter(u => u.role === 'pending_clinician').length > 0 && (
+            <div className="d-sec" style={{ border: '2px solid #f59e0b', borderRadius: 'var(--md, 12px)', padding: 16, marginBottom: 20, background: '#fffbeb' }}>
+              <h3 style={{ color: '#92400e', marginBottom: 12 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20, verticalAlign: 'middle' }}>pending_actions</span> Pending Clinician Requests
+              </h3>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="rt" style={{ fontSize: 13 }}>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Organization</th>
+                      <th>Registered</th>
+                      <th style={{ width: 140, textAlign: 'center' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.filter(u => u.role === 'pending_clinician').map(u => (
+                      <tr key={u.id}>
+                        <td style={{ fontWeight: 600 }}>{u.name}</td>
+                        <td>{u.email}</td>
+                        <td>{u.organization || '\u2014'}</td>
+                        <td style={{ fontSize: 12, color: '#6b7280' }}>{u.created_at ? new Date(u.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '\u2014'}</td>
+                        <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                          <button
+                            style={{
+                              border: 'none',
+                              background: '#00e0bc',
+                              color: '#003052',
+                              padding: '6px 14px',
+                              borderRadius: 'var(--pill, 20px)',
+                              fontSize: 12,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              fontFamily: "'Inter', sans-serif",
+                              marginRight: 6,
+                            }}
+                            disabled={actionLoading === u.id}
+                            onClick={async () => {
+                              setActionLoading(u.id);
+                              setError('');
+                              try {
+                                await updateUser(u.id, { role: 'clinician' });
+                                await loadUsers();
+                              } catch (err) {
+                                setError(err.message);
+                              } finally {
+                                setActionLoading(null);
+                              }
+                            }}
+                          >
+                            {actionLoading === u.id ? 'Saving...' : 'Approve'}
+                          </button>
+                          <button
+                            style={{
+                              border: 'none',
+                              background: '#ef4444',
+                              color: '#fff',
+                              padding: '6px 14px',
+                              borderRadius: 'var(--pill, 20px)',
+                              fontSize: 12,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              fontFamily: "'Inter', sans-serif",
+                            }}
+                            disabled={actionLoading === u.id}
+                            onClick={async () => {
+                              if (!confirm(`Reject and delete ${u.name}'s account?`)) return;
+                              setActionLoading(u.id);
+                              setError('');
+                              try {
+                                await deleteUser(u.id);
+                                await loadUsers();
+                              } catch (err) {
+                                setError(err.message);
+                              } finally {
+                                setActionLoading(null);
+                              }
+                            }}
+                          >
+                            Reject
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* User list */}
           <div className="d-sec">
             <h3>
@@ -257,16 +353,16 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
                             />
                           </td>
                           <td>
-                            <span style={{
-                              fontSize: 11,
-                              fontWeight: 700,
-                              padding: '2px 8px',
-                              borderRadius: 'var(--pill)',
-                              background: u.role === 'admin' ? '#e0e7ff' : 'var(--grey)',
-                              color: u.role === 'admin' ? '#3730a3' : '#6b7280',
-                            }}>
-                              {u.role}
-                            </span>
+                            <select
+                              value={editRole}
+                              onChange={(e) => setEditRole(e.target.value)}
+                              style={{ fontSize: 12, padding: '4px 6px', borderRadius: 6, border: '1px solid var(--border)', fontFamily: "'Inter', sans-serif" }}
+                            >
+                              <option value="patient">patient</option>
+                              <option value="clinician">clinician</option>
+                              <option value="pending_clinician">pending_clinician</option>
+                              <option value="admin">admin</option>
+                            </select>
                           </td>
                           <td>
                             <input
@@ -306,10 +402,10 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
                               fontWeight: 700,
                               padding: '2px 8px',
                               borderRadius: 'var(--pill)',
-                              background: u.role === 'admin' ? '#e0e7ff' : 'var(--grey)',
-                              color: u.role === 'admin' ? '#3730a3' : '#6b7280',
+                              background: u.role === 'admin' ? '#e0e7ff' : u.role === 'pending_clinician' ? '#fef3c7' : 'var(--grey)',
+                              color: u.role === 'admin' ? '#3730a3' : u.role === 'pending_clinician' ? '#92400e' : '#6b7280',
                             }}>
-                              {u.role}
+                              {u.role === 'pending_clinician' ? 'pending' : u.role}
                             </span>
                           </td>
                           <td>{u.organization || '\u2014'}</td>

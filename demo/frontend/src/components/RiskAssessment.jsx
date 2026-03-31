@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { predict, downloadTemplate, searchNdc } from '../utils/api';
 import { parseCSV } from '../utils/csv';
+import { useAuth } from '../hooks/useAuth';
 
 const DEMO_SINGLE = {
   patient_id: 'P-10003',
@@ -14,13 +15,38 @@ const DEMO_SINGLE = {
   patient_pay_amt: '35.00',
   total_drug_cost: '55.00',
   refill_count: '2',
-  age: '82',
+  age: '24',
   chronic_conditions: 'Hyperlipidemia, CHF, Diabetes',
 };
 
+// Pre-loaded patient profiles for demo accounts
+const USER_PATIENTS = {
+  'o.choudhry@leeds.ac.uk': {
+    patient_id: 'P-10003',
+    drug_name: 'Atorvastatin',
+    drug_ndc: '00093-5057-01',
+    drug_dose: '20',
+    drug_unit: 'mg',
+    last_fill_date: '2026-02-05',
+    days_supply: '30',
+    quantity_dispensed: '30',
+    patient_pay_amt: '35.00',
+    total_drug_cost: '55.00',
+    refill_count: '2',
+    age: '24',
+    chronic_conditions: 'Hyperlipidemia, CHF, Diabetes',
+  },
+};
+
 export default function RiskAssessment({ onStartProcessing }) {
+  const { user } = useAuth();
+
+  // Auto-fill form for demo accounts with pre-loaded patient data
+  const userEmail = user?.email?.toLowerCase();
+  const preloaded = userEmail ? USER_PATIENTS[userEmail] : null;
+
   const [activeTab, setActiveTab] = useState('single');
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(preloaded || {
     patient_id: '',
     drug_name: '',
     drug_ndc: '',

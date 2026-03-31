@@ -114,8 +114,13 @@ function NewNotifBanner({ notif, onDismiss }) {
         backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
         display: 'flex', alignItems: 'flex-start', gap: 10,
       }}>
-        <div style={{ width: 36, height: 36, borderRadius: 8, background: 'linear-gradient(135deg, #00e0bc, #00b89c)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#fff' }}>{config.icon}</span>
+        <div style={{ width: 36, height: 36, borderRadius: 8, background: '#003052', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, padding: 4 }}>
+          <svg viewBox="0 0 239 239" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="#00e0bc" y="139" width="100" height="100" rx="5"/>
+            <path fill="#00e0bc" d="M48,0h46c3,0,6,2,6,5v89c0,3-2,5-6,5H5c-3,0-5-2-5-5V48C0,21,21,0,48,0Z"/>
+            <rect fill="#00e0bc" x="139" width="100" height="100" rx="5"/>
+            <path fill="#00e0bc" d="M145,139h89c3,0,5,2,5,5v47c0,26-21,48-48,48h-46c-3,0-6-2-6-6V145c0-3,3-6,6-6Z"/>
+          </svg>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Pharmacy2U</div>
