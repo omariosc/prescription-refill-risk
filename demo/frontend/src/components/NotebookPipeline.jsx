@@ -33,8 +33,8 @@ const NOTEBOOKS = [
     nbviewerUrl:
       'https://nbviewer.org/github/omariosc/prescription-refill-risk/blob/main/notebooks/eda_with_late_refillers.ipynb',
     steps: [
-      { num: 1,  icon: 'label',              title: 'Load & Label',           desc: 'Load the cleaned dataset and construct the binary late refill label using a 7-day grace window.' },
-      { num: 2,  icon: 'fact_check',         title: 'Data Quality',           desc: 'Audit the dataset for missing values, class imbalance, and distribution anomalies before analysis.' },
+      { num: 1,  icon: 'label',              title: 'Load & Label',           desc: 'Load the cleaned dataset and construct the binary late refill label using a 14-day grace window.' },
+      { num: 2,  icon: 'fact_check',         title: 'Data Quality',           desc: 'Audit the dataset for missing values and distribution anomalies before analysis.' },
       { num: 3,  icon: 'calendar_month',     title: 'Temporal Patterns',      desc: 'Examine refill timing across years and months, revealing the 2010 volume truncation artifact.' },
       { num: 4,  icon: 'groups',             title: 'Demographics',           desc: 'Explore how age, sex, race, and chronic condition burden relate to late refill behaviour.' },
       { num: 5,  icon: 'medication',         title: 'Drug & Dispensing',      desc: 'Analyse late rates by drug group, days of supply (30 vs 90-day), and dispensing quantity.' },
@@ -56,7 +56,7 @@ const NOTEBOOKS = [
     nbviewerUrl:
       'https://nbviewer.org/github/omariosc/prescription-refill-risk/blob/main/notebooks/challenge_a_model.ipynb',
     steps: [
-      { num: 0,  icon: 'settings',       title: 'Setup',                  desc: 'Configure environment, define the 7-day grace window, and initialise LightGBM and SHAP dependencies.' },
+      { num: 0,  icon: 'settings',       title: 'Setup',                  desc: 'Configure environment, define the 14-day grace window, and initialise LightGBM and SHAP dependencies.' },
       { num: 1,  icon: 'cloud_download', title: 'Load Data',              desc: 'Import the cleaned prescription dataset and beneficiary files ready for label construction.' },
       { num: 2,  icon: 'label',          title: 'Build Target Variable',  desc: 'Compute run-out dates, identify next fills, apply the grace window, and assign is_late labels. Exclude death-censored and last fills.' },
       { num: 3,  icon: 'construction',   title: 'Feature Engineering',    desc: 'Build 67 predictive signals from fill history, demographics, inpatient events, outpatient visits, and carrier claims.' },
