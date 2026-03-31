@@ -1,0 +1,80 @@
+[
+  {
+    "id": "side_effects",
+    "question": "Have you experienced any side effects from this medication?",
+    "type": "scale",
+    "labels": [
+      "None at all",
+      "Very mild",
+      "Mild but manageable",
+      "Moderate",
+      "Severe"
+    ],
+    "weight": 0.2
+  },
+  {
+    "id": "effectiveness",
+    "question": "How well do you feel the medication is working for you?",
+    "type": "scale",
+    "labels": [
+      "Very effective",
+      "Somewhat effective",
+      "Not sure yet",
+      "Not very effective",
+      "Not effective at all"
+    ],
+    "weight": 0.2
+  },
+  {
+    "id": "ease_of_use",
+    "question": "How easy is it to take this medication as prescribed?",
+    "type": "scale",
+    "labels": [
+      "Very easy",
+      "Easy",
+      "Manageable",
+      "Difficult",
+      "Very difficult"
+    ],
+    "weight": 0.15
+  },
+  {
+    "id": "daily_routine",
+    "question": "How well does this medication fit into your daily routine?",
+    "type": "scale",
+    "labels": [
+      "Fits perfectly",
+      "Fits well",
+      "Some adjustments needed",
+      "Significant disruption",
+      "Major disruption"
+    ],
+    "weight": 0.1
+  },
+  {
+    "id": "missed_doses",
+    "question": "In the past 7 days, how many doses have you missed?",
+    "type": "scale",
+    "labels": [
+      "None (0)",
+      "One (1)",
+      "Two (2)",
+      "Three to four (3-4)",
+      "Five or more (5+)"
+    ],
+    "weight": 0.15
+  },
+  {
+    "id": "likelihood_continue",
+    "question": "How likely are you to continue taking this medication?",
+    "type": "scale",
+    "labels": [
+      "Definitely will",
+      "Very likely",
+      "Probably",
+      "Unlikely",
+      "Definitely stopping"
+    ],
+    "weight": 0.2
+  }
+]

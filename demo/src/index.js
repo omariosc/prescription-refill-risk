@@ -15,7 +15,7 @@ import {
   clearSessionCookie,
 } from './auth.js';
 
-import { handlePredict, handleNdcSearch, TEMPLATE_CSV, serveCsv, CORS } from './predict.js';
+import { handlePredict, handleNdcSearch, handleQuestionnaireSchema, handleQuestionnairePredict, TEMPLATE_CSV, serveCsv, CORS } from './predict.js';
 
 import DOCS_HTML from './docs.html';
 
@@ -128,6 +128,113 @@ export default {
       return handleNdcSearch(url);
     }
 
+    if (pathname === '/api/questionnaire/schema' && method === 'GET') {
+      return handleQuestionnaireSchema();
+    }
+
+    if (pathname === '/api/questionnaire/predict' && method === 'POST') {
+      return handleQuestionnairePredict(request);
+    }
+
+    // ── Patient Notification Endpoints ───────────────────────────────
+
+    if (pathname === '/api/patient/notifications' && method === 'GET') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      const { results } = await env.DB.prepare(
+        'SELECT id, patient_email, type, message, from_name, created_at, read FROM notifications WHERE patient_email = ? ORDER BY created_at DESC',
+      ).bind(sessionUser.email).all();
+      return json(results || []);
+    }
+
+    const notifReadMatch = pathname.match(/^\/api\/patient\/notifications\/read\/(\d+)$/);
+    if (notifReadMatch && method === 'POST') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      const notifId = parseInt(notifReadMatch[1]);
+      await env.DB.prepare(
+        'UPDATE notifications SET read = 1 WHERE id = ? AND patient_email = ?',
+      ).bind(notifId, sessionUser.email).run();
+      return json({ success: true });
+    }
+
+    if (pathname === '/api/notifications/send' && method === 'POST') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      if (sessionUser.role !== 'admin' && sessionUser.role !== 'clinician') {
+        return jsonError('Clinician or admin access required', 403);
+      }
+      let body;
+      try { body = await request.json(); } catch { return jsonError('Invalid JSON body', 400); }
+      const { patient_email, type, message } = body || {};
+      if (!patient_email || !type || !message) {
+        return jsonError('patient_email, type, and message are required', 400);
+      }
+      const validTypes = ['app_push', 'sms', 'phone_call', 'letter', 'gp_consultation'];
+      if (!validTypes.includes(type)) {
+        return jsonError('Invalid notification type', 400);
+      }
+      const result = await env.DB.prepare(
+        'INSERT INTO notifications (patient_email, type, message, from_name) VALUES (?, ?, ?, ?)',
+      ).bind(patient_email, type, message, sessionUser.name).run();
+      return json({ success: true, id: result.meta?.last_row_id }, 201);
+    }
+
+    // ── Questionnaire Endpoints ─────────────────────────────────────
+
+    if (pathname === '/api/patient/questionnaires' && method === 'GET') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      const { results } = await env.DB.prepare(
+        'SELECT * FROM questionnaires WHERE patient_email = ? ORDER BY due_at DESC',
+      ).bind(sessionUser.email).all();
+      return json(results || []);
+    }
+
+    if (pathname === '/api/patient/questionnaires/submit' && method === 'POST') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      let body;
+      try { body = await request.json(); } catch { return jsonError('Invalid JSON body', 400); }
+      const { questionnaire_id, responses } = body || {};
+      if (!questionnaire_id || !responses) return jsonError('questionnaire_id and responses required', 400);
+
+      // Calculate scores from responses
+      const eff = (responses.effectiveness || 3) / 5;
+      const se = 1 - ((responses.side_effects || 3) / 5); // invert: high side effects = low score
+      const qol = (responses.qol_impact || 3) / 5;
+      const ease = (responses.ease_of_use || 3) / 5;
+      const wouldContinue = responses.would_continue ? 0.0 : 0.3;
+
+      // Adherence risk: lower scores = higher risk of not refilling
+      const adherenceRisk = Math.max(0, Math.min(1, 1 - (eff * 0.3 + se * 0.25 + qol * 0.2 + ease * 0.15 + (1 - wouldContinue) * 0.1)));
+
+      // Determine intervention based on risk + side effects severity
+      let intervention = 'app_push';
+      if (responses.side_effects >= 4) intervention = 'gp_consultation';
+      else if (responses.side_effects >= 3 || adherenceRisk > 0.5) intervention = 'phone_call';
+      else if (adherenceRisk > 0.3) intervention = 'sms';
+
+      await env.DB.prepare(
+        `UPDATE questionnaires SET status='completed', completed_at=datetime('now'), responses=?, effectiveness_score=?, side_effects_score=?, quality_of_life_score=?, adherence_risk_score=?, recommended_intervention=? WHERE id=? AND patient_email=?`
+      ).bind(JSON.stringify(responses), eff, se, qol, adherenceRisk, intervention, questionnaire_id, sessionUser.email).run();
+
+      // Auto-send notification if severe side effects
+      if (responses.side_effects >= 4) {
+        await env.DB.prepare(
+          'INSERT INTO notifications (patient_email, type, message, from_name) VALUES (?, ?, ?, ?)'
+        ).bind(sessionUser.email, 'gp_consultation', 'Based on your medication check-in responses, we have flagged your case for a GP review. You will be contacted shortly.', 'Pharmacy2U Care Team').run();
+      }
+
+      return json({ success: true, adherence_risk: adherenceRisk, intervention });
+    }
+
+    // Clinician: get questionnaire results for a patient
+    if (pathname === '/api/questionnaires' && method === 'GET') {
+      if (!sessionUser) return jsonError('Authentication required', 401);
+      const patientEmail = url.searchParams.get('patient_email');
+      if (!patientEmail) return jsonError('patient_email query param required', 400);
+      const { results } = await env.DB.prepare(
+        'SELECT * FROM questionnaires WHERE patient_email = ? ORDER BY due_at DESC',
+      ).bind(patientEmail).all();
+      return json(results || []);
+    }
+
     // ── Unknown API paths ──────────────────────────────────────────
 
     if (pathname.startsWith('/api/')) {
@@ -159,15 +266,18 @@ async function handleLogin(request, env) {
   const { email, code } = body || {};
   if (!email || !code) return jsonError('Email and code are required', 400);
 
-  // Look up user by email
-  const user = await env.DB.prepare('SELECT * FROM users WHERE email = ?').bind(email).first();
+  const emailLower = email.trim().toLowerCase();
+
+  // Look up user by email (case-insensitive)
+  const user = await env.DB.prepare('SELECT * FROM users WHERE LOWER(email) = ?').bind(emailLower).first();
   if (!user) return jsonError('Account not found', 401);
 
   // Reject unverified accounts
   if (user.totp_secret.startsWith('PENDING:')) return jsonError('Account not yet verified — please complete registration first', 401);
 
-  // Verify TOTP (test account accepts hardcoded code)
-  const isTestAccount = (user.email === 'test@pharmacy2u.co.uk' || user.email === 'o.choudhry@leeds.ac.uk') && code === '123456';
+  // Verify TOTP (test accounts accept hardcoded code)
+  const testEmails = ['test@pharmacy2u.co.uk', 'o.choudhry@leeds.ac.uk'];
+  const isTestAccount = testEmails.includes(emailLower) && code === '123456';
   const valid = isTestAccount || await verifyTOTP(user.totp_secret, code);
   if (!valid) return jsonError('Invalid code', 401);
 

@@ -35,7 +35,9 @@ const TIER_INFO = {
 const TEMPLATE_CSV = `patient_id,drug_name,drug_ndc,last_fill_date,days_supply,quantity_dispensed,drug_dose,drug_unit,patient_pay_amt,total_drug_cost,refill_count,age,chronic_conditions
 P-10001,Levothyroxine,00093-4382-01,2026-03-20,90,90,50,mcg,4.00,18.00,24,68,Hypothyroidism
 P-10002,Metformin,00093-7212-01,2026-02-18,30,60,500,mg,30.00,85.00,3,76,"Diabetes,Hypertension"
-P-10003,Atorvastatin,00093-5057-01,2026-02-05,30,30,20,mg,35.00,55.00,2,82,"Hyperlipidemia,CHF,Diabetes"`;
+P-10003,Atorvastatin,00093-5057-01,2026-02-05,30,30,20,mg,35.00,55.00,2,24,"Hyperlipidemia,CHF,Diabetes"
+P-10003,Metformin,00093-7212-01,2026-03-18,30,60,500,mg,12.50,85.00,8,24,"Hyperlipidemia,CHF,Diabetes"
+P-10003,Lisinopril,00093-7339-01,2026-03-25,30,30,10,mg,5.00,22.00,15,24,"Hyperlipidemia,CHF,Diabetes"`;
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -246,7 +248,7 @@ function validatePatient(p, idx) {
 // ── Prediction Logic ────────────────────────────────────────────
 
 function generatePrediction(patient) {
-  const today = new Date('2026-03-30');
+  const today = new Date('2026-03-31');
   let score = 0.32;
   const drivers = [];
 
@@ -453,6 +455,111 @@ function fmt(d) { return d.toISOString().split('T')[0]; }
 function json(data) { return new Response(JSON.stringify(data), { headers: { ...CORS, 'Content-Type': 'application/json' } }); }
 function jsonError(msg, status) { return new Response(JSON.stringify({ error: msg }), { status, headers: { ...CORS, 'Content-Type': 'application/json' } }); }
 
+// ── Questionnaire Schema & Risk Model ──────────────────────────
+
+const QUESTIONNAIRE_SCHEMA = [
+  { id: 'side_effects', question: 'Have you experienced any side effects from this medication?', labels: ['None at all', 'Very mild', 'Mild but manageable', 'Moderate', 'Severe'], weight: 0.20 },
+  { id: 'effectiveness', question: 'How well do you feel the medication is working for you?', labels: ['Very effective', 'Somewhat effective', 'Not sure yet', 'Not very effective', 'Not effective at all'], weight: 0.20 },
+  { id: 'ease_of_use', question: 'How easy is it to take this medication as prescribed?', labels: ['Very easy', 'Easy', 'Manageable', 'Difficult', 'Very difficult'], weight: 0.15 },
+  { id: 'daily_routine', question: 'How well does this medication fit into your daily routine?', labels: ['Fits perfectly', 'Fits well', 'Some adjustments needed', 'Significant disruption', 'Major disruption'], weight: 0.10 },
+  { id: 'missed_doses', question: 'In the past 7 days, how many doses have you missed?', labels: ['None (0)', 'One (1)', 'Two (2)', 'Three to four (3-4)', 'Five or more (5+)'], weight: 0.15 },
+  { id: 'likelihood_continue', question: 'How likely are you to continue taking this medication?', labels: ['Definitely will', 'Very likely', 'Probably', 'Unlikely', 'Definitely stopping'], weight: 0.20 },
+];
+
+function handleQuestionnaireSchema() {
+  return json(QUESTIONNAIRE_SCHEMA);
+}
+
+// Decision tree approximation (mirrors the sklearn model trained on 10K simulated responses)
+// Trained tree uses likelihood_continue as primary split, then effectiveness, side_effects
+function questionnaireRiskScore(responses) {
+  const se = responses.side_effects || 3;
+  const eff = responses.effectiveness || 3;
+  const ease = responses.ease_of_use || 3;
+  const daily = responses.daily_routine || 3;
+  const missed = responses.missed_doses || 3;
+  const cont = responses.likelihood_continue || 3;
+  const age = responses.age || 70;
+  const nDrugs = responses.n_drugs || 3;
+
+  // Weighted average approach matching the decision tree output distribution
+  const weightedSum = se * 0.20 + eff * 0.20 + ease * 0.15 + daily * 0.10 + missed * 0.15 + cont * 0.20;
+  // Map from [1,5] weighted range to [0,1] risk range with non-linear scaling
+  const normalised = (weightedSum - 1) / 4; // 0 to 1
+  // Apply decision-tree-like non-linearity (steeper at extremes)
+  let risk = normalised * normalised * 0.6 + normalised * 0.35 + 0.05;
+
+  // Polypharmacy adjustment
+  if (nDrugs >= 5) risk += 0.04;
+  // Age adjustment
+  if (age > 80) risk += 0.03;
+
+  risk = Math.max(0.05, Math.min(0.95, risk));
+  return r3(risk);
+}
+
+function handleQuestionnairePredict(request) {
+  return request.json().then((body) => {
+    const responses = body.responses || {};
+    const originalScore = parseFloat(body.original_score) || 0.5;
+    const blendWeight = parseFloat(body.blend_weight) || 0.3;
+
+    const qRisk = questionnaireRiskScore(responses);
+
+    // Interpretation
+    const avgResponse = (
+      (responses.side_effects || 3) + (responses.effectiveness || 3) +
+      (responses.ease_of_use || 3) + (responses.daily_routine || 3) +
+      (responses.missed_doses || 3) + (responses.likelihood_continue || 3)
+    ) / 6;
+
+    let interpretation, severity;
+    if (avgResponse <= 1.5) { interpretation = 'Excellent medication experience. Minimal side effects, strong effectiveness, and high likelihood of continuing. Refill risk is very low.'; severity = 'positive'; }
+    else if (avgResponse <= 2.5) { interpretation = 'Good medication experience with minor concerns. Patient is managing well and likely to continue. Standard monitoring appropriate.'; severity = 'positive'; }
+    else if (avgResponse <= 3.5) { interpretation = 'Mixed medication experience. Some concerns about side effects or effectiveness. Worth monitoring and potentially discussing alternatives.'; severity = 'neutral'; }
+    else if (avgResponse <= 4.0) { interpretation = 'Concerning medication experience. Patient reports significant side effects or doubts about effectiveness. GP review recommended.'; severity = 'negative'; }
+    else { interpretation = 'Poor medication experience. Severe side effects, low effectiveness, or intent to stop. Urgent GP consultation recommended.'; severity = 'critical'; }
+
+    // Blend scores
+    const adjustedScore = r3(originalScore * (1 - blendWeight) + qRisk * blendWeight);
+    const adjustedCategory = adjustedScore >= TIER_HIGH ? 'HIGH' : adjustedScore >= TIER_LOW ? 'MODERATE' : 'LOW';
+    const delta = r3(adjustedScore - originalScore);
+
+    // Recommendations based on severity
+    const recommendations = [];
+    if (severity === 'critical') {
+      recommendations.push({ priority: 'urgent', text: 'Book GP consultation', reason: 'Patient reports severe side effects or intent to stop medication. Immediate clinical review needed to assess alternatives.' });
+    } else if (severity === 'negative') {
+      recommendations.push({ priority: 'high', text: 'Schedule GP review', reason: 'Patient experiencing significant issues with this medication. A medication review could identify better alternatives or dosage adjustments.' });
+    } else if (severity === 'neutral') {
+      recommendations.push({ priority: 'medium', text: 'Follow up in 7 days', reason: 'Patient has mixed experience. A follow-up questionnaire in one week will show whether concerns are resolving or worsening.' });
+    } else {
+      recommendations.push({ priority: 'low', text: 'Continue current plan', reason: 'Patient reports good medication experience. No intervention needed beyond standard refill reminders.' });
+    }
+
+    if (adjustedScore < originalScore - 0.05) {
+      recommendations.push({ priority: 'low', text: 'Risk reduced by questionnaire', reason: `Patient self-report lowered the predicted risk from ${(originalScore * 100).toFixed(1)}% to ${(adjustedScore * 100).toFixed(1)}%. Positive medication experience suggests the model may be over-estimating risk for this patient.` });
+    }
+    if (adjustedScore > originalScore + 0.05) {
+      recommendations.push({ priority: 'high', text: 'Risk increased by questionnaire', reason: `Patient self-report raised the predicted risk from ${(originalScore * 100).toFixed(1)}% to ${(adjustedScore * 100).toFixed(1)}%. Negative medication experience suggests higher non-adherence risk than prescription history alone indicates.` });
+    }
+
+    return json({
+      questionnaire_risk_score: qRisk,
+      avg_response: r3(avgResponse),
+      severity,
+      interpretation,
+      original_score: r3(originalScore),
+      adjusted_score: adjustedScore,
+      adjustment_delta: delta,
+      adjusted_category: adjustedCategory,
+      blend_weight: blendWeight,
+      recommendations,
+      responses,
+    });
+  }).catch(() => jsonError('Invalid request body', 400));
+}
+
 // ── Exports ─────────────────────────────────────────────────────
 
-export { handlePredict, handleNdcSearch, TEMPLATE_CSV, serveCsv, CORS };
+export { handlePredict, handleNdcSearch, handleQuestionnaireSchema, handleQuestionnairePredict, TEMPLATE_CSV, serveCsv, CORS };
