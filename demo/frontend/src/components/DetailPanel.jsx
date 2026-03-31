@@ -251,8 +251,8 @@ export default function DetailPanel({ patient: p, onClose, onConfirmIntervention
           </div>
 
           {/* Clinician Intervention */}
-          <InterventionPanel patient={p} onConfirm={(interventionId, patientId) => {
-            if (onConfirmIntervention) onConfirmIntervention(interventionId, patientId);
+          <InterventionPanel patient={p} onConfirm={(interventionId, patientId, patientEmail) => {
+            if (onConfirmIntervention) onConfirmIntervention(interventionId, patientId, patientEmail);
           }} />
 
           {/* Disclaimer */}
