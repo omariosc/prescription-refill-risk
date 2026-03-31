@@ -1,5 +1,5 @@
 import TrustBar from "./TrustBar";
-import PipelineExplainer from "./PipelineExplainer";
+import NotebookPipeline from "./NotebookPipeline";
 import StatsSection from "./StatsSection";
 
 const REFERENCES = [
@@ -161,7 +161,7 @@ export default function LandingPage({ onGetStarted }) {
         </div>
       </section>
       <TrustBar />
-      <PipelineExplainer />
+      <NotebookPipeline />
       <StatsSection />
       <MeetTheTeam />
       <ReferencesSection />
