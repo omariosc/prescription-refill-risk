@@ -126,12 +126,10 @@ export function getSessionCookie(request) {
   return match ? match[1] : null;
 }
 
-export function setSessionCookie(token, isSecure = true) {
-  const secure = isSecure ? '; Secure' : '';
-  return `session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${SESSION_MAX_AGE}${secure}`;
+export function setSessionCookie(token) {
+  return `session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${SESSION_MAX_AGE}`;
 }
 
-export function clearSessionCookie(isSecure = true) {
-  const secure = isSecure ? '; Secure' : '';
-  return `session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${secure}`;
+export function clearSessionCookie() {
+  return `session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0`;
 }

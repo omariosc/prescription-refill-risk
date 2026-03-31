@@ -243,17 +243,19 @@ export default {
       const now = new Date().toISOString();
       const notifId = result.meta?.last_row_id;
 
-      // Broadcast to patient's WebSocket clients instantly
-      await broadcastToUser(env, normalizedEmail, {
-        type: 'notification',
-        data: { id: notifId, patient_email: normalizedEmail, type, message, from_name: sessionUser.name, created_at: now, read: 0 },
-      });
-      if (type === 'in_app_survey' && questionnaireId) {
-        await broadcastToUser(env, normalizedEmail, {
-          type: 'questionnaire',
-          data: { id: questionnaireId, patient_email: normalizedEmail, patient_id: body.patient_id || '', drug_name: body.drug_name || 'Medication', drug_ndc: body.drug_ndc || '', status: 'pending', due_at: now.split('T')[0], fill_date: now.split('T')[0] },
-        });
-      }
+      // Broadcast to patient's WebSocket clients (fire-and-forget, don't block response)
+      try {
+        broadcastToUser(env, normalizedEmail, {
+          type: 'notification',
+          data: { id: notifId, patient_email: normalizedEmail, type, message, from_name: sessionUser.name, created_at: now, read: 0 },
+        }).catch(() => {});
+        if (type === 'in_app_survey' && questionnaireId) {
+          broadcastToUser(env, normalizedEmail, {
+            type: 'questionnaire',
+            data: { id: questionnaireId, patient_email: normalizedEmail, patient_id: body.patient_id || '', drug_name: body.drug_name || 'Medication', drug_ndc: body.drug_ndc || '', status: 'pending', due_at: now.split('T')[0], fill_date: now.split('T')[0] },
+          }).catch(() => {});
+        }
+      } catch { /* WebSocket broadcast failure should never block notification creation */ }
 
       return json({ success: true, id: result.meta?.last_row_id }, 201);
     }
