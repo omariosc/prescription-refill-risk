@@ -124,14 +124,73 @@ async function handlePredict(request) {
       const mod = predictions.filter((p) => p.risk_category === 'MODERATE').length;
       const low = predictions.filter((p) => p.risk_category === 'LOW').length;
       const avg = predictions.reduce((s, p) => s + p.risk_score, 0) / predictions.length;
+
+      // ── Patient-level composite risk scores ──
+      // Group predictions by patient_id and compute composite risk
+      const patientGroups = {};
+      predictions.forEach((p) => {
+        const pid = p.patient_id;
+        if (!patientGroups[pid]) patientGroups[pid] = [];
+        patientGroups[pid].push(p);
+      });
+      const patient_composites = Object.entries(patientGroups).map(([pid, preds]) => {
+        // P(at least one late) = 1 - product of (1 - p_i)
+        const probAllOnTime = preds.reduce((acc, p) => acc * (1 - p.risk_score), 1);
+        const compositeScore = r3(1 - probAllOnTime);
+        const compositeCat = compositeScore >= TIER_HIGH ? 'HIGH' : compositeScore >= TIER_LOW ? 'MODERATE' : 'LOW';
+        const nDrugs = preds.length;
+        const nHigh = preds.filter((p) => p.risk_category === 'HIGH').length;
+        const nMod = preds.filter((p) => p.risk_category === 'MODERATE').length;
+        const nLow = preds.filter((p) => p.risk_category === 'LOW').length;
+        const meanScore = r3(preds.reduce((s, p) => s + p.risk_score, 0) / nDrugs);
+        const maxScore = r3(Math.max(...preds.map((p) => p.risk_score)));
+
+        // Escalation logic
+        const recommendations = [];
+        if (nDrugs >= 3 && compositeCat === 'HIGH') {
+          recommendations.push({
+            priority: 'urgent',
+            text: 'Consider GP consultation: multiple medications at collective high risk',
+            reason: `This patient is taking ${nDrugs} medications with a composite risk of ${(compositeScore * 100).toFixed(1)}% (probability of at least one late refill). ${nHigh > 0 ? nHigh + ' drug(s) are individually HIGH risk. ' : ''}${nMod >= 2 ? 'Multiple MODERATE-risk medications compound to HIGH overall risk. ' : ''}A GP review could identify simplification opportunities (combination pills, extended supply) to reduce adherence burden.`,
+          });
+        }
+        if (nDrugs >= 5) {
+          recommendations.push({
+            priority: 'high',
+            text: 'Polypharmacy flag: ' + nDrugs + ' concurrent medications',
+            reason: 'Patients managing 5 or more medications face significantly higher adherence challenges. Medication review to identify redundancies, interactions, or simplification opportunities is recommended.',
+          });
+        }
+        if (nMod >= 3 && compositeCat === 'HIGH' && nHigh === 0) {
+          recommendations.push({
+            priority: 'high',
+            text: 'Accumulation risk: no single HIGH drug, but collective risk is HIGH',
+            reason: `While no individual medication exceeds the HIGH threshold, ${nMod} medications at MODERATE risk create a composite score of ${(compositeScore * 100).toFixed(1)}%. This patient is at high risk of missing at least one refill and may benefit from an adherence support programme.`,
+          });
+        }
+
+        return {
+          patient_id: pid,
+          n_drugs: nDrugs,
+          composite_score: compositeScore,
+          composite_category: compositeCat,
+          mean_score: meanScore,
+          max_score: maxScore,
+          tier_breakdown: { high: nHigh, moderate: nMod, low: nLow },
+          drug_scores: preds.map((p) => ({ drug_name: p.drug_name, risk_score: p.risk_score, risk_category: p.risk_category })),
+          recommendations,
+        };
+      });
+
       send({
         type: 'result',
         timestamp: new Date().toISOString(),
-        model_version: 'v1.2.0-lightgbm-calibrated',
+        model_version: 'v1.3.0-lightgbm-composite',
         processing_time_ms: 3200 + patients.length * 80,
         disclaimer: 'This is a modelling and product-thinking exercise using synthetic claims-style data. Outputs should not be interpreted as clinical advice.',
         summary: { total_patients: predictions.length, high_risk: high, moderate_risk: mod, low_risk: low, avg_risk_score: r3(avg) },
         predictions,
+        patient_composites,
       });
       send({ type: 'progress', message: 'Complete', progress: 100 });
       controller.close();
@@ -264,8 +323,12 @@ function generatePrediction(patient) {
     ? patient.drug_name + (patient.drug_dose ? ' ' + patient.drug_dose + (patient.drug_unit || 'mg') : '')
     : patient.drug_ndc || 'Unknown Drug';
 
+  // Demo patient email mapping for notification delivery
+  const PATIENT_EMAILS = { 'P-10003': 'O.Choudhry@leeds.ac.uk' };
+
   return {
     patient_id: patient.patient_id || 'UNKNOWN',
+    patient_email: PATIENT_EMAILS[patient.patient_id] || '',
     drug_name: drugLabel,
     drug_ndc: patient.drug_ndc || '',
     risk_score: r3(score),
