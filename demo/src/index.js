@@ -418,11 +418,13 @@ export default {
 
       // Always check for patient-facing notifications and questionnaires for this user
       // (a user can be a clinician AND have notifications sent to them for demo purposes)
-      // Only return unread notifications (read=0) — dismissed ones stay hidden
+      // Return all unread notifications (read=0) — both new ones and any the patient hasn't dismissed yet
+      // Using OR: either unread (regardless of cursor) or created after cursor
       const nr = await env.DB.prepare(
-        'SELECT * FROM notifications WHERE LOWER(patient_email) = ? AND read = 0 AND created_at > ? ORDER BY created_at DESC LIMIT 20',
+        'SELECT * FROM notifications WHERE LOWER(patient_email) = ? AND (read = 0 OR created_at > ?) ORDER BY created_at DESC LIMIT 20',
       ).bind(normalizedEmail, since).all();
-      notifications = nr.results || [];
+      // Filter to only unread in results
+      notifications = (nr.results || []).filter(n => n.read === 0);
 
       // Always include ALL pending questionnaires (regardless of cursor) so they appear immediately
       const qr = await env.DB.prepare(
