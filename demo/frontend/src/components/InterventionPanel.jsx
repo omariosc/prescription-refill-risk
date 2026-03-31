@@ -11,11 +11,11 @@ const INTERVENTIONS = [
     level: 0,
   },
   {
-    id: 'sms',
-    label: 'SMS Reminder',
-    icon: 'sms',
+    id: 'in_app_survey',
+    label: 'In-App Survey',
+    icon: 'fact_check',
     color: '#3b82f6',
-    description: 'Text message reminder to refill medication',
+    description: 'Send a medication check-in questionnaire to the patient\'s app',
     levelLabel: 'Low',
     level: 1,
   },
@@ -50,17 +50,23 @@ const INTERVENTIONS = [
 
 const LEVEL_COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#e89c0d', '#e8423a'];
 
-function getSuggestedIntervention(age, riskCategory) {
+function getSuggestedIntervention(age, riskCategory, language, ethnicity) {
+  // Language/ethnicity overrides
+  if (language && language !== 'English' && language !== 'en') {
+    if (riskCategory === 'HIGH') return 'in_app_survey';
+    return 'app_push';
+  }
+
   if (riskCategory === 'LOW') return 'app_push';
   if (riskCategory === 'HIGH') {
     if (age && age > 75) return 'phone_call';
-    if (age && age < 25) return 'app_push';
+    if (age && age < 25) return 'in_app_survey';
     return 'phone_call';
   }
   if (age && age > 80) return 'phone_call';
-  if (age && age > 65) return 'sms';
+  if (age && age > 65) return 'in_app_survey';
   if (age && age < 30) return 'app_push';
-  return 'sms';
+  return 'in_app_survey';
 }
 
 export function getInterventionLabel(id) {
@@ -73,16 +79,29 @@ export function getInterventionColor(id) {
   return item ? item.color : '#6b7280';
 }
 
+export const INTERVENTION_MESSAGES = {
+  app_push: 'Quick reminder: your prescription is due for a refill. Tap to reorder.',
+  in_app_survey: 'Your care team has sent you a medication check-in survey. Please complete it when you have a moment.',
+  letter: 'A letter has been posted with information about your medication review. Expected delivery within 2 working days.',
+  phone_call: 'Your pharmacy team will be calling you shortly to discuss your prescription refill.',
+  gp_consultation: 'A GP consultation has been booked to review your medication adherence. You will receive further details shortly.',
+};
+
 export default function InterventionPanel({ patient, onConfirm }) {
   const [selected, setSelected] = useState(null);
 
-  const suggested = getSuggestedIntervention(patient.age, patient.risk_category);
+  const suggested = getSuggestedIntervention(patient.age, patient.risk_category, patient.language, patient.ethnicity);
 
   const handleConfirm = () => {
     if (selected && onConfirm) {
-      onConfirm(selected, patient.patient_id);
+      // Pass patient email for notification delivery (use patient_id as email lookup hint)
+      onConfirm(selected, patient.patient_id, patient.patient_email);
     }
   };
+
+  const languageNote = patient.language && patient.language !== 'English' && patient.language !== 'en'
+    ? `, language preference (${patient.language})`
+    : '';
 
   return (
     <div className="d-sec">
@@ -90,7 +109,7 @@ export default function InterventionPanel({ patient, onConfirm }) {
         <span className="material-symbols-outlined" style={{ fontSize: 20 }}>support_agent</span> Clinician Intervention
       </h3>
       <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 16, lineHeight: 1.5 }}>
-        Choose how to reach this patient. Suggested: <strong style={{ color: '#0d9488' }}>{getInterventionLabel(suggested)}</strong> based on risk level{patient.age ? ` and patient age (${patient.age}y)` : ''}.
+        Choose how to reach this patient. Suggested: <strong style={{ color: '#0d9488' }}>{getInterventionLabel(suggested)}</strong> based on risk level{patient.age ? ` and patient age (${patient.age}y)` : ''}{languageNote}.
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -112,7 +131,7 @@ export default function InterventionPanel({ patient, onConfirm }) {
                 background: isSelected ? `${item.color}12` : '#fff',
                 border: '1px solid',
                 borderColor: isSelected ? `${item.color}60` : '#e5e7eb',
-                borderLeft: `10px solid ${isSelected ? item.color : item.color + '30'}`,
+                borderLeft: `15px solid ${isSelected ? item.color : item.color + '30'}`,
                 borderRadius: 'var(--sm)',
                 cursor: 'pointer',
                 textAlign: 'left',

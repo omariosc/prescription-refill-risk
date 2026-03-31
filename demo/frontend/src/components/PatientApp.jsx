@@ -111,7 +111,7 @@ function NewNotifBanner({ notif, onDismiss }) {
       <div style={{
         margin: '8px 12px', background: '#fff', borderRadius: 16,
         padding: '14px 16px', boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
-        borderLeft: '5px solid #f59e0b',
+        borderBottom: '5px solid #f59e0b',
         display: 'flex', alignItems: 'flex-start', gap: 12,
       }}>
         <span className="material-symbols-outlined" style={{ fontSize: 24, color: '#f59e0b', flexShrink: 0, marginTop: 1 }}>{config.icon}</span>
@@ -195,8 +195,8 @@ export default function PatientApp({ user, onLogout }) {
 
     // Initial load
     poll();
-    // Fast poll every 1 second for real-time feel
-    const interval = setInterval(poll, 1000);
+    // 500ms poll for near-instant updates during demo
+    const interval = setInterval(poll, 500);
     return () => { active = false; clearInterval(interval); };
   }, []);
 
@@ -267,7 +267,7 @@ export default function PatientApp({ user, onLogout }) {
 
         {/* Pending Questionnaire Banners */}
         {pendingQuestionnaires.map(q => (
-          <div key={q.id} style={{ background: '#fff', borderRadius: 16, padding: 16, margin: '0 16px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', borderLeft: '4px solid #00e0bc' }}>
+          <div key={q.id} style={{ background: '#fff', borderRadius: 16, padding: 16, margin: '0 16px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', borderBottom: '15px solid #00e0bc' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 24, color: '#00e0bc' }}>fact_check</span>
               <div style={{ flex: 1 }}>
@@ -315,7 +315,7 @@ export default function PatientApp({ user, onLogout }) {
               const config = NOTIF_CONFIG[notif.type] || NOTIF_CONFIG.app_push;
               const isUnread = !notif.read;
               return (
-                <div key={notif.id} style={{ background: isUnread ? '#fffbeb' : '#fff', borderRadius: 16, padding: 14, marginBottom: 10, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', borderLeft: '4px solid #f59e0b' }}>
+                <div key={notif.id} style={{ background: isUnread ? '#fffbeb' : '#fff', borderRadius: 16, padding: 14, marginBottom: 10, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', borderBottom: '15px solid #f59e0b' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#f59e0b', marginTop: 1, flexShrink: 0 }}>{config.icon}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -350,7 +350,7 @@ export default function PatientApp({ user, onLogout }) {
             const currentStep = isOverdue ? 3 : 2;
 
             return (
-              <div key={i} style={{ background: '#fff', borderRadius: 16, marginBottom: 10, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', overflow: 'hidden', borderLeft: isOverdue ? '4px solid #ef4444' : '4px solid #10b981' }}>
+              <div key={i} style={{ background: '#fff', borderRadius: 16, marginBottom: 10, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', overflow: 'hidden', borderBottom: isOverdue ? '15px solid #ef4444' : '15px solid #10b981' }}>
                 {/* Header row — always visible, clickable */}
                 <button onClick={() => setExpandedDrug(isExpanded ? -1 : i)} style={{
                   display: 'flex', alignItems: 'center', width: '100%', padding: '14px 16px', gap: 12,
@@ -376,8 +376,12 @@ export default function PatientApp({ user, onLogout }) {
                       <InfoRow icon="schedule" label="Days supply" value={`${rx.days_supply} days`} />
                       <InfoRow icon="inventory_2" label="Quantity" value={`${rx.quantity} tablets`} />
                       <InfoRow icon="autorenew" label="Prior refills" value={String(rx.refill_count)} />
-                      <InfoRow icon="payments" label="Your cost" value={`$${rx.patient_pay.toFixed(2)}`} />
-                      <InfoRow icon="receipt_long" label="Total cost" value={`$${rx.total_cost.toFixed(2)}`} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#9ca3af' }}>payments</span>
+                        <span style={{ fontSize: 13, color: '#6b7280', flex: 1 }}>Out of Pocket Cost</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#003052' }}>${rx.patient_pay.toFixed(2)}</span>
+                        <span style={{ fontSize: 12, color: '#9ca3af', textDecoration: 'line-through' }}>${rx.total_cost.toFixed(2)}</span>
+                      </div>
                     </div>
 
                     {isOverdue ? (
@@ -468,7 +472,7 @@ function InfoRow({ icon, label, value }) {
 
 function NavTab({ icon, label, active, disabled }) {
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, position: 'relative', paddingTop: 4, opacity: disabled ? 0.35 : 1 }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, position: 'relative', paddingTop: 4, pointerEvents: disabled ? 'none' : 'auto' }}>
       {active && <div style={{ position: 'absolute', top: 0, left: '25%', right: '25%', height: 3, background: '#00e0bc', borderRadius: '0 0 3px 3px' }} />}
       <span className="material-symbols-outlined" style={{ fontSize: 24, color: active ? '#003052' : '#9ca3af' }}>{icon}</span>
       <span style={{ fontSize: 11, fontWeight: active ? 600 : 400, color: active ? '#003052' : '#9ca3af' }}>{label}</span>
