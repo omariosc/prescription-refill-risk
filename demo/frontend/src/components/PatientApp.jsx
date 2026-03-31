@@ -104,25 +104,28 @@ function NewNotifBanner({ notif, onDismiss }) {
   const config = NOTIF_CONFIG[notif.type] || NOTIF_CONFIG.app_push;
   return (
     <div style={{
-      position: 'fixed', top: 56, left: 0, right: 0, zIndex: 150,
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999,
       maxWidth: 480, margin: '0 auto',
-      animation: 'slideDown 400ms ease-out',
+      animation: 'iosSlideDown 350ms cubic-bezier(0.32, 0.72, 0, 1)',
     }}>
       <div style={{
-        margin: '8px 12px', background: '#fff', borderRadius: 16,
-        padding: '14px 16px', boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
-        borderBottom: '15px solid #f59e0b',
-        display: 'flex', alignItems: 'flex-start', gap: 12,
+        margin: '8px 8px 0', background: 'rgba(255,255,255,0.97)', borderRadius: 14,
+        padding: '14px 14px 12px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        display: 'flex', alignItems: 'flex-start', gap: 10,
       }}>
-        <span className="material-symbols-outlined" style={{ fontSize: 24, color: '#f59e0b', flexShrink: 0, marginTop: 1 }}>{config.icon}</span>
+        <div style={{ width: 36, height: 36, borderRadius: 8, background: 'linear-gradient(135deg, #00e0bc, #00b89c)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#fff' }}>{config.icon}</span>
+        </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#92400e', lineHeight: 1.4, marginBottom: 2 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Pharmacy2U</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', lineHeight: 1.35, marginBottom: 2 }}>
             {config.titleFn(notif)}
           </div>
-          <div style={{ fontSize: 12, color: '#6b7280', lineHeight: 1.4 }}>{notif.message}</div>
+          <div style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.35, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{notif.message}</div>
         </div>
-        <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, flexShrink: 0 }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#9ca3af' }}>close</span>
+        <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, flexShrink: 0, marginTop: -2 }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#c7c7cc' }}>close</span>
         </button>
       </div>
     </div>
