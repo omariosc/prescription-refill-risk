@@ -316,24 +316,24 @@ export default {
       let questionnaires = [];
       let clinicianAlerts = [];
 
-      if (role === 'patient') {
-        // Patient: get new notifications + questionnaires
-        // Normalize email for case-insensitive matching
-        const normalizedEmail = email.toLowerCase();
+      // Normalize email for case-insensitive matching
+      const normalizedEmail = email.toLowerCase();
 
-        const nr = await env.DB.prepare(
-          'SELECT * FROM notifications WHERE LOWER(patient_email) = ? AND created_at > ? ORDER BY created_at DESC LIMIT 20',
-        ).bind(normalizedEmail, since).all();
-        notifications = nr.results || [];
+      // Always check for patient-facing notifications and questionnaires for this user
+      // (a user can be a clinician AND have notifications sent to them for demo purposes)
+      const nr = await env.DB.prepare(
+        'SELECT * FROM notifications WHERE LOWER(patient_email) = ? AND created_at > ? ORDER BY created_at DESC LIMIT 20',
+      ).bind(normalizedEmail, since).all();
+      notifications = nr.results || [];
 
-        // Always include ALL pending questionnaires (regardless of cursor) so they appear immediately
-        // Also include recently completed ones for the result screen
-        const qr = await env.DB.prepare(
-          "SELECT * FROM questionnaires WHERE LOWER(patient_email) = ? AND (status = 'pending' OR completed_at > ?) ORDER BY due_at DESC LIMIT 10",
-        ).bind(normalizedEmail, since).all();
-        questionnaires = qr.results || [];
-      } else {
-        // Clinician/admin: get alerts
+      // Always include ALL pending questionnaires (regardless of cursor) so they appear immediately
+      const qr = await env.DB.prepare(
+        "SELECT * FROM questionnaires WHERE LOWER(patient_email) = ? AND (status = 'pending' OR completed_at > ?) ORDER BY due_at DESC LIMIT 10",
+      ).bind(normalizedEmail, since).all();
+      questionnaires = qr.results || [];
+
+      // Clinician/admin also get clinician alerts
+      if (role !== 'patient') {
         const ar = await env.DB.prepare(
           "SELECT * FROM notifications WHERE patient_email = '__clinician_alerts__' AND created_at > ? ORDER BY created_at DESC LIMIT 20",
         ).bind(since).all();
