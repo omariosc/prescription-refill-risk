@@ -125,7 +125,7 @@ export default function DetailPanel({ patient: p, onClose, onConfirmIntervention
             <div className="conf-badge">Model confidence: {(p.confidence * 100).toFixed(1)}%</div>
 
             {p.uncertain && (
-              <div style={{ background: '#fffbeb', borderBottom: '15px solid #fde68a', borderRadius: 'var(--sm)', padding: '8px 12px', fontSize: 12, color: '#92400e', marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 'var(--sm)', padding: '8px 12px', fontSize: 12, color: '#92400e', marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#d97706' }}>warning</span>
                 Uncertain: prediction interval spans multiple risk tiers. Consider clinical review before acting on tier alone.
               </div>

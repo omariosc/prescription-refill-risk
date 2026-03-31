@@ -59,12 +59,14 @@ All notebooks live in the [`notebooks/`](notebooks/) folder. Run them **in order
 
 Download [CMS DE-SynPUF Sample 1](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf) — a fully synthetic Medicare dataset (no real patient data).
 
-The notebooks use two files from the dataset:
+The notebooks use these files from the dataset:
 
 | File | Used in |
 |------|---------|
-| `DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv` | Notebook 1 |
-| `DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 |
+| `DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv` | Notebook 1 (primary — 5.5M prescription fills) |
+| `DE1_0_2008_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 (patient demographics — 2008) |
+| `DE1_0_2009_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 (patient demographics — 2009) |
+| `DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 (patient demographics — 2010) |
 
 ### Step 2 — Upload to Google Drive
 
@@ -75,6 +77,8 @@ MyDrive/
 └── pharma2u/
     └── datasets/
         ├── DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv
+        ├── DE1_0_2008_Beneficiary_Summary_File_Sample_1.csv
+        ├── DE1_0_2009_Beneficiary_Summary_File_Sample_1.csv
         ├── DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv
         └── full_df_with_msr.parquet        ← produced by notebook 1
 ```
