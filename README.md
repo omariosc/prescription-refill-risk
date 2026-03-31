@@ -5,174 +5,160 @@
 </p>
 
 <p align="center">
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue?logo=python&logoColor=white" alt="Python 3.10+"></a>
-  <a href="https://github.com/omariosc/prescription-refill-risk/actions"><img src="https://img.shields.io/badge/build-passing-brightgreen?logo=github" alt="Build Passing"></a>
+  <a href="https://refill-risk-demo.omariosc101.workers.dev"><img src="https://img.shields.io/badge/demo-live-00e0bc?logo=cloudflare&logoColor=white" alt="Live Demo"></a>
   <a href="https://github.com/omariosc/prescription-refill-risk/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License MIT"></a>
   <a href="https://lightgbm.readthedocs.io/"><img src="https://img.shields.io/badge/model-LightGBM-orange?logo=microsoft&logoColor=white" alt="LightGBM"></a>
   <a href="https://shap.readthedocs.io/"><img src="https://img.shields.io/badge/explainability-SHAP-purple" alt="SHAP"></a>
-  <a href="https://scikit-learn.org/"><img src="https://img.shields.io/badge/sklearn-1.3+-F7931E?logo=scikit-learn&logoColor=white" alt="scikit-learn"></a>
-  <a href="https://pandas.pydata.org/"><img src="https://img.shields.io/badge/pandas-2.0+-150458?logo=pandas&logoColor=white" alt="Pandas"></a>
-  <a href="https://matplotlib.org/"><img src="https://img.shields.io/badge/matplotlib-3.7+-11557C" alt="Matplotlib"></a>
-  <a href="https://refill-risk-demo.omariosc101.workers.dev"><img src="https://img.shields.io/badge/demo-live-00e0bc?logo=cloudflare&logoColor=white" alt="Live Demo"></a>
 </p>
 
 <p align="center">
-  <strong>Challenge A</strong> &mdash; Data & AI Hackathon, University of Leeds, 30&ndash;31 March 2026<br>
+  <strong>Challenge A</strong> &mdash; Data &amp; AI Hackathon, University of Leeds, 30&ndash;31 March 2026<br>
   Sponsored by <a href="https://www.pharmacy2u.co.uk/">Pharmacy2U</a>
-</p>
-
-<p align="center">
-  <a href="https://refill-risk-demo.omariosc101.workers.dev">🔗 Live Demo — refill-risk-demo.omariosc101.workers.dev</a>
 </p>
 
 ---
 
 ## What this project does
 
-Uses Medicare claims data (CMS DE-SynPUF, 2008–2010) to predict which prescription refills will arrive late. A LightGBM model is trained on features from fill history, patient demographics, and healthcare utilisation. Risk scores are explained with SHAP.
+Patients who pick up repeat prescriptions late risk gaps in their medication — particularly serious for conditions like diabetes or hypertension. This project builds a machine learning model that predicts, for each patient and drug, how likely their **next** refill is to arrive late.
+
+Using three years of anonymised prescription records (2008–2010), the model assigns each upcoming refill a risk score. A pharmacist can then proactively contact high-risk patients before a lapse occurs.
+
+> **Data note:** All analysis uses the [CMS DE-SynPUF](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf) dataset — a fully **synthetic** (artificially generated) recreation of US Medicare records. It contains no real patient information and is freely available for research and education.
 
 ---
 
-## Quick start
+## The quickest way to explore
 
-> The ML pipeline runs in Google Colab (no local Python needed). The demo web app runs locally with Node.js.
+**No setup required:**
+
+| Option | Link |
+|--------|------|
+| 🌐 Live demo (web tool) | [refill-risk-demo.omariosc101.workers.dev](https://refill-risk-demo.omariosc101.workers.dev) |
+| 📓 Notebook 1 — Data Cleaning | [View on nbviewer](https://nbviewer.org/github/omariosc/prescription-refill-risk/blob/main/notebooks/data_cleaning_clean.ipynb) |
+| 📓 Notebook 2 — Exploratory Analysis | [View on nbviewer](https://nbviewer.org/github/omariosc/prescription-refill-risk/blob/main/notebooks/eda_with_late_refillers.ipynb) |
+| 📓 Notebook 3 — Predictive Model | [View on nbviewer](https://nbviewer.org/github/omariosc/prescription-refill-risk/blob/main/notebooks/challenge_a_model.ipynb) |
+
+For the live demo, log in with:
+- **Email:** `test@pharmacy2u.co.uk`
+- **Authenticator code:** `123456`
 
 ---
 
-## Part 1 — Analysis Notebooks (Google Colab)
+## Part 1 — Running the analysis notebooks
 
-All notebooks live in the [`notebooks/`](notebooks/) folder. Run them **in order** — each builds on the output of the previous.
+The analysis is split across three notebooks that run in **Google Colab** — a free, browser-based Python environment provided by Google. You do not need to install anything on your computer.
 
 | # | Notebook | What it does |
 |---|----------|-------------|
-| 1 | [`data_cleaning_clean.ipynb`](notebooks/data_cleaning_clean.ipynb) | Loads raw CMS data, cleans, engineers features, calculates PDC scores → exports `full_df_with_msr.parquet` |
-| 2 | [`eda_with_late_refillers.ipynb`](notebooks/eda_with_late_refillers.ipynb) | Exploratory data analysis — distributions, late rates, and feature signals |
-| 3 | [`challenge_a_model.ipynb`](notebooks/challenge_a_model.ipynb) | Trains LightGBM, evaluates (PR-AUC, calibration), explains with SHAP |
+| 1 | `data_cleaning_clean.ipynb` | Loads the raw data, removes bad records, engineers features, and saves a clean dataset |
+| 2 | `eda_with_late_refillers.ipynb` | Explores the data — who refills late, which drugs, which demographics |
+| 3 | `challenge_a_model.ipynb` | Trains the prediction model and generates risk scores and explanations |
 
-### Prerequisites
+**Run them in order** — each notebook builds on the output of the one before it.
 
-- Google account with Google Drive
-- [Google Colab](https://colab.research.google.com/) (free tier is sufficient)
-- The CMS DE-SynPUF data files (see below)
+---
 
-### Step 1 — Download the data
+### What you need before starting
 
-Download [CMS DE-SynPUF Sample 1](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf) — a fully synthetic Medicare dataset (no real patient data).
+1. **A Google account** — needed for Google Colab and Google Drive (both free).
+2. **The CMS DE-SynPUF data files** — free synthetic Medicare data. Download instructions below.
 
-The notebooks use these files from the dataset:
+---
 
-| File | Used in |
-|------|---------|
-| `DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv` | Notebook 1 (primary — 5.5M prescription fills) |
-| `DE1_0_2008_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 (patient demographics — 2008) |
-| `DE1_0_2009_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 (patient demographics — 2009) |
-| `DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv` | Notebook 1 (patient demographics — 2010) |
+### Step 1 — Download the data files
 
-### Step 2 — Upload to Google Drive
+1. Go to the [CMS DE-SynPUF download page](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf).
+2. Download **Sample 1** of each of these four files:
 
-Upload the files to a folder in your Drive. The notebooks default to:
+| File name | What it contains |
+|-----------|-----------------|
+| `DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv` | All prescription fill records (the main dataset — ~5.5 million rows) |
+| `DE1_0_2008_Beneficiary_Summary_File_Sample_1.csv` | Patient age, sex, and health conditions for 2008 |
+| `DE1_0_2009_Beneficiary_Summary_File_Sample_1.csv` | Patient age, sex, and health conditions for 2009 |
+| `DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv` | Patient age, sex, and health conditions for 2010 |
+
+---
+
+### Step 2 — Upload the files to Google Drive
+
+The notebooks read files directly from your Google Drive, so you need to upload the four files there first.
+
+1. Go to [drive.google.com](https://drive.google.com) and sign in.
+2. Create this exact folder structure (the notebooks look for files here by default):
 
 ```
-MyDrive/
+My Drive/
 └── pharma2u/
     └── datasets/
         ├── DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv
         ├── DE1_0_2008_Beneficiary_Summary_File_Sample_1.csv
         ├── DE1_0_2009_Beneficiary_Summary_File_Sample_1.csv
-        ├── DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv
-        └── full_df_with_msr.parquet        ← produced by notebook 1
+        └── DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv
 ```
 
-**If you use a different folder path**, update the path variable in the Setup cell of each notebook before running:
-
-| Notebook | Variable | Default value |
-|----------|----------|---------------|
-| `data_cleaning_clean.ipynb` | `PDE_PATH`, `BENE_PATH` | `…/pharma2u/datasets/DE1_…csv` |
-| `eda_with_late_refillers.ipynb` | `link` | `…/pharma2u/datasets/full_df_with_msr.parquet` |
-| `challenge_a_model.ipynb` | `link` | `…/pharma2u/datasets/full_df_with_msr.parquet` |
-
-### Step 3 — Run in order
-
-1. Open `notebooks/data_cleaning_clean.ipynb` in Colab → **Runtime → Run all** → download `full_df_with_msr.parquet` when prompted
-2. Upload `full_df_with_msr.parquet` to your Drive (path above)
-3. Open `notebooks/eda_with_late_refillers.ipynb` → **Run all**
-4. Open `notebooks/challenge_a_model.ipynb` → **Run all**
-
-Notebook 1 takes around 5–10 minutes. Notebooks 2 and 3 each take 2–5 minutes.
+> **Using a different folder?** That is fine — just update the file path variable in the **Setup** cell at the top of each notebook before running. The variable names and their defaults are shown in the table below.
+>
+> | Notebook | Variable to update | Default path |
+> |----------|--------------------|--------------|
+> | Notebook 1 | `PDE_PATH` and `BENE_PATH` | `/content/drive/MyDrive/pharma2u/datasets/` |
+> | Notebook 2 | `link` | `/content/drive/MyDrive/pharma2u/datasets/full_df_with_msr.parquet` |
+> | Notebook 3 | `link` | `/content/drive/MyDrive/pharma2u/datasets/full_df_with_msr.parquet` |
 
 ---
 
-<!--
-## Part 1 — ML Pipeline (local Python scripts — superseded by Colab notebooks above)
+### Step 3 — Run Notebook 1 (Data Cleaning)
 
-### Prerequisites
+1. Click this link to open Notebook 1 directly in Google Colab:
+   👉 [Open Notebook 1 in Colab](https://colab.research.google.com/github/omariosc/prescription-refill-risk/blob/main/notebooks/data_cleaning_clean.ipynb)
 
-- [Python 3.10 or newer](https://www.python.org/downloads/)
-- [Git](https://git-scm.com/)
+2. In Colab, click **Runtime → Run all** (or press `Ctrl+F9` / `Cmd+F9`).
 
-### Step 1 — Clone the repo
+3. When prompted, click **Connect to Google Drive** and allow access. This lets the notebook read your uploaded files and save the output.
 
-```bash
-git clone https://github.com/omariosc/prescription-refill-risk.git
-cd prescription-refill-risk
-```
+4. Wait for all cells to finish — this takes **around 10–15 minutes** (the dataset is large). You can monitor progress by watching the cells run top to bottom.
 
-### Step 2 — Create a virtual environment
-
-```bash
-python -m venv .venv
-source .venv/bin/activate      # Mac / Linux
-.venv\Scripts\activate         # Windows
-```
-
-### Step 3 — Install Python dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Step 4 — Download the data
-
-Download the following 8 files and place them in `data/raw/`:
-
-| File | What it contains |
-|------|-----------------|
-| `DE1_0_2008_to_2010_Prescription_Drug_Events_Sample_1.csv` | All prescription fills (the main dataset) |
-| `DE1_0_2008_Beneficiary_Summary_File_Sample_1.csv` | Patient demographics — 2008 |
-| `DE1_0_2009_Beneficiary_Summary_File_Sample_1.csv` | Patient demographics — 2009 |
-| `DE1_0_2010_Beneficiary_Summary_File_Sample_1.csv` | Patient demographics — 2010 |
-| `DE1_0_2008_to_2010_Inpatient_Claims_Sample_1.csv` | Hospital admissions |
-| `DE1_0_2008_to_2010_Outpatient_Claims_Sample_1.csv` | Clinic visits |
-| `DE1_0_2008_to_2010_Carrier_Claims_Sample_1A.csv` | Physician claims (part A) |
-| `DE1_0_2008_to_2010_Carrier_Claims_Sample_1B.csv` | Physician claims (part B) |
-
-### Step 5 — Run the pipeline
-
-```bash
-python scripts/run_pipeline.py
-```
-
-### Optional — Run population analytics
-
-```bash
-python scripts/run_population.py
-```
-
--->
+5. When complete, the notebook saves a processed file called `full_df_with_msr.parquet` directly to your Google Drive at `pharma2u/datasets/`. You do not need to download or move anything — Notebooks 2 and 3 will read it from there automatically.
 
 ---
 
-## Part 2 — Demo Web App
+### Step 4 — Run Notebook 2 (Exploratory Analysis)
 
-The demo is a Cloudflare Worker + React frontend. It runs entirely locally with no Python or data files required.
+1. Click to open in Colab:
+   👉 [Open Notebook 2 in Colab](https://colab.research.google.com/github/omariosc/prescription-refill-risk/blob/main/notebooks/eda_with_late_refillers.ipynb)
 
-### Prerequisites
+2. Click **Runtime → Run all**.
 
-- [Node.js 20+](https://nodejs.org/)
+3. Allow Google Drive access when prompted.
 
-### Running locally with live reload
+4. This notebook produces charts and statistics exploring who refills late, which drugs are involved, and which patient characteristics are associated with late refills. It takes around **3–5 minutes** to run.
 
-This starts the Cloudflare Worker and the React dev server together. Frontend changes update instantly in the browser.
+---
+
+### Step 5 — Run Notebook 3 (Predictive Model)
+
+1. Click to open in Colab:
+   👉 [Open Notebook 3 in Colab](https://colab.research.google.com/github/omariosc/prescription-refill-risk/blob/main/notebooks/challenge_a_model.ipynb)
+
+2. Click **Runtime → Run all**.
+
+3. Allow Google Drive access when prompted.
+
+4. This notebook trains the LightGBM model, evaluates its accuracy, and produces explanations (SHAP charts) showing which factors drive each risk score. It takes around **3–5 minutes** to run.
+
+5. Results are saved to an `outputs/` folder inside your Google Drive.
+
+---
+
+## Part 2 — Running the demo web app locally
+
+The demo is already live at [refill-risk-demo.omariosc101.workers.dev](https://refill-risk-demo.omariosc101.workers.dev) — you do not need to run it locally unless you want to make changes.
+
+If you do want to run it locally, you need **Node.js** (a JavaScript runtime that powers the web server). If you don't have it, [download it from nodejs.org](https://nodejs.org/) — use the LTS version.
+
+### Run with live reload (recommended for development)
+
+Open a terminal, navigate to the repo, then run:
 
 ```bash
 cd demo
@@ -181,15 +167,12 @@ cd frontend && npm install && cd ..
 npm run dev:local
 ```
 
-Open [http://localhost:5173](http://localhost:5173).
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
-- **React changes** (components, styles) → hot-reload instantly, no rebuild needed
-- **Worker changes** (API routes, auth logic) → wrangler restarts automatically
-- API calls from the React app are proxied to the worker on port 8787
+- Edits to the frontend (components, styles) appear instantly without restarting.
+- Edits to the backend (API logic) restart automatically.
 
-### Quick demo (no live reload)
-
-If you just want to run the pre-built app without a React dev server:
+### Run the pre-built app (simpler, no live reload)
 
 ```bash
 cd demo
@@ -197,33 +180,26 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:8787](http://localhost:8787). Changes to the React frontend require a rebuild (`npm run build:frontend`) before they appear here.
+Then open [http://localhost:8787](http://localhost:8787).
 
-### Setting up the database (optional, for auth features)
+### Test login credentials
 
-The demo uses a Cloudflare D1 SQLite database for login. For local development:
+Use these to sign in on the demo:
+
+- **Email:** `test@pharmacy2u.co.uk`
+- **Authenticator code:** `123456`
+
+### Setting up the database (only needed if auth stops working)
+
+The demo uses a small local database for user accounts. If you need to reset it:
 
 ```bash
 cd demo
-npm run db:migrate    # creates tables
-npm run db:seed       # adds a demo admin user (edit seed.sql first — see security note below)
+npm run db:migrate    # creates the tables
+npm run db:seed       # adds the test user
 ```
 
-> **Security note:** `seed.sql` is intentionally excluded from this repo because it contains credentials. Create your own `demo/seed.sql` with a fresh TOTP secret before running `db:seed`. See `demo/schema.sql` for the expected table structure.
-
----
-
-## Configuration
-
-All pipeline parameters live in one place — `src/utils.py`:
-
-| Constant | Default | What it controls |
-|----------|---------|-----------------|
-| `GRACE_DAYS` | `7` | Days after run-out before a refill is "late" |
-| `TRAIN_END` | `2009-06-30` | End of training period |
-| `VAL_END` | `2009-12-31` | End of validation period (test = everything after) |
-| `TIER_LOW` | `0.30` | Threshold below which risk is LOW |
-| `TIER_HIGH` | `0.55` | Threshold at or above which risk is HIGH |
+> **Note:** `seed.sql` is not included in the repo because it contains credentials. You can create your own — see `demo/schema.sql` for the expected format.
 
 ---
 
