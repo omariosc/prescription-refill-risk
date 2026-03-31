@@ -19,7 +19,17 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    checkAuth();
+    const params = new URLSearchParams(window.location.search);
+    const magicToken = params.get('magic');
+    if (magicToken) {
+      // Remove the token from the URL immediately so it isn't bookmarked or shared
+      window.history.replaceState(null, '', window.location.pathname);
+      // Redeem the magic link (sets session cookie), then check auth
+      fetch(`/api/auth/magic-link/redeem?magic=${encodeURIComponent(magicToken)}`, { credentials: 'include' })
+        .finally(() => checkAuth());
+    } else {
+      checkAuth();
+    }
   }, [checkAuth]);
 
   const login = useCallback(async (email, code) => {

@@ -18,7 +18,16 @@ export default function PatientDesktopGate({ onContinue, onLogout }) {
 
   // Fetch a short-lived magic link so mobile auto-logs in on scan
   useEffect(() => {
-    const baseUrl = window.location.origin;
+    // On localhost, swap to the LAN IP so the phone can reach it.
+    // __LAN_IP__ is injected by Vite at startup from os.networkInterfaces().
+    const { hostname, port, protocol } = window.location;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+    /* global __LAN_IP__ */
+    const lanIp = typeof __LAN_IP__ !== 'undefined' ? __LAN_IP__ : null;
+    const baseUrl = (isLocal && lanIp)
+      ? `${protocol}//${lanIp}${port ? `:${port}` : ''}`
+      : window.location.origin;
+
     fetch('/api/auth/magic-link', {
       method: 'POST',
       credentials: 'include',
