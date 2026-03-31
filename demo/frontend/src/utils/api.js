@@ -8,10 +8,13 @@ export async function fetchAuth() {
 export async function login(email, code) {
   const res = await fetch('/api/auth/login', {
     method: 'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, code }),
   });
-  const data = await res.json();
+  const text = await res.text();
+  let data;
+  try { data = JSON.parse(text); } catch { throw new Error(text || `Login failed (${res.status})`); }
   if (!res.ok) throw new Error(data.error || 'Login failed');
   return data;
 }
