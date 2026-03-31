@@ -26,6 +26,14 @@ export function AuthProvider({ children }) {
       window.history.replaceState(null, '', window.location.pathname);
       // Redeem the magic link (sets session cookie), then check auth
       fetch(`/api/auth/magic-link/redeem?magic=${encodeURIComponent(magicToken)}`, { credentials: 'include' })
+        .then(r => {
+          if (!r.ok) {
+            // Token expired or invalid — surface a visible hint via sessionStorage
+            // so the login page can show it without needing extra props
+            sessionStorage.setItem('magic_link_error', 'Your QR code link has expired. Please scan a new one or log in manually.');
+          }
+        })
+        .catch(() => {})
         .finally(() => checkAuth());
     } else {
       checkAuth();

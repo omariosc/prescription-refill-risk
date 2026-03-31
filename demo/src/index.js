@@ -281,10 +281,11 @@ export default {
       const se = 1 - ((parseInt(responses.side_effects) || 3) / 5); // invert: high side effects = low score
       const qol = (parseInt(responses.qol_impact) || 3) / 5;
       const ease = (parseInt(responses.ease_of_use) || 3) / 5;
-      const wouldContinue = responses.would_continue ? 0.0 : 0.3;
+      // 1.0 = wants to continue (low risk), 0.0 = does not want to continue (high risk)
+      const wouldContinue = responses.would_continue ? 1.0 : 0.0;
 
       // Adherence risk: lower scores = higher risk of not refilling
-      const adherenceRisk = Math.max(0, Math.min(1, 1 - (eff * 0.3 + se * 0.25 + qol * 0.2 + ease * 0.15 + (1 - wouldContinue) * 0.1)));
+      const adherenceRisk = Math.max(0, Math.min(1, 1 - (eff * 0.3 + se * 0.25 + qol * 0.2 + ease * 0.15 + wouldContinue * 0.1)));
 
       // Determine intervention based on risk + side effects severity
       let intervention = 'app_push';

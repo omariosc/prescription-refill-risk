@@ -47,7 +47,7 @@ export default function AdminPanel({ onClose, currentUserEmail }) {
         qrRef.current.removeChild(qrRef.current.firstChild);
       }
       window.QrCreator.render({
-        text: newUser.totp_uri,
+        text: newUser.otpauth_uri,
         radius: 0.4,
         ecLevel: 'M',
         fill: '#003052',

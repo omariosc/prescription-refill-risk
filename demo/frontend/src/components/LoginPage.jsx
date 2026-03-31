@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 export default function LoginPage({ onCancel, onRegister }) {
@@ -7,6 +7,14 @@ export default function LoginPage({ onCancel, onRegister }) {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const msg = sessionStorage.getItem('magic_link_error');
+    if (msg) {
+      setError(msg);
+      sessionStorage.removeItem('magic_link_error');
+    }
+  }, []);
   const inputRefs = useRef([]);
 
   const handleCodeChange = useCallback((index, value) => {

@@ -1,8 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export default function PendingApprovalPage({ email, onLogin, onStatusChange }) {
   const [checking, setChecking] = useState(false);
   const [approved, setApproved] = useState(false);
+  const redirectTimer = useRef(null);
+  const onLoginRef = useRef(onLogin);
+  const onStatusChangeRef = useRef(onStatusChange);
+
+  // Keep refs current so the timeout always calls the latest callbacks
+  useEffect(() => { onLoginRef.current = onLogin; }, [onLogin]);
+  useEffect(() => { onStatusChangeRef.current = onStatusChange; }, [onStatusChange]);
 
   const checkStatus = useCallback(async () => {
     if (!email) return;
@@ -16,9 +23,9 @@ export default function PendingApprovalPage({ email, onLogin, onStatusChange }) 
       const data = await res.json();
       if (data.status === 'approved') {
         setApproved(true);
-        setTimeout(() => {
-          if (onStatusChange) onStatusChange();
-          else if (onLogin) onLogin();
+        redirectTimer.current = setTimeout(() => {
+          if (onStatusChangeRef.current) onStatusChangeRef.current();
+          else if (onLoginRef.current) onLoginRef.current();
         }, 2000);
       }
     } catch {
@@ -26,13 +33,16 @@ export default function PendingApprovalPage({ email, onLogin, onStatusChange }) 
     } finally {
       setChecking(false);
     }
-  }, [email, onLogin, onStatusChange]);
+  }, [email]);
 
   // Auto-poll every 3 seconds
   useEffect(() => {
     checkStatus();
     const interval = setInterval(checkStatus, 3000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (redirectTimer.current) clearTimeout(redirectTimer.current);
+    };
   }, [checkStatus]);
 
   return (

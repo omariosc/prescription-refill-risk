@@ -259,7 +259,11 @@ export default function PatientApp({ user, onLogout }) {
       };
 
       ws.onerror = () => {
+        // null out onclose so the reconnect fires via onerror path only,
+        // not a double-trigger from the subsequent close event
+        ws.onclose = null;
         ws.close();
+        reconnectTimer = setTimeout(connect, 2000);
       };
     };
 
